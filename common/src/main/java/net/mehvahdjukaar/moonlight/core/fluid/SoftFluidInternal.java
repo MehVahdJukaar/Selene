@@ -4,10 +4,12 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidColors;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.core.network.ClientBoundFinalizeFluidsMessage;
 import net.mehvahdjukaar.moonlight.core.network.ModNetworking;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -16,6 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import static net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry.getHolders;
 
@@ -24,13 +27,13 @@ public class SoftFluidInternal {
 
     //TODO: improve, this isnt very robust. Same with DynamicHolder stuff
     //needs thread local as each level has its own holderand registry
-    public static final ThreadLocal<Map<Fluid, Holder<SoftFluid>>> FLUID_MAP = ThreadLocal.withInitial(IdentityHashMap::new);
-    public static final ThreadLocal<Map<Item, Holder<SoftFluid>>> ITEM_MAP = ThreadLocal.withInitial(IdentityHashMap::new);
+    public static final WeakHashMap <RegistryAccess, Map<Fluid, Holder<SoftFluid>>> FLUID_MAP = new WeakHashMap<>();
+    public static final WeakHashMap<RegistryAccess, Map<Item, Holder<SoftFluid>>> ITEM_MAP = new WeakHashMap<>();
 
     //needs to be called on both sides
-    private static void populateSlaveMaps() {
-        var fludiMap = SoftFluidInternal.FLUID_MAP.get();
-        var itemMap = SoftFluidInternal.ITEM_MAP.get();
+    private static void populateSlaveMaps(RegistryAccess registryAccess) {
+        var fludiMap = SoftFluidInternal.FLUID_MAP.computeIfAbsent(registryAccess, k -> new IdentityHashMap<>());
+        var itemMap = SoftFluidInternal.ITEM_MAP.computeIfAbsent(registryAccess, k -> new IdentityHashMap<>());
         fludiMap.clear();
         itemMap.clear();
         for (var h : getHolders()) {
@@ -56,7 +59,8 @@ public class SoftFluidInternal {
 
     //called by data sync to player
     public static void postInitClient() {
-        populateSlaveMaps();
+        var reg = Utils.hackyGetRegistryAccess();
+        populateSlaveMaps(reg);
         //ok so here the extra registered fluids should have already been sent to the client
         SoftFluidColors.refreshParticleColors();
     }
@@ -70,10 +74,11 @@ public class SoftFluidInternal {
 
     //on data load
     public static void doPostInitServer() {
-        populateSlaveMaps();
+        var reg = Utils.hackyGetRegistryAccess();
+        populateSlaveMaps(reg);
         //registers existing fluids. also update the salve maps
         //we need to call this on bont server and client as this happens too late and these wont be sent
-        registerExistingVanillaFluids(FLUID_MAP.get(), ITEM_MAP.get());
+        registerExistingVanillaFluids(FLUID_MAP.get(reg), ITEM_MAP.get(reg));
     }
 
     @ExpectPlatform

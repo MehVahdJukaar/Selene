@@ -7,6 +7,7 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
 import net.minecraft.core.BlockPos;
@@ -254,13 +255,28 @@ public class SoftFluidStack implements DataComponentHolder {
         return this.getCount() + " " + this.getFluid();
     }
 
+    @NotNull
+    public static SoftFluidStack fromFluid(Fluid fluid, int amount, @Nullable CompoundTag tag) {
+        Holder<SoftFluid> f = SoftFluidInternal.FLUID_MAP.get(Utils.hackyGetRegistryAccess()).get(fluid);
+        if (f == null) return empty();
+        return of(f, amount, tag);
+    }
+
+    @NotNull
+    public static SoftFluidStack fromFluid(FluidState fluid) {
+        if (fluid.is(FluidTags.WATER)) {
+            return fromFluid(fluid.getType(), SoftFluid.WATER_BUCKET_COUNT, null);
+        }
+        return fromFluid(fluid.getType(), SoftFluid.BUCKET_COUNT, null);
+    }
+
 
     // item conversion
 
     @Nullable
     public static Pair<SoftFluidStack, FluidContainerList.Category> fromItem(ItemStack itemStack) {
         Item filledContainer = itemStack.getItem();
-        Holder<SoftFluid> fluid = SoftFluidInternal.ITEM_MAP.get().get(filledContainer);
+        Holder<SoftFluid> fluid = SoftFluidInternal.ITEM_MAP.get(Utils.hackyGetRegistryAccess()).get(filledContainer);
 
         if (fluid != null && !fluid.value().isEmptyFluid()) {
             var category = fluid.value().getContainerList()
