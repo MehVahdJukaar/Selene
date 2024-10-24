@@ -319,7 +319,6 @@ public abstract class DynamicResourcePack implements PackResources {
     protected void clearNonStatic() {
         if (!this.needsClearingNonStatic) return;
         this.needsClearingNonStatic = false;
-        Stopwatch watch = Stopwatch.createStarted();
         boolean mf = MODERN_FIX && getPackType() == PackType.CLIENT_RESOURCES;
         for (var r : this.resources.keySet()) {
             if (mf && modernFixHack(r.getPath())) {
@@ -346,8 +345,6 @@ public abstract class DynamicResourcePack implements PackResources {
         for (var s : staticResources) {
             this.searchTrie.insert(s);
         }
-        Moonlight.LOGGER.info("Cleared non-static resources for pack {} in: {} ms", this.resourcePackName,
-                watch.elapsed().toMillis());
     }
 
     // Called after each reload
