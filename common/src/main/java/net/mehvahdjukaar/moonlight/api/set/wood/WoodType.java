@@ -251,7 +251,7 @@ public class WoodType extends BlockType {
                         var w = new WoodType(id, plank, log);
                         childNames.forEach((key, value) -> {
                             Block obj = BuiltInRegistries.BLOCK.get(value);
-                            if (obj != null) w.addChild(key, obj);
+                            if (obj != null && obj != d) w.addChild(key, obj);
                         });
                         return Optional.of(w);
                     }
