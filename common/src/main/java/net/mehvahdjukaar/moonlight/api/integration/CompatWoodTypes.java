@@ -17,17 +17,40 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(new ResourceLocation("domum_ornamentum:cactus_extra"),
                 new ResourceLocation("domum_ornamentum:cactus_extra"), new ResourceLocation("cactus")));
 
-        // spectrum
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, spectrumWood("ebony"));
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, spectrumWood("slate"));
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, spectrumWood("chestnut"));
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, spectrumWood("ivory"));
+        // Spectrum (FABRIC)
+//        BlockSetAPI.addBlockTypeFinder(WoodType.class, stemWoodFinder("spectrum", "ivory_noxwood", "ivory_noxcap"));
+//        BlockSetAPI.addBlockTypeFinder(WoodType.class, stemWoodFinder("spectrum", "slate_noxwood", "slate_noxcap"));
+//        BlockSetAPI.addBlockTypeFinder(WoodType.class, stemWoodFinder("spectrum", "ebony_noxwood", "ebony_noxcap"));
+//        BlockSetAPI.addBlockTypeFinder(WoodType.class, stemWoodFinder("spectrum", "chestnut_noxwood", "chestnut_noxcap"));
 
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple("spectrum",
-                "ebony_noxwood", "ebony_noxwood_planks", "ebony_noxcap_stem"));
+        var ebony = WoodType.Finder.simple("spectrum",
+                "ebony_noxwood", "ebony_noxwood_planks", "ebony_noxcap_stem");
+        ebony.addChild("stripped_log", "stripped_ebony_noxcap_stem");
+        ebony.addChild("wood", "ebony_noxcap_hyphae");
+        ebony.addChild("stripped_wood", "stripped_ebony_noxcap_hyphae");
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,ebony);
 
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple("spectrum",
-                "chestnut_noxwood", "chestnut_noxwood_planks", "chestnut_noxcap_stem"));
+        var chestnut = WoodType.Finder.simple("spectrum",
+                "chestnut_noxwood", "chestnut_noxwood_planks", "chestnut_noxcap_stem");
+        chestnut.addChild("stripped_log", "stripped_chestnut_noxcap_stem");
+        chestnut.addChild("wood", "chestnut_noxcap_hyphae");
+        chestnut.addChild("stripped_wood", "stripped_chestnut_noxcap_hyphae");
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, chestnut);
+
+        var slate = WoodType.Finder.simple("spectrum",
+                "slate_noxwood", "slate_noxwood_planks", "slate_noxcap_stem");
+        slate.addChild("stripped_log", "stripped_slate_noxcap_stem");
+        slate.addChild("wood", "slate_noxcap_hyphae");
+        slate.addChild("stripped_wood", "stripped_slate_noxcap_hyphae");
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, slate);
+
+        var ivory = WoodType.Finder.simple("spectrum",
+                "ivory_noxwood", "ivory_noxwood_planks", "ivory_noxcap_stem");
+        ivory.addChild("stripped_log", "stripped_ivory_noxcap_stem");
+        ivory.addChild("wood", "ivory_noxcap_hyphae");
+        ivory.addChild("stripped_wood", "stripped_ivory_noxcap_hyphae");
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, ivory);
+
         // Ars Nouveau
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(
                 "ars_nouveau", "archwood", "archwood_planks", "blue_archwood_log"));
@@ -130,7 +153,6 @@ public class CompatWoodTypes {
         var quarkAzalea = WoodType.Finder.simple(
                 "quark", "azalea", "azalea_planks", "azalea_log");
         quarkAzalea.addChild("leaves", new ResourceLocation("minecraft:azalea_leaves"));
-
         BlockSetAPI.addBlockTypeFinder(WoodType.class, quarkAzalea);
 
 
@@ -400,6 +422,7 @@ public class CompatWoodTypes {
                 "chipped", "white_flower_spruce", "white_flower_spruce_leaves", "spruce"));
     }
 
+    //TODO: Why is it not working? It's not returning value of WoodType.Finder? it's practically blank
     private static WoodType.@NotNull Finder spectrumWood(String name) {
         var w = WoodType.Finder.simple("spectrum",
                 name + "_noxwood", name + "_noxwood_planks", "_noxcap_stem");
@@ -408,4 +431,43 @@ public class CompatWoodTypes {
         w.addChild("stripped_wood", "stripped_" + name + "_noxcap_hyphae");
         return w;
     }
+
+    // Below is to reduce the amount of works to add new undetected woodTypes
+    private static WoodType.@NotNull Finder logWoodFinder(String modId, String planksName, String logName) {
+        return WoodFinder(modId, planksName +"_planks", logName +"_log",
+                logName +"_wood", true, true);
+    }
+    private static WoodType.@NotNull Finder logWoodFinder(String modId, String planksName, String logName, String woodName) {
+        return WoodFinder(modId, planksName +"_planks", logName +"_log",
+                woodName +"_wood", true, true);
+    }
+
+    private static WoodType.@NotNull Finder stemWoodFinder(String modId, String planksName, String stemName) {
+        return WoodFinder(modId, planksName +"_planks", stemName +"_stem",
+                stemName +"_hyphae", true, true);
+    }
+    private static WoodType.@NotNull Finder stemWoodFinder(String modId, String planksName, String stemName, String hyphaeName) {
+        return WoodFinder(modId, planksName +"_planks", stemName +"_stem",
+                hyphaeName +"_hyphae", true, true);
+    }
+
+    @SuppressWarnings({"SameParameterValue"})
+    private static WoodType.@NotNull Finder WoodFinder(String modId, String planks, String log, String wood, boolean hasStrippedLog, boolean hasStrippedWood) {
+
+        String name = planks.replace("_planks", "");
+        String stripped_log = "stripped_"+ log;
+        String stripped_wood = "stripped_"+ wood;
+
+        WoodType.Finder wf = WoodType.Finder.simple(modId, name, planks, log);
+
+        if (hasStrippedLog)
+            wf.addChild("stripped_log", stripped_log);
+        if (!wood.isEmpty())
+            wf.addChild("wood", wood);
+        if (hasStrippedWood)
+            wf.addChild("stripped_wood", stripped_wood);
+
+        return wf;
+    }
+
 }
