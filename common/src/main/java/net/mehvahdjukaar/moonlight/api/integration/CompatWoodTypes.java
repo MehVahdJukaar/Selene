@@ -3,10 +3,12 @@ package net.mehvahdjukaar.moonlight.api.integration;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.leaves.LeavesType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
+import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 //place for all known weird hardcoded wood types from mods that aren't getting detected
+@SuppressWarnings("SameParameterValue")
 public class CompatWoodTypes {
 
     public static void init() {
@@ -17,43 +19,37 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(new ResourceLocation("domum_ornamentum:cactus_extra"),
                 new ResourceLocation("domum_ornamentum:cactus_extra"), new ResourceLocation("cactus")));
 
+        // Unusual End
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                uniqueWoodFinder("unusualend", "chorus_cane", "chorus_nest_planks",
+                "block", ""));
+
         // Spectrum (FABRIC)
-//        BlockSetAPI.addBlockTypeFinder(WoodType.class, stemWoodFinder("spectrum", "ivory_noxwood", "ivory_noxcap"));
-//        BlockSetAPI.addBlockTypeFinder(WoodType.class, stemWoodFinder("spectrum", "slate_noxwood", "slate_noxcap"));
-//        BlockSetAPI.addBlockTypeFinder(WoodType.class, stemWoodFinder("spectrum", "ebony_noxwood", "ebony_noxcap"));
-//        BlockSetAPI.addBlockTypeFinder(WoodType.class, stemWoodFinder("spectrum", "chestnut_noxwood", "chestnut_noxcap"));
-
-        var ebony = WoodType.Finder.simple("spectrum",
-                "ebony_noxwood", "ebony_noxwood_planks", "ebony_noxcap_stem");
-        ebony.addChild("stripped_log", "stripped_ebony_noxcap_stem");
-        ebony.addChild("wood", "ebony_noxcap_hyphae");
-        ebony.addChild("stripped_wood", "stripped_ebony_noxcap_hyphae");
-        BlockSetAPI.addBlockTypeFinder(WoodType.class,ebony);
-
-        var chestnut = WoodType.Finder.simple("spectrum",
-                "chestnut_noxwood", "chestnut_noxwood_planks", "chestnut_noxcap_stem");
-        chestnut.addChild("stripped_log", "stripped_chestnut_noxcap_stem");
-        chestnut.addChild("wood", "chestnut_noxcap_hyphae");
-        chestnut.addChild("stripped_wood", "stripped_chestnut_noxcap_hyphae");
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, chestnut);
-
-        var slate = WoodType.Finder.simple("spectrum",
-                "slate_noxwood", "slate_noxwood_planks", "slate_noxcap_stem");
-        slate.addChild("stripped_log", "stripped_slate_noxcap_stem");
-        slate.addChild("wood", "slate_noxcap_hyphae");
-        slate.addChild("stripped_wood", "stripped_slate_noxcap_hyphae");
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, slate);
-
-        var ivory = WoodType.Finder.simple("spectrum",
-                "ivory_noxwood", "ivory_noxwood_planks", "ivory_noxcap_stem");
-        ivory.addChild("stripped_log", "stripped_ivory_noxcap_stem");
-        ivory.addChild("wood", "ivory_noxcap_hyphae");
-        ivory.addChild("stripped_wood", "stripped_ivory_noxcap_hyphae");
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, ivory);
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(true, "spectrum", "ivory_noxcap", "ivory_noxwood_planks", false));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(true, "spectrum", "slate_noxcap", "slate_noxwood_planks", false));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(true, "spectrum", "ebony_noxcap", "ebony_noxwood_planks", false));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(true, "spectrum", "chestnut_noxcap", "chestnut_noxwood_planks", false));
 
         // Ars Nouveau
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(
-                "ars_nouveau", "archwood", "archwood_planks", "blue_archwood_log"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "ars_nouveau", "blue_archwood", "archwood_planks", true));
+
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "ars_nouveau", "red_archwood", "archwood_planks", true));
+
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "ars_nouveau", "purple_archwood", "archwood_planks", true));
+
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "ars_nouveau", "green_archwood", "archwood_planks", true));
+
+        // Ars Elemental
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                uniqueWoodFinder("ars_elemental", "yellow_archwood", "ars_nouveau:archwood_planks", "log", ""));
 
         // Blue Skies
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(
@@ -80,12 +76,9 @@ public class CompatWoodTypes {
                 "rats", "pirat", "pirat_planks", "pirat_log"));
 
         // Oh The Biomes You'll Go
-        var embur = WoodType.Finder.simple(
-                "byg", "embur", "embur_planks", "embur_pedu");
-        embur.addChild("stripped_log", "stripped_embur_pedu");
-        embur.addChild("wood", "embur_pedu_top");
-        embur.addChild("stripped_wood", "stripped_embur_pedu_top");
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, embur);
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                uniqueWoodFinder("byg", "embur", "embur_planks", "pedu", "pedu_top"));
+
 
         // mcreator mod with typos...
         // Nethers Exoticism
@@ -98,26 +91,17 @@ public class CompatWoodTypes {
         ));
 
         // Nourished End
-        var verdant = WoodType.Finder.simple(
-                "nourished_end", "verdant", "verdant_planks", "verdant_stalk");
-        verdant.addChild("wood", "verdant_hyphae");
-        verdant.addChild("stripped_wood", "stripped_verdant_hyphae");
-        verdant.addChild("stripped_log", "stripped_verdant_stem");
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, verdant);
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                uniqueWoodFinder("nourished_end", "verdant", "verdant_planks", "stalk", "hyphae"));
 
-        var cerulean = WoodType.Finder.simple(
-                "nourished_end", "cerulean", "cerulean_planks", "cerulean_stem_thick");
-        cerulean.addChild("stripped_wood", "stripped_cerulean_hyphae");
-        cerulean.addChild("stripped_log", "cerulean_stem_stripped");
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, cerulean);
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false,"nourished_end", "cerulean", "cerulean_planks",
+                        "stem_thick", "hyphae",
+                        "stem_stripped", ""));
 
         // Gardens Of The Dead
-        var soulblight = WoodType.Finder.simple("gardens_of_the_dead",
-                "soulblight", "soulblight_planks", "soulblight_stem");
-        cerulean.addChild("stripped_wood", "stripped_soulblight_hyphae");
-        cerulean.addChild("wood", "soulblight_hyphae");
-        cerulean.addChild("stripped_log", "stripped_soulblight_stem");
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, soulblight);
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "gardens_of_the_dead", "soulblight", "soulblight_planks", false));
 
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple("gardens_of_the_dead",
                 "whistlecane", "whistlecane_block", "whistlecane"));
@@ -420,52 +404,69 @@ public class CompatWoodTypes {
                 "chipped", "red_spruce", "red_spruce_leaves", "spruce"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "chipped", "white_flower_spruce", "white_flower_spruce_leaves", "spruce"));
+
+        var undetected = WoodType.Finder.simple("modId", "nameWood", "namePlanks", "nameLog");
+        undetected.addChild("stripped_log", "nameStrippedLog");
+        undetected.addChild("wood", "nameWood");
+        undetected.addChild("stripped_wood", "nameStrippedWood");
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, undetected);
     }
 
-    //TODO: Why is it not working? It's not returning value of WoodType.Finder? it's practically blank
-    private static WoodType.@NotNull Finder spectrumWood(String name) {
-        var w = WoodType.Finder.simple("spectrum",
-                name + "_noxwood", name + "_noxwood_planks", "_noxcap_stem");
-        w.addChild("stripped_log", "stripped_" + name + "_noxcap_stem");
-        w.addChild("wood", name + "_noxcap_hyphae");
-        w.addChild("stripped_wood", "stripped_" + name + "_noxcap_hyphae");
-        return w;
+    /*
+    * Below just reduce the amount of works to add undetected wood
+    * Its the same as the code used to add the undetected wood:
+        var undetected = WoodType.Finder.simple("modId", "nameWood", "namePlanks", "nameLog");
+        undetected.addChild("stripped_log", "nameStrippedLog");
+        undetected.addChild("wood", "nameWood");
+        undetected.addChild("stripped_wood", "nameStrippedWood");
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, undetected);
+    */
+    private static WoodType.@NotNull Finder uniqueWoodFinder(String modId, String nameWood, String namePlanks, String suffixLog, String suffixWood) {
+        return woodTypeFinder(false, modId, nameWood, namePlanks, suffixLog, suffixWood, "", "");
     }
 
-    // Below is to reduce the amount of works to add new undetected woodTypes
-    private static WoodType.@NotNull Finder logWoodFinder(String modId, String planksName, String logName) {
-        return WoodFinder(modId, planksName +"_planks", logName +"_log",
-                logName +"_wood", true, true);
-    }
-    private static WoodType.@NotNull Finder logWoodFinder(String modId, String planksName, String logName, String woodName) {
-        return WoodFinder(modId, planksName +"_planks", logName +"_log",
-                woodName +"_wood", true, true);
-    }
-
-    private static WoodType.@NotNull Finder stemWoodFinder(String modId, String planksName, String stemName) {
-        return WoodFinder(modId, planksName +"_planks", stemName +"_stem",
-                stemName +"_hyphae", true, true);
-    }
-    private static WoodType.@NotNull Finder stemWoodFinder(String modId, String planksName, String stemName, String hyphaeName) {
-        return WoodFinder(modId, planksName +"_planks", stemName +"_stem",
-                hyphaeName +"_hyphae", true, true);
+    private static WoodType.@NotNull Finder generalWoodFinder(boolean nameAlt, String modId, String nameWood, String namePlanks, boolean isLog) {
+        String suffixLog, suffixWood;
+        if (isLog) {
+            suffixLog = "log";
+            suffixWood = "wood";
+        }
+        else {
+            suffixLog = "stem";
+            suffixWood = "hyphae";
+        }
+        return woodTypeFinder(nameAlt, modId, nameWood, namePlanks, suffixLog, suffixWood, "", "");
     }
 
-    @SuppressWarnings({"SameParameterValue"})
-    private static WoodType.@NotNull Finder WoodFinder(String modId, String planks, String log, String wood, boolean hasStrippedLog, boolean hasStrippedWood) {
+    /**
+     * @param nameAlt use planks' name instead of nameWood's
+     * @param planks has 2 options: "planksId" OR "modId:planksId".
+    */
+    private static WoodType.@NotNull Finder woodTypeFinder(boolean nameAlt, String modId, String nameWood, String planks,
+                                                       String suffixLog, String suffixWood, String suffixStrippedLog, String suffixStrippedWood) {
 
-        String name = planks.replace("_planks", "");
-        String stripped_log = "stripped_"+ log;
-        String stripped_wood = "stripped_"+ wood;
+        // Creating Ids of log & stripped_log
+        String prefixLog = (suffixStrippedLog.contains("stripped")) ? "" : "stripped_";
+        String log = (suffixLog.isBlank()) ? nameWood : nameWood +"_"+ suffixLog;
+        String stripped_log = (suffixStrippedLog.isBlank()) ? prefixLog + log : prefixLog + nameWood +"_"+ suffixStrippedLog;
 
-        WoodType.Finder wf = WoodType.Finder.simple(modId, name, planks, log);
+        // Creating Ids of wood & stripped_wood
+        String prefixWood = (suffixStrippedWood.contains("stripped")) ? "" : "stripped_";
+        String wood = (suffixWood.isBlank()) ? nameWood : nameWood +"_"+ suffixWood;
+        String stripped_wood = (suffixStrippedWood.isBlank()) ? prefixWood + wood : prefixWood + nameWood +"_"+ suffixStrippedWood;
 
-        if (hasStrippedLog)
-            wf.addChild("stripped_log", stripped_log);
-        if (!wood.isEmpty())
-            wf.addChild("wood", wood);
-        if (hasStrippedWood)
-            wf.addChild("stripped_wood", stripped_wood);
+        nameWood = (nameAlt) ? planks.replace("_planks", "") : nameWood;
+
+        WoodType.Finder wf;
+        if (planks.contains(":")) // some addons like ars_elemental are using ars_nouveau's planks
+            wf = WoodType.Finder.simple(new ResourceLocation(modId, nameWood), new ResourceLocation(planks), new ResourceLocation(modId, log));
+        else
+            wf = WoodType.Finder.simple(modId, nameWood, planks, log);
+
+        // WoodType.Finder has a null check for below, so don't worry about it
+        wf.addChild("wood", wood);
+        wf.addChild("stripped_log", stripped_log);
+        wf.addChild("stripped_wood", stripped_wood);
 
         return wf;
     }
