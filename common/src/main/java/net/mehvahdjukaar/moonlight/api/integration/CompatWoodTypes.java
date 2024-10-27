@@ -3,12 +3,10 @@ package net.mehvahdjukaar.moonlight.api.integration;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.leaves.LeavesType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
-import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 //place for all known weird hardcoded wood types from mods that aren't getting detected
-@SuppressWarnings("SameParameterValue")
 public class CompatWoodTypes {
 
     public static void init() {
@@ -404,12 +402,6 @@ public class CompatWoodTypes {
                 "chipped", "red_spruce", "red_spruce_leaves", "spruce"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "chipped", "white_flower_spruce", "white_flower_spruce_leaves", "spruce"));
-
-        var undetected = WoodType.Finder.simple("modId", "nameWood", "namePlanks", "nameLog");
-        undetected.addChild("stripped_log", "nameStrippedLog");
-        undetected.addChild("wood", "nameWood");
-        undetected.addChild("stripped_wood", "nameStrippedWood");
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, undetected);
     }
 
     /*
@@ -442,6 +434,7 @@ public class CompatWoodTypes {
      * @param nameAlt use planks' name instead of nameWood's
      * @param planks has 2 options: "planksId" OR "modId:planksId".
     */
+    @SuppressWarnings("SameParameterValue")
     private static WoodType.@NotNull Finder woodTypeFinder(boolean nameAlt, String modId, String nameWood, String planks,
                                                        String suffixLog, String suffixWood, String suffixStrippedLog, String suffixStrippedWood) {
 
