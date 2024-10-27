@@ -156,15 +156,19 @@ public class CompatWoodTypes {
         coconut.addChild("sapling", new ResourceLocation("ecologics:coconut_seedling"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, coconut);
 
-        // ARS NOUVEAU
+        // Ars Nouveau
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ars_nouveau", "blue_archwood", "blue_archwood_leaves", "ars_nouveau:archwood"));
+                "ars_nouveau", "blue_archwood", "blue_archwood_leaves", "ars_nouveau:blue_archwood"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ars_nouveau", "green_archwood", "green_archwood_leaves", "ars_nouveau:archwood"));
+                "ars_nouveau", "green_archwood", "green_archwood_leaves", "ars_nouveau:green_archwood"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ars_nouveau", "purple_archwood", "purple_archwood_leaves", "ars_nouveau:archwood"));
+                "ars_nouveau", "purple_archwood", "purple_archwood_leaves", "ars_nouveau:purple_archwood"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ars_nouveau", "red_archwood", "red_archwood_leaves", "ars_nouveau:archwood"));
+                "ars_nouveau", "red_archwood", "red_archwood_leaves", "ars_nouveau:red_archwood"));
+        
+        // Ars Elemental
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "ars_nouveau", "yellow_archwood", "yellow_archwood_leaves", "ars_nouveau:yellow_archwood"));
 
         // BIOMES O' PLENTY
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
