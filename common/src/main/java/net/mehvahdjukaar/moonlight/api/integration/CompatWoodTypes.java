@@ -17,6 +17,18 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(ResourceLocation.parse("domum_ornamentum:cactus_extra"),
                 ResourceLocation.parse("domum_ornamentum:cactus_extra"), ResourceLocation.parse("cactus")));
 
+        // Jaden's Nether Expansion
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(true, "netherexp", "cerebrage_claret", "claret_planks",
+                        "stem", "hyphae",
+                        "netherexp:stripped_claret_stem", "netherexp:stripped_claret_hyphae")
+        );
+
+        // Piglin Ruins
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                uniqueWoodFinder("piglin_ruins", "ominous", "ominous_planks",
+                        "stalk_block", "" ));
+
         // Unusual End
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
                 uniqueWoodFinder("unusualend", "chorus_cane", "chorus_nest_planks",
@@ -432,12 +444,14 @@ public class CompatWoodTypes {
 
     /**
      * @param nameAlt use planks' name instead of nameWood's
-     * @param planks has 2 options: "planksId" OR "modId:planksId".
+     * @param planks options: "planksId" OR "modId:planksId".
+     * @param suffixStrippedLog options: suffix of stripped_log OR "modId:stripped_log_ID"
+     * @param suffixStrippedWood options: suffix of stripped_log OR "modId:stripped_wood_ID"
     */
     @SuppressWarnings("SameParameterValue")
     private static WoodType.@NotNull Finder woodTypeFinder(boolean nameAlt, String modId, String nameWood, String planks,
                                                        String suffixLog, String suffixWood, String suffixStrippedLog, String suffixStrippedWood) {
-
+                                                                                                // stripped_claret_stem   // stripped_claret_hyphae
         // Creating Ids of log & stripped_log
         String prefixLog = (suffixStrippedLog.contains("stripped")) ? "" : "stripped_";
         String log = (suffixLog.isBlank()) ? nameWood : nameWood +"_"+ suffixLog;
@@ -458,8 +472,15 @@ public class CompatWoodTypes {
 
         // WoodType.Finder has a null check for below, so don't worry about it
         wf.addChild("wood", wood);
-        wf.addChild("stripped_log", stripped_log);
-        wf.addChild("stripped_wood", stripped_wood);
+        if (suffixStrippedLog.contains(":"))
+            wf.addChild("stripped_log", new ResourceLocation(suffixStrippedLog));
+        else
+            wf.addChild("stripped_log", stripped_log);
+
+        if (suffixStrippedWood.contains(":"))
+            wf.addChild("stripped_log", new ResourceLocation(suffixStrippedWood));
+        else
+            wf.addChild("stripped_wood", stripped_wood);
 
         return wf;
     }
