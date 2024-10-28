@@ -44,22 +44,23 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
                 generalWoodFinder(true, "spectrum", "chestnut_noxcap", "chestnut_noxwood_planks", false));
 
-        // Ars Nouveau
+        // Ars Nouveau - Do not add other WoodTypes blc it would create too many block variants using archwood_planks
+                        // The WoodTypes below all are using the same planks. There is no solutions
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
-                generalWoodFinder(false, "ars_nouveau", "blue_archwood", "archwood_planks", true));
+                generalWoodFinder(true, "ars_nouveau", "blue_archwood", "archwood_planks", true));
 
-        BlockSetAPI.addBlockTypeFinder(WoodType.class,
-                generalWoodFinder(false, "ars_nouveau", "red_archwood", "archwood_planks", true));
-
-        BlockSetAPI.addBlockTypeFinder(WoodType.class,
-                generalWoodFinder(false, "ars_nouveau", "purple_archwood", "archwood_planks", true));
-
-        BlockSetAPI.addBlockTypeFinder(WoodType.class,
-                generalWoodFinder(false, "ars_nouveau", "green_archwood", "archwood_planks", true));
+//        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+//                generalWoodFinder(false, "ars_nouveau", "red_archwood", "archwood_planks", true));
+//
+//        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+//                generalWoodFinder(false, "ars_nouveau", "purple_archwood", "archwood_planks", true));
+//
+//        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+//                generalWoodFinder(false, "ars_nouveau", "green_archwood", "archwood_planks", true));
 
         // Ars Elemental
-        BlockSetAPI.addBlockTypeFinder(WoodType.class,
-                uniqueWoodFinder("ars_elemental", "yellow_archwood", "ars_nouveau:archwood_planks", "log", ""));
+//        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+//                uniqueWoodFinder("ars_elemental", "yellow_archwood", "ars_nouveau:archwood_planks", "log", ""));
 
         // Blue Skies
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(
@@ -158,17 +159,17 @@ public class CompatWoodTypes {
 
         // Ars Nouveau
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ars_nouveau", "blue_archwood", "blue_archwood_leaves", "ars_nouveau:blue_archwood"));
+                "ars_nouveau", "blue_archwood", "blue_archwood_leaves", "ars_nouveau:archwood"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ars_nouveau", "green_archwood", "green_archwood_leaves", "ars_nouveau:green_archwood"));
+                "ars_nouveau", "green_archwood", "green_archwood_leaves", "ars_nouveau:archwood"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ars_nouveau", "purple_archwood", "purple_archwood_leaves", "ars_nouveau:purple_archwood"));
+                "ars_nouveau", "purple_archwood", "purple_archwood_leaves", "ars_nouveau:archwood"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ars_nouveau", "red_archwood", "red_archwood_leaves", "ars_nouveau:red_archwood"));
+                "ars_nouveau", "red_archwood", "red_archwood_leaves", "ars_nouveau:archwood"));
         
         // Ars Elemental
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ars_nouveau", "yellow_archwood", "yellow_archwood_leaves", "ars_nouveau:yellow_archwood"));
+                "ars_nouveau", "yellow_archwood", "yellow_archwood_leaves", "ars_nouveau:archwood"));
 
         // BIOMES O' PLENTY
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
