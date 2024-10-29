@@ -8,6 +8,7 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.map.type.MapDecorationType;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.MoonlightClient;
 import net.mehvahdjukaar.moonlight.core.map.MapDataInternal;
 import net.minecraft.advancements.Advancement;
@@ -198,16 +199,21 @@ public class Utils {
         return registry.wrapAsHolder(entry).is(tag);
     }
 
-    //very hacky
+    //very very hacky
+    //attempts to grab the right registry access for the current thread, hopefully matching the logical side one
     public static RegistryAccess hackyGetRegistryAccess() {
         var s = PlatHelper.getCurrentServer();
         if (PlatHelper.getPhysicalSide().isClient()) {
             if (s != null && (s.isSameThread() || !MoonlightClient.isClientThread())) return s.registryAccess();
             var level = Minecraft.getInstance().level;
             if (level != null) return level.registryAccess();
+            var hack2 = Moonlight.EARLY_REGISTRY_ACCESS.get();
+            if (hack2 != null) return hack2.get();
             throw new UnsupportedOperationException("Failed to get registry access: level was null");
         }
         if (s != null) return s.registryAccess();
+        var hack2 = Moonlight.EARLY_REGISTRY_ACCESS.get();
+        if (hack2 != null) return hack2.get();
         throw new UnsupportedOperationException("Failed to get registry access. This is a bug");
     }
 

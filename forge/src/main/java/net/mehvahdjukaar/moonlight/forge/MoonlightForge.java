@@ -66,7 +66,7 @@ public class MoonlightForge {
     }
 
     //hacky but eh
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onTagUpdated(TagsUpdatedEvent event) {
         Moonlight.afterDataReload(event.getRegistryAccess(), event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED);
     }
