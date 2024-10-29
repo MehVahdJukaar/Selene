@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
@@ -161,6 +162,10 @@ public class SoftFluidStack {
 
     public final SoftFluid fluid() {
         return isEmptyCache ? SoftFluidRegistry.empty() : fluid;
+    }
+
+    public final ResourceKey<SoftFluid> fluidKey() {
+        return getHolder().unwrapKey().get();
     }
 
     public boolean isEmpty() {
