@@ -267,7 +267,7 @@ public class SoftFluidStack implements DataComponentHolder {
 
     @NotNull
     public static SoftFluidStack fromFluid(Fluid fluid, int amount, @Nullable CompoundTag tag) {
-        Holder<SoftFluid> f = SoftFluidInternal.FLUID_MAP.get(Utils.hackyGetRegistryAccess()).get(fluid);
+        Holder<SoftFluid> f = SoftFluidInternal.fromVanillaFluid(fluid, Utils.hackyGetRegistryAccess());
         if (f == null) return empty();
         return of(f, amount, tag);
     }
@@ -286,7 +286,7 @@ public class SoftFluidStack implements DataComponentHolder {
     @Nullable
     public static Pair<SoftFluidStack, FluidContainerList.Category> fromItem(ItemStack itemStack) {
         Item filledContainer = itemStack.getItem();
-        Holder<SoftFluid> fluid = SoftFluidInternal.ITEM_MAP.get(Utils.hackyGetRegistryAccess()).get(filledContainer);
+        Holder<SoftFluid> fluid = SoftFluidInternal.fromVanillaItem(filledContainer, Utils.hackyGetRegistryAccess());
 
         if (fluid != null && !BuiltInSoftFluids.EMPTY.is(fluid)) {
             var category = fluid.value().getContainerList()
