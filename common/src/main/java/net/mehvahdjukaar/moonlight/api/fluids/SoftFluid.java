@@ -204,6 +204,7 @@ public class SoftFluid {
         return this.equivalentFluids.contains(fluid);
     }
 
+    @Deprecated(forRemoval = true)
     public boolean isEmptyFluid() {
         return this == SoftFluidRegistry.empty();
     }
