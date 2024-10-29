@@ -24,13 +24,28 @@ import static net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry.getHolder
 @ApiStatus.Internal
 public class SoftFluidInternal {
 
-    public static final WeakHashMap <RegistryAccess, Map<Fluid, Holder<SoftFluid>>> FLUID_MAP = new WeakHashMap<>();
-    public static final WeakHashMap<RegistryAccess, Map<Item, Holder<SoftFluid>>> ITEM_MAP = new WeakHashMap<>();
+    private static final WeakHashMap<RegistryAccess, Map<Fluid, Holder<SoftFluid>>> FLUID_MAP = new WeakHashMap<>();
+    private static final WeakHashMap<RegistryAccess, Map<Item, Holder<SoftFluid>>> ITEM_MAP = new WeakHashMap<>();
+
+
+    public static Holder<SoftFluid> fromVanillaFluid(Fluid fluid, RegistryAccess registryAccess) {
+        if (FLUID_MAP.isEmpty()) {
+            populateSlaveMaps(registryAccess);
+        }
+        return FLUID_MAP.get(registryAccess).get(fluid);
+    }
+
+    public static Holder<SoftFluid> fromVanillaItem(Item item, RegistryAccess registryAccess) {
+        if (ITEM_MAP.isEmpty()) {
+            populateSlaveMaps(registryAccess);
+        }
+        return ITEM_MAP.get(registryAccess).get(item);
+    }
 
     //needs to be called on both sides
     private static void populateSlaveMaps(RegistryAccess registryAccess) {
-        var fluidMap = SoftFluidInternal.FLUID_MAP.computeIfAbsent(registryAccess, k -> new IdentityHashMap<>());
-        var itemMap = SoftFluidInternal.ITEM_MAP.computeIfAbsent(registryAccess, k -> new IdentityHashMap<>());
+        var fluidMap = FLUID_MAP.computeIfAbsent(registryAccess, k -> new IdentityHashMap<>());
+        var itemMap = ITEM_MAP.computeIfAbsent(registryAccess, k -> new IdentityHashMap<>());
         fluidMap.clear();
         itemMap.clear();
         for (var h : getHolders()) {
@@ -56,8 +71,8 @@ public class SoftFluidInternal {
 
     //called by data sync to player
     public static void postInitClient() {
-        var reg = Utils.hackyGetRegistryAccess();
-        populateSlaveMaps(reg);
+        FLUID_MAP.clear();
+        ITEM_MAP.clear();
         //ok so here the extra registered fluids should have already been sent to the client
         SoftFluidColors.refreshParticleColors();
     }
