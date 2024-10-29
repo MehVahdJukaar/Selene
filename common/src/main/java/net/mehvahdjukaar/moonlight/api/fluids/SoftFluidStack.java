@@ -168,7 +168,7 @@ public class SoftFluidStack {
     }
 
     protected void updateEmpty() {
-        isEmptyCache = count <= 0 ||fluid.isEmptyFluid() ;
+        isEmptyCache = count <= 0 || BuiltInSoftFluids.EMPTY.is(fluidHolder);
     }
 
     public int getCount() {
@@ -176,7 +176,7 @@ public class SoftFluidStack {
     }
 
     public void setCount(int count) {
-        if (this.fluid.isEmptyFluid()) {
+        if (BuiltInSoftFluids.EMPTY.is(fluidHolder)) {
             if (PlatHelper.isDev()) throw new AssertionError();
             return;
         }
@@ -202,7 +202,7 @@ public class SoftFluidStack {
     }
 
     public void setTag(@Nullable CompoundTag tag) {
-        if (this.fluid.isEmptyFluid()) {
+        if (BuiltInSoftFluids.EMPTY.is(fluidHolder)) {
             if (PlatHelper.isDev()) throw new AssertionError();
             return;
         }
@@ -314,7 +314,7 @@ public class SoftFluidStack {
         Item filledContainer = itemStack.getItem();
         Holder<SoftFluid> fluid = SoftFluidInternal.ITEM_MAP.get(Utils.hackyGetRegistryAccess()).get(filledContainer);
 
-        if (fluid != null && !fluid.value().isEmptyFluid()) {
+        if (fluid != null && !BuiltInSoftFluids.EMPTY.is(fluid)) {
             var category = fluid.value().getContainerList()
                     .getCategoryFromFilled(filledContainer);
 

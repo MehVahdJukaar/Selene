@@ -174,6 +174,7 @@ public class SoftFluid {
         return this == SoftFluidRegistry.empty();
     }
 
+    @Deprecated(forRemoval = true)
     public boolean isEmptyFluid() {
         return this == SoftFluidRegistry.empty();
     }
