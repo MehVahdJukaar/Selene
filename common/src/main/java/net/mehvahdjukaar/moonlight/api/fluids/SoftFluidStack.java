@@ -18,6 +18,7 @@ import net.minecraft.core.component.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -171,6 +172,10 @@ public class SoftFluidStack implements DataComponentHolder {
 
     public final SoftFluid fluid() {
         return isEmptyCache ? SoftFluidRegistry.empty() : fluid;
+    }
+
+    public final ResourceKey<SoftFluid> fluidKey() {
+        return getHolder().unwrapKey().get();
     }
 
     public boolean isEmpty() {
