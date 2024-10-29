@@ -23,7 +23,7 @@ public class SoftFluidColorsImpl {
         if (fluidTag != null && fluidTag.contains("color")) {
             specialColor = fluidTag.getInt("color");
         }
-        if (stack.is(BuiltInSoftFluids.POTION.get())) {
+        if (stack.is(BuiltInSoftFluids.POTION)) {
             specialColor = PotionNBTHelper.getColorFromNBT(fluidTag);
         } else {
             Fluid f = stack.getVanillaFluid();

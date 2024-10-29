@@ -143,12 +143,17 @@ public class SoftFluidStack {
         return getHolder().is(tag);
     }
 
+    public boolean is(ResourceKey<SoftFluid> location) {
+        return getHolder().is(location);
+    }
+
+    @Deprecated(forRemoval = true)
     public boolean is(SoftFluid fluid) {
         return this.fluid() == fluid;
     }
 
     public boolean is(Holder<SoftFluid> fluid) {
-        return is(fluid.value());
+        return fluid == this.fluidHolder || fluid.is(this.fluidKey());
     }
 
     @Deprecated(forRemoval = true)    //just make private
