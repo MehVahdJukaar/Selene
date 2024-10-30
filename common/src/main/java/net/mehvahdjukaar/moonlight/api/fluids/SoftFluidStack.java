@@ -109,7 +109,7 @@ public class SoftFluidStack implements DataComponentHolder {
 
     @NotNull
     public static SoftFluidStack fromFluid(Fluid fluid, int amount, @NotNull DataComponentPatch component) {
-        Holder<SoftFluid> f = SoftFluidInternal.FLUID_MAP.get().get(fluid);
+        Holder<SoftFluid> f = SoftFluidInternal.fromVanillaFluid(fluid, Utils.hackyGetRegistryAccess());
         if (f == null) return empty();
         return of(f, amount, component);
     }
@@ -133,7 +133,6 @@ public class SoftFluidStack implements DataComponentHolder {
         }
         return this.fluid().getTranslatedName();
     }
-
 
     public Tag save(HolderLookup.Provider lookupProvider) {
         var a = CODEC.encodeStart(lookupProvider.createSerializationContext(NbtOps.INSTANCE), this);
@@ -264,22 +263,6 @@ public class SoftFluidStack implements DataComponentHolder {
     public String toString() {
         return this.getCount() + " " + this.getFluid();
     }
-
-    @NotNull
-    public static SoftFluidStack fromFluid(Fluid fluid, int amount, @Nullable CompoundTag tag) {
-        Holder<SoftFluid> f = SoftFluidInternal.fromVanillaFluid(fluid, Utils.hackyGetRegistryAccess());
-        if (f == null) return empty();
-        return of(f, amount, tag);
-    }
-
-    @NotNull
-    public static SoftFluidStack fromFluid(FluidState fluid) {
-        if (fluid.is(FluidTags.WATER)) {
-            return fromFluid(fluid.getType(), SoftFluid.WATER_BUCKET_COUNT, null);
-        }
-        return fromFluid(fluid.getType(), SoftFluid.BUCKET_COUNT, null);
-    }
-
 
     // item conversion
 

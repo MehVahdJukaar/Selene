@@ -27,6 +27,7 @@ dependencies {
     modCompileOnly("curse.maven:quark-243121:5344451")
     modImplementation("curse.maven:yacl-667299:5424504")
 
+    modCompileOnly("curse.maven:irisshaders-455508:5789255")
 
 }
 

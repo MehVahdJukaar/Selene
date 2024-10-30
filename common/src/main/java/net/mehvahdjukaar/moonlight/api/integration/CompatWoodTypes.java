@@ -471,19 +471,19 @@ public class CompatWoodTypes {
 
         WoodType.Finder wf;
         if (planks.contains(":")) // some addons like ars_elemental are using ars_nouveau's planks
-            wf = WoodType.Finder.simple(new ResourceLocation(modId, nameWood), new ResourceLocation(planks), new ResourceLocation(modId, log));
+            wf = WoodType.Finder.simple(ResourceLocation.fromNamespaceAndPath(modId, nameWood), ResourceLocation.parse(planks), ResourceLocation.fromNamespaceAndPath(modId, log));
         else
             wf = WoodType.Finder.simple(modId, nameWood, planks, log);
 
         // WoodType.Finder has a null check for below, so don't worry about it
         wf.addChild("wood", wood);
         if (suffixStrippedLog.contains(":"))
-            wf.addChild("stripped_log", new ResourceLocation(suffixStrippedLog));
+            wf.addChild("stripped_log", ResourceLocation.parse(suffixStrippedLog));
         else
             wf.addChild("stripped_log", stripped_log);
 
         if (suffixStrippedWood.contains(":"))
-            wf.addChild("stripped_log", new ResourceLocation(suffixStrippedWood));
+            wf.addChild("stripped_log", ResourceLocation.parse(suffixStrippedWood));
         else
             wf.addChild("stripped_wood", stripped_wood);
 

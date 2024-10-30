@@ -170,23 +170,26 @@ public class Utils {
     }
 
     public static ResourceLocation getID(Object object) {
-        if (object instanceof Block b) return getID(b);
-        if (object instanceof Item b) return getID(b);
-        if (object instanceof EntityType<?> b) return getID(b);
-        if (object instanceof BlockEntityType<?> b) return getID(b);
-        if (object instanceof Biome b) return getID(b);
-        if (object instanceof Fluid b) return getID(b);
-        if (object instanceof RecipeSerializer<?> b) return getID(b);
-        if (object instanceof ConfiguredFeature<?, ?> c) return getID(c);
-        if (object instanceof Potion c) return getID(c);
-        if (object instanceof MobEffect c) return getID(c);
-        if (object instanceof Supplier<?> s) return getID(s.get());
-        if (object instanceof SoftFluid s) return getID(s);
-        if (object instanceof MLMapDecorationType<?, ?> s) return getID(s);
-        if (object instanceof CreativeModeTab t) return getID(t);
-        if (object instanceof DamageType t) return getID(t);
-        if (object instanceof StatType t) return getID(t);
-        throw new UnsupportedOperationException("Unsupported class type " + object.getClass() + ". Expected a registry entry for a call to Utils.getID()");
+        return switch (object) {
+            case Block b -> getID(b);
+            case Item b -> getID(b);
+            case EntityType<?> b -> getID(b);
+            case BlockEntityType<?> b -> getID(b);
+            case Biome b -> getID(b);
+            case Fluid b -> getID(b);
+            case RecipeSerializer<?> b -> getID(b);
+            case ConfiguredFeature<?, ?> c -> getID(c);
+            case Potion c -> getID(c);
+            case MobEffect c -> getID(c);
+            case Supplier<?> s -> getID(s.get());
+            case SoftFluid s -> getID(s);
+            case MLMapDecorationType<?, ?> s -> getID(s);
+            case CreativeModeTab t -> getID(t);
+            case DamageType t -> getID(t);
+            case StatType<?> t -> getID(t);
+            default -> throw new UnsupportedOperationException("Unsupported class type " +
+                            object.getClass() + ". Expected a registry entry for a call to Utils.getID()");
+        };
     }
 
     @Deprecated(forRemoval = true)
@@ -210,6 +213,10 @@ public class Utils {
         var hack2 = Moonlight.EARLY_REGISTRY_ACCESS.get();
         if (hack2 != null) return hack2.get();
         throw new UnsupportedOperationException("Failed to get registry access. This is a bug");
+    }
+
+    public static <T> Registry<T> hackyGetRegistry(ResourceKey<Registry<T>> key) {
+        return hackyGetRegistryAccess().registryOrThrow(key);
     }
 
 
