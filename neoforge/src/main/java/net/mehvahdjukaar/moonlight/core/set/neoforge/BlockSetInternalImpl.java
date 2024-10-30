@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.neoforge.registries.NeoForgeRegistriesSetup;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,7 +104,7 @@ public class BlockSetInternalImpl {
     protected static void registerLateBlockAndItems(RegisterEvent event,
                                                     List<Runnable> toRun) {
         //fires right after blocks
-        if (event.getRegistryKey().equals(BuiltInRegistries.ATTRIBUTE.key())) {
+        if (event.getRegistryKey().equals(BuiltInRegistries.ENTITY_TYPE.key())) {
             if (!hasFilledBlockSets) {
                 BlockSetInternal.initializeBlockSets();
                 hasFilledBlockSets = true;

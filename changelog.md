@@ -1,1 +1,1 @@
-ported may recent changes from1.20
+fixed an issue on neoforge causing blocks sets to be initialized too early
