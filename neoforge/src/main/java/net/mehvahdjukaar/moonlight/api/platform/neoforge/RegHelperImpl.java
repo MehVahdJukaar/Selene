@@ -270,7 +270,7 @@ public class RegHelperImpl {
                         }
                         return;
                     } else {
-                        Moonlight.crashIfInDev();
+                        Moonlight.crashIfInDev("Failed to find target item before for items: " + items);
                     }
                 } else {
                     ItemStack first = findFirst(event, target);
@@ -280,7 +280,7 @@ public class RegHelperImpl {
                         }
                         return;
                     } else {
-                        Moonlight.crashIfInDev();
+                        Moonlight.crashIfInDev("Failed to find target item after for items: " + items);
                     }
                 }
             }

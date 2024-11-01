@@ -163,6 +163,10 @@ public class Moonlight {
         return Set.copyOf(DEPENDENTS);
     }
 
+    public static void crashIfInDev(String message) {
+        if (PlatHelper.isDev()) throw new AssertionError();
+    }
+
     public static void crashIfInDev() {
         if (PlatHelper.isDev()) throw new AssertionError();
     }
