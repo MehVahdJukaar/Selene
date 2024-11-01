@@ -115,7 +115,7 @@ public class CompatWoodTypes {
                 generalWoodFinder(false, "gardens_of_the_dead", "soulblight", "soulblight_planks", false));
 
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple("gardens_of_the_dead",
-                "whistlecane", "whistlecane_block", "whistlecane"));
+                "whistlecane", "whistlecane_planks", "whistlecane_block"));
 
         // Desolation
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple("desolation",
