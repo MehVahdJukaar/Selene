@@ -1,1 +1,2 @@
-fixed an issue on neoforge causing blocks sets to be initialized too early
+### UPDATED:
+- Corrected WoodType's logs and planks for **Gardens of The Dead**'s _whistlecane_
