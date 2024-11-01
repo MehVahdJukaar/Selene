@@ -5,21 +5,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import net.fabricmc.loader.impl.lib.gson.MalformedJsonException;
 import net.mehvahdjukaar.moonlight.api.client.TextureCache;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicTexturePack;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.mehvahdjukaar.moonlight.core.Moonlight;
-import net.minecraft.Util;
 import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
@@ -218,10 +213,15 @@ public class RPUtils {
     //recipe stuff
 
     public static Recipe<?> readRecipe(ResourceManager manager, String location) {
-        return readRecipe(manager, ResType.RECIPES.getPath(location));
+        return readRecipeAbsolute(manager, ResType.RECIPES.getPath(location));
     }
 
+    // path is relative to recipe folder
     public static Recipe<?> readRecipe(ResourceManager manager, ResourceLocation location) {
+        return readRecipeAbsolute(manager, ResType.RECIPES.getPath(location));
+    }
+
+    private static Recipe<?> readRecipeAbsolute(ResourceManager manager, ResourceLocation location) {
         var resource = manager.getResource(location);
         try (var stream = resource.orElseThrow().open()) {
             JsonObject element = RPUtils.deserializeJson(stream);
@@ -255,7 +255,7 @@ public class RPUtils {
             ResourceLocation newId = ResourceLocation.parse(baseID + "/" + destinationMat.getAppendableId());
             NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY, newList.toArray(Ingredient[]::new));
             ShapedRecipePattern pattern = new ShapedRecipePattern(or.getWidth(), or.getHeight(), ingredients, Optional.empty());
-            return new RecipeHolder<>(newId, new ShapedRecipe(or.getGroup(), or.category(),   pattern, result));
+            return new RecipeHolder<>(newId, new ShapedRecipe(or.getGroup(), or.category(), pattern, result));
         } else if (original instanceof ShapelessRecipe or) {
             List<Ingredient> newList = new ArrayList<>();
             for (var ingredient : or.getIngredients()) {
@@ -316,7 +316,6 @@ public class RPUtils {
         json.add("predicate", predicates);
         return json;
     }
-
 
 
 }
