@@ -1,2 +1,1 @@
-### UPDATED:
-- changed fluid API again to prevent some rare issues with empty fluid object. moving away from it in favour of holder comparsions
+. fixed a mod compat issue related to the latest updated

@@ -29,14 +29,14 @@ public class SoftFluidInternal {
 
 
     public static Holder<SoftFluid> fromVanillaFluid(Fluid fluid, RegistryAccess registryAccess) {
-        if (FLUID_MAP.isEmpty()) {
+        if (!FLUID_MAP.containsKey(registryAccess)) {
             populateSlaveMaps(registryAccess);
         }
         return FLUID_MAP.get(registryAccess).get(fluid);
     }
 
     public static Holder<SoftFluid> fromVanillaItem(Item item, RegistryAccess registryAccess) {
-        if (ITEM_MAP.isEmpty()) {
+        if (!ITEM_MAP.containsKey(registryAccess)) {
             populateSlaveMaps(registryAccess);
         }
         return ITEM_MAP.get(registryAccess).get(item);
