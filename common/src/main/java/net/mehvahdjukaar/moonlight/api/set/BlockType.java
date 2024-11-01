@@ -138,6 +138,17 @@ public abstract class BlockType {
         return this.children.get(key);
     }
 
+    public boolean hasChild(String key) {
+        return this.children.containsKey(key);
+    }
+
+    public boolean hasChildren(String... keys) {
+        for (String key : keys) {
+            if (!this.hasChild(key)) return false;
+        }
+        return true;
+    }
+
     /**
      * Should be called after you register a block made out of this wood type
      */
