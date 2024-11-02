@@ -98,7 +98,7 @@ public abstract class BlockType {
         if (!after.isEmpty()) after = "_" + after;
         ResourceLocation[] targets = {
                 id.withPath(id.getPath() + "_" + before + after),
-                id.withPath( before + "_" + id.getPath() + after),
+                id.withPath(before + "_" + id.getPath() + after),
         };
         V found = null;
         for (var r : targets) {
@@ -194,7 +194,16 @@ public abstract class BlockType {
      */
     @Nullable
     public String getChildKey(Object child) {
-        return children.inverse().get(child);
+        BiMap<Object, String> inverse = children.inverse();
+        var firs = inverse.get(child);
+        if (firs != null) return firs;
+        if (child instanceof BlockItem bi) {
+            return inverse.get(bi.getBlock());
+        }
+        if (child instanceof ItemLike il) {
+            return inverse.get(il.asItem());
+        }
+        return null;
     }
 
     /**
