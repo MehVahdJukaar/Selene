@@ -3,6 +3,7 @@ package net.mehvahdjukaar.moonlight.api.misc;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -89,10 +90,10 @@ public class FakeLevel extends Level {
     }
 
     public static FakeLevel getDefault(boolean client, RegistryAccess registryAccess) {
-        return get("dummy_world", client,registryAccess,  FakeLevel::new);
+        return get("dummy_world", client, registryAccess, FakeLevel::new);
     }
 
-    public static <T extends FakeLevel> T get(String id, boolean client,RegistryAccess registryAccess, TriFunction<Boolean, String, RegistryAccess, T> constructor) {
+    public static <T extends FakeLevel> T get(String id, boolean client, RegistryAccess registryAccess, TriFunction<Boolean, String, RegistryAccess, T> constructor) {
         if (client) {
             id = "client_" + id;
         }
@@ -219,7 +220,11 @@ public class FakeLevel extends Level {
 
     @Override
     public RegistryAccess registryAccess() {
-        return registryAccess.get();
+        var r = registryAccess.get();
+        if (r == null) {
+            return Utils.hackyGetRegistryAccess();
+        }
+        return r;
     }
 
     @Override
