@@ -23,8 +23,17 @@ import java.util.List;
 
 public abstract class MimicBlock extends Block {
     protected MimicBlock(Properties properties) {
-        super(properties);
+        super(properties.emissiveRendering(MimicBlock::hasEmissiveRendering));
     }
+
+    private static boolean hasEmissiveRendering(BlockState state, BlockGetter blockGetter, BlockPos pos) {
+        if (blockGetter.getBlockEntity(pos) instanceof IBlockHolder tile) {
+            BlockState mimic = tile.getHeldBlock();
+            return mimic.emissiveRendering(blockGetter, pos);
+        }
+        return false;
+    }
+
 
     //THIS IS DANGEROUS
     @Override
@@ -40,7 +49,7 @@ public abstract class MimicBlock extends Block {
     }
 
     //might cause lag when breaking?
-    //@Override
+//@Override
     @PlatformOnly(PlatformOnly.FORGE)
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
         if (world.getBlockEntity(pos) instanceof IBlockHolder tile) {
