@@ -2,6 +2,7 @@ package net.mehvahdjukaar.moonlight.core.misc;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.mehvahdjukaar.moonlight.api.misc.TriFunction;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -9,6 +10,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.AbortableIterationConsumer;
@@ -103,6 +105,11 @@ public class FakeLevel extends Level {
     @Override
     public ChunkSource getChunkSource() {
         return this.chunkManager;
+    }
+
+    @Override
+    public @Nullable MinecraftServer getServer() {
+        return PlatHelper.getCurrentServer();
     }
 
     @Override
