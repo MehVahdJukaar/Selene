@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.moonlight.core.misc;
 
+import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.mehvahdjukaar.moonlight.api.misc.TriFunction;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
@@ -67,18 +68,16 @@ public class FakeLevel extends Level {
     private final RecipeManager recipeManager = new RecipeManager();
     private final ChunkSource chunkManager = new DummyChunkManager();
     private final DummyLevelEntityGetter<Entity> entityGetter = new DummyLevelEntityGetter<>();
-    private final WeakReference<RegistryAccess> registryAccess;
 
     protected FakeLevel(boolean client, String id, RegistryAccess registryAccess) {
         super(new DummyData(),
                 ResourceKey.create(Registries.DIMENSION, new ResourceLocation(id)),
-                registryAccess,
+                Preconditions.checkNotNull(registryAccess, "registry access cant be null!"),
                 registryAccess.registryOrThrow(Registries.DIMENSION_TYPE).getHolderOrThrow(BuiltinDimensionTypes.OVERWORLD),
                 () -> InactiveProfiler.INSTANCE,
                 client, //client side
                 false, //debug
                 0, 0);
-        this.registryAccess = new WeakReference<>(registryAccess);
     }
 
     public static FakeLevel getDefault(boolean client, RegistryAccess registryAccess) {
@@ -210,22 +209,13 @@ public class FakeLevel extends Level {
     }
 
     @Override
-    public RegistryAccess registryAccess() {
-        var r = registryAccess.get();
-        if (r == null) {
-            return Utils.hackyGetRegistryAccess();
-        }
-        return r;
-    }
-
-    @Override
     public FeatureFlagSet enabledFeatures() {
         return FeatureFlags.DEFAULT_FLAGS;
     }
 
     @Override
     public Holder<Biome> getUncachedNoiseBiome(int x, int y, int z) {
-        return getPlains(registryAccess.get());
+        return getPlains(registryAccess());
     }
 
     @NotNull
@@ -239,7 +229,7 @@ public class FakeLevel extends Level {
 
         @Override
         public ChunkAccess getChunk(int x, int z, ChunkStatus leastStatus, boolean create) {
-            return new EmptyLevelChunk(FakeLevel.this, new ChunkPos(x, z), registryAccess.get().registryOrThrow(Registries.BIOME)
+            return new EmptyLevelChunk(FakeLevel.this, new ChunkPos(x, z), registryAccess().registryOrThrow(Registries.BIOME)
                     .getHolderOrThrow(Biomes.FOREST));
         }
 
