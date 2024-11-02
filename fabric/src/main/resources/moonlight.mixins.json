@@ -6,9 +6,10 @@
   "client": [
     "BlockModelAccessor",
     "BlockModelDeserializerMixin",
-    "ClientLanguagesMixin",
     "BlockModelMixin",
+    "ClientLanguagesMixin",
     "ClientPacketListenerMixin",
+    "EffectInstanceMixin",
     "GameRendererMixin",
     "ItemRendererAccessor",
     "ItemRendererMixin",

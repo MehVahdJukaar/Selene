@@ -4,6 +4,7 @@ import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapDecorationType;
 import net.mehvahdjukaar.moonlight.core.map.MapDataInternal;
 import net.mehvahdjukaar.moonlight.neoforge.MoonlightForge;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
 

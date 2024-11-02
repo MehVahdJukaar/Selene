@@ -1,2 +1,3 @@
 ### UPDATED:
-- Corrected WoodType's logs and planks for **Gardens of The Dead**'s _whistlecane_
+- fixed some wood type child keys not gettig populated correctly
+- fixed custom post shaders not loading on fabric
