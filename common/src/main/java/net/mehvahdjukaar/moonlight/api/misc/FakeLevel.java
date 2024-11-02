@@ -72,7 +72,6 @@ public class FakeLevel extends Level {
     private final TickRateManager tickRateManager = new TickRateManager();
     private final ChunkSource chunkManager = new DummyChunkManager();
     private final DummyLevelEntityGetter<Entity> entityGetter = new DummyLevelEntityGetter<>();
-    private final WeakReference<RegistryAccess> registryAccess;
     private final LevelTickAccess<Block> blockTicks = new EmptyLevelTickAccess<>();
     private final LevelTickAccess<Fluid> fluidTicks = new EmptyLevelTickAccess<>();
 
@@ -85,7 +84,6 @@ public class FakeLevel extends Level {
                 client, //client side
                 false, //debug
                 0, 0);
-        this.registryAccess = new WeakReference<>(registryAccess);
         this.recipeManager = new RecipeManager(registryAccess);
     }
 
@@ -216,15 +214,6 @@ public class FakeLevel extends Level {
     @Override
     public List<? extends Player> players() {
         return List.of();
-    }
-
-    @Override
-    public RegistryAccess registryAccess() {
-        var r = registryAccess.get();
-        if (r == null) {
-            return Utils.hackyGetRegistryAccess();
-        }
-        return r;
     }
 
     @Override
