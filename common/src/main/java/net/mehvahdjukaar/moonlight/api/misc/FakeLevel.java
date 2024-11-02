@@ -2,6 +2,7 @@ package net.mehvahdjukaar.moonlight.api.misc;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
