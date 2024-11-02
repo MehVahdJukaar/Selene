@@ -156,13 +156,9 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
         return childrenToType.getOrDefault(itemLike, null);
     }
 
-    // adds all just to be sure
+    // we cant add items yet. item map has not been populated yet
     protected void mapObjectToType(Object itemLike, BlockType type) {
         this.childrenToType.put(itemLike, (T) type);
-        if (itemLike instanceof ItemLike il) {
-            if (!this.childrenToType.containsKey(il.asItem()))
-                this.childrenToType.put(il.asItem(), (T) type);
-        }
         if(itemLike instanceof BlockItem bi){
             if (!this.childrenToType.containsKey(bi.getBlock()))
                 this.childrenToType.put(bi.getBlock(), (T) type);

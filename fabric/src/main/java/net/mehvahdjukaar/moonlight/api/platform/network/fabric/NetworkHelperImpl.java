@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -107,19 +108,23 @@ public class NetworkHelperImpl {
     }
 
     public static void sendToAllClientPlayersTrackingEntity(Entity target, CustomPacketPayload message) {
-        if (target.level() instanceof ServerLevel serverLevel) {
+        Level level = target.level();
+        if (level.isClientSide) throw makeAssertionError();
+        if (level instanceof ServerLevel serverLevel) {
             serverLevel.getChunkSource().broadcast(target, ServerPlayNetworking.createS2CPacket(message));
-        } else throw makeAssertionError();
+        }
     }
 
     public static void sendToAllClientPlayersTrackingEntityAndSelf(Entity target, Message message) {
-        if (target.level() instanceof ServerLevel serverLevel) {
+        Level level = target.level();
+        if (level.isClientSide) throw makeAssertionError();
+        if (level instanceof ServerLevel serverLevel) {
             var p = ServerPlayNetworking.createS2CPacket(message);
             serverLevel.getChunkSource().broadcast(target, p);
             if (target instanceof ServerPlayer player) {
                 sendToClientPlayer(player, message);
             }
-        } else throw makeAssertionError();
+        }
     }
 
     public static void sendToServer(CustomPacketPayload message) {
