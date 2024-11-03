@@ -83,7 +83,7 @@ public class MoonlightForge {
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         for (var e : BuiltInRegistries.BLOCK_ENTITY_TYPE.entrySet()) {
             String modId = e.getKey().location().getNamespace();
-            if (!Moonlight.getDependents().contains(modId)) continue;
+            if (!Moonlight.isDependant(modId)) continue;
             try {
                 var beType = e.getValue();
                 var instance = beType.create(BlockPos.ZERO, beType.getValidBlocks().stream().findFirst().get().defaultBlockState());

@@ -159,8 +159,13 @@ public class Moonlight {
         }
     }
 
+    //not ideal but works most of the times. this is populated when a mod invokes a ML registry function
     public static Set<String> getDependents() {
         return Set.copyOf(DEPENDENTS);
+    }
+
+    public static boolean isDependant(String modId) {
+        return DEPENDENTS.contains(modId);
     }
 
     public static void crashIfInDev(String message) {
