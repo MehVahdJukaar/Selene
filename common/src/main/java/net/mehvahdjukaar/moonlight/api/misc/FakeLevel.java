@@ -228,7 +228,7 @@ public class FakeLevel extends Level {
 
     @Override
     public Holder<Biome> getUncachedNoiseBiome(int x, int y, int z) {
-        return getPlains(registryAccess.get());
+        return getPlains(registryAccess());
     }
 
     @NotNull
@@ -242,7 +242,7 @@ public class FakeLevel extends Level {
 
         @Override
         public @Nullable ChunkAccess getChunk(int x, int z, net.minecraft.world.level.chunk.status.ChunkStatus chunkStatus, boolean requireChunk) {
-            return new EmptyLevelChunk(FakeLevel.this, new ChunkPos(x, z), registryAccess.get().registryOrThrow(Registries.BIOME)
+            return new EmptyLevelChunk(FakeLevel.this, new ChunkPos(x, z), registryAccess().registryOrThrow(Registries.BIOME)
                     .getHolderOrThrow(Biomes.FOREST));
         }
 

@@ -1,4 +1,1 @@
-- fixed a recently added issue that caused block item map to be initialized early causing all sorts of issues
-- fixed an issue where FakeLevel was not returning a RegistryAccess
-- fixed an issue where FakeClientPlayer was not returning a MinecraftServer
-- fixed an issue with fabric networking not working when a fake server level was used
+- fixed another issue with FakeLevel causing a rare crash with some mods
