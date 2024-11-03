@@ -24,7 +24,9 @@ public class ResourceConditionsBridge {
 
     private static final Codec<ICondition> REMAPPING_CODEC =
             byNameCodecRemap(NeoForgeRegistries.CONDITION_SERIALIZERS, "fabric", "neoforge")
-                    .dispatch("condition", ICondition::codec, Function.identity());
+                    .dispatch("type", ICondition::codec, Function.identity());
+    //we must use "type" key instead of "condition" that fabric uses as compound conditions do expect that
+
     private static final Codec<List<ICondition>> LIST_CODEC = Utils.lenientListCodec(REMAPPING_CODEC);
     private static final Codec<ICondition> SINGLE_OR_LIST = Codec.withAlternative(REMAPPING_CODEC, LIST_CODEC,
             AndCondition::new);
@@ -45,7 +47,8 @@ public class ResourceConditionsBridge {
     public static boolean matchesForgeConditions(JsonObject obj, ICondition.IContext context, String conditionKey) {
         JsonElement je = obj.get(conditionKey);
         if (je != null) {
-
+            replaceKeyInJsonRecursive(obj, "condition", "type");
+            //very dumb incoming
             var c = SINGLE_OR_LIST.parse(JsonOps.INSTANCE, je);
             if (c.result().isPresent()) {
                 return c.getOrThrow().test(context);
@@ -84,5 +87,25 @@ public class ResourceConditionsBridge {
         public MapCodec<? extends ICondition> codec() {
             return CODEC;
         }
+    }
+
+    private static void replaceKeyInJsonRecursive(JsonElement json, String from, String to) {
+
+        if (json.isJsonObject()) {
+            JsonObject obj = json.getAsJsonObject();
+            for (var entry : obj.entrySet()) {
+                if (entry.getKey().equals(from)) {
+                    obj.add(to, entry.getValue());
+                    obj.remove(from);
+                } else {
+                    replaceKeyInJsonRecursive(entry.getValue(), from, to);
+                }
+            }
+        } else if (json.isJsonArray()) {
+            for (var element : json.getAsJsonArray()) {
+                replaceKeyInJsonRecursive(element, from, to);
+            }
+        }
+
     }
 }

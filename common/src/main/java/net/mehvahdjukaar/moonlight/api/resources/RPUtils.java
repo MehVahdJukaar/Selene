@@ -13,15 +13,12 @@ import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.client.renderer.block.model.ItemOverride;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
@@ -240,40 +237,7 @@ public class RPUtils {
     }
 
     public static <T extends BlockType> RecipeHolder<?> makeSimilarRecipe(Recipe<?> original, T originalMat, T destinationMat, String baseID) {
-        if (original instanceof ShapedRecipe or) {
-            List<Ingredient> newList = new ArrayList<>();
-            for (var ingredient : or.getIngredients()) {
-                if (ingredient != null && ingredient.getItems().length > 0) {
-                    ItemLike i = BlockType.changeItemType(ingredient.getItems()[0].getItem(), originalMat, destinationMat);
-                    if (i != null) newList.add(Ingredient.of(i));
-                }
-            }
-            Item originalRes = or.getResultItem(RegistryAccess.EMPTY).getItem();
-            ItemLike newRes = BlockType.changeItemType(originalRes, originalMat, destinationMat);
-            if (newRes == null) throw new UnsupportedOperationException("Failed to convert recipe");
-            ItemStack result = newRes.asItem().getDefaultInstance();
-            ResourceLocation newId = ResourceLocation.parse(baseID + "/" + destinationMat.getAppendableId());
-            NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY, newList.toArray(Ingredient[]::new));
-            ShapedRecipePattern pattern = new ShapedRecipePattern(or.getWidth(), or.getHeight(), ingredients, Optional.empty());
-            return new RecipeHolder<>(newId, new ShapedRecipe(or.getGroup(), or.category(), pattern, result));
-        } else if (original instanceof ShapelessRecipe or) {
-            List<Ingredient> newList = new ArrayList<>();
-            for (var ingredient : or.getIngredients()) {
-                if (ingredient != null && ingredient.getItems().length > 0) {
-                    ItemLike i = BlockType.changeItemType(ingredient.getItems()[0].getItem(), originalMat, destinationMat);
-                    if (i != null) newList.add(Ingredient.of(i));
-                }
-            }
-            Item originalRes = or.getResultItem(RegistryAccess.EMPTY).getItem();
-            ItemLike newRes = BlockType.changeItemType(originalRes, originalMat, destinationMat);
-            if (newRes == null) throw new UnsupportedOperationException("Failed to convert recipe");
-            ItemStack result = newRes.asItem().getDefaultInstance();
-            ResourceLocation newId = ResourceLocation.parse(baseID + "/" + destinationMat.getAppendableId());
-            NonNullList<Ingredient> ingredients = NonNullList.of(Ingredient.EMPTY, newList.toArray(Ingredient[]::new));
-            return new RecipeHolder<>(newId, new ShapelessRecipe(or.getGroup(), or.category(), result, ingredients));
-        } else {
-            throw new UnsupportedOperationException(String.format("Original recipe %s must be Shaped or Shapeless", original));
-        }
+        return RecipeTemplate.makeSimilarRecipe(original, originalMat, destinationMat, baseID);
     }
 
     @FunctionalInterface
