@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.moonlight.api.resources.recipe.neoforge;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
@@ -45,11 +46,11 @@ public class ResourceConditionsBridge {
     }
 
     public static boolean matchesForgeConditions(JsonObject obj, ICondition.IContext context, String conditionKey) {
-        JsonElement je = obj.get(conditionKey);
-        if (je != null) {
-            replaceKeyInJsonRecursive(obj, "condition", "type");
+        JsonElement conditionElement = obj.get(conditionKey);
+        if (conditionElement != null) {
+            var newObj = replaceKeyInJsonRecursive(conditionElement, "condition", "type");
             //very dumb incoming
-            var c = SINGLE_OR_LIST.parse(JsonOps.INSTANCE, je);
+            var c = SINGLE_OR_LIST.parse(JsonOps.INSTANCE, newObj);
             if (c.result().isPresent()) {
                 return c.getOrThrow().test(context);
             }
@@ -89,23 +90,27 @@ public class ResourceConditionsBridge {
         }
     }
 
-    private static void replaceKeyInJsonRecursive(JsonElement json, String from, String to) {
-
+    private static JsonElement replaceKeyInJsonRecursive(JsonElement json, String from, String to) {
         if (json.isJsonObject()) {
-            JsonObject obj = json.getAsJsonObject();
-            for (var entry : obj.entrySet()) {
-                if (entry.getKey().equals(from)) {
-                    obj.add(to, entry.getValue());
-                    obj.remove(from);
-                } else {
-                    replaceKeyInJsonRecursive(entry.getValue(), from, to);
-                }
+            JsonObject newObj = new JsonObject();
+
+            for (var entry : json.getAsJsonObject().entrySet()) {
+                String key = entry.getKey().equals(from) ? to : entry.getKey();
+                newObj.add(key, replaceKeyInJsonRecursive(entry.getValue(), from, to));
             }
+
+            return newObj;
         } else if (json.isJsonArray()) {
+            JsonArray newArray = new JsonArray();
+
             for (var element : json.getAsJsonArray()) {
-                replaceKeyInJsonRecursive(element, from, to);
+                newArray.add(replaceKeyInJsonRecursive(element, from, to));
             }
+
+            return newArray;
         }
 
+        return json; // Return the element itself if it's neither an object nor an array
     }
+
 }

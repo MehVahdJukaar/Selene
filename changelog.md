@@ -1,1 +1,4 @@
-- fixed another issue with FakeLevel causing a rare crash with some mods
+- fixed recipe template method not working properly and made it extendable for other recipe types
+- fixed an issue with custom mod shaders on fabric
+- fixed an issue with the mod shared recipe conditions
+- fixed a concurrent modification exception caused by last update
