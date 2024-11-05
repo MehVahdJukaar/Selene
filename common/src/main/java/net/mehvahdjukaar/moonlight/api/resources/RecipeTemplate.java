@@ -102,7 +102,6 @@ public class RecipeTemplate {
         Map<Character, Ingredient> key = new HashMap<>();
         List<String> pattern = new ArrayList<>();
 
-        int counter = 0;  // To generate unique character symbols for each ingredient.
         char nextSymbol = 'A';  // Start with 'A' as the symbol for mapping ingredients.
 
         // Iterate over each row in the grid based on the width and height of the pattern.
@@ -136,8 +135,6 @@ public class RecipeTemplate {
             // Add the constructed row to the pattern.
             pattern.add(rowPattern.toString());
         }
-
-        // Return a new Data object with the constructed key and pattern.
         return  new ShapedRecipePattern.Data(key, pattern);
     }
 

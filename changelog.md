@@ -1,4 +1,1 @@
-- fixed recipe template method not working properly and made it extendable for other recipe types
-- fixed an issue with custom mod shaders on fabric
-- fixed an issue with the mod shared recipe conditions
-- fixed a concurrent modification exception caused by last update
+- fixed recipe templates not working with shaped recipes

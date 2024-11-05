@@ -7,15 +7,13 @@ import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
-import net.mehvahdjukaar.moonlight.api.platform.fabric.RegHelperImpl;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class ResourceConditionsBridge {
 
@@ -23,6 +21,7 @@ public class ResourceConditionsBridge {
     public static void init() {
         try {
             ResourceConditions.register(ModLoadedCondition.TYPE);
+            ResourceConditions.register(TagEmptyCondition.TYPE);
         } catch (Exception e) {
             Moonlight.LOGGER.error("Failed to register fabric conditions", e);
         }
@@ -35,7 +34,7 @@ public class ResourceConditionsBridge {
 
 
         public static final ResourceConditionType<ModLoadedCondition> TYPE = ResourceConditionType.create(
-                        ResourceLocation.parse("fabric:mod_loaded"), ModLoadedCondition.CODEC);
+                ResourceLocation.parse("fabric:mod_loaded"), ModLoadedCondition.CODEC);
 
         @Override
         public ResourceConditionType<?> getType() {
@@ -45,6 +44,27 @@ public class ResourceConditionsBridge {
         @Override
         public boolean test(@Nullable HolderLookup.Provider registryLookup) {
             return PlatHelper.isModLoaded(modIds);
+        }
+    }
+
+    public record TagEmptyCondition(TagKey<Item> tag) implements ResourceCondition {
+        public static final MapCodec<TagEmptyCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                TagKey.codec(Registries.ITEM).fieldOf("tag").forGetter(TagEmptyCondition::tag)
+        ).apply(instance, TagEmptyCondition::new));
+
+
+        public static final ResourceConditionType<ModLoadedCondition> TYPE = ResourceConditionType.create(
+                ResourceLocation.parse("fabric:tag_empty"), ModLoadedCondition.CODEC);
+
+        @Override
+        public ResourceConditionType<?> getType() {
+            return TYPE;
+        }
+
+        @Override
+        public boolean test(@Nullable HolderLookup.Provider registryLookup) {
+            var opt = registryLookup.lookupOrThrow(Registries.ITEM).get(tag);
+            return opt.isEmpty() || opt.get().stream().findAny().isEmpty();
         }
     }
 
