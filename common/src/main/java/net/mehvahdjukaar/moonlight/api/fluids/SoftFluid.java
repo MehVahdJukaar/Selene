@@ -102,6 +102,7 @@ public class SoftFluid {
         this.isGenerated = false;
     }
 
+    //from vanilla fluid
     public SoftFluid(Holder<Fluid> fluid) {
         var still = ResourceLocation.parse("block/water_still");
         var flowing = ResourceLocation.parse("block/water_flowing");
@@ -139,9 +140,10 @@ public class SoftFluid {
 
     public void afterInit() {
         for (var f : equivalentFluids) {
-            Item i = f.value().getBucket();
-            if (i != Items.AIR && i != Items.BUCKET) {
-                this.containerList.add(i, Items.BUCKET, BUCKET_COUNT, SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
+            Item filled = f.value().getBucket();
+            if (filled != Items.AIR && filled != Items.BUCKET) {
+                this.containerList.add(Items.BUCKET, filled, BUCKET_COUNT,
+                        SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
             }
         }
     }

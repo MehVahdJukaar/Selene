@@ -1,61 +1,41 @@
-package net.mehvahdjukaar.moonlight.core.mixins.forge;
+package net.mehvahdjukaar.moonlight.core.mixins.neoforge;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.Supplier;
-
 //Fixes hard casts
 @Mixin(PacketDistributor.class)
 public class PacketDistributorHackMixin {
 
-    @Inject(method = "lambda$trackingEntity$6",
+    @Inject(method = "sendToPlayersTrackingEntity",
             cancellable = true,
             remap = false,
             require = 0,
-            at = @At(value = "INVOKE",
-                    remap = true,
-                    target = "Lnet/minecraft/world/entity/Entity;getCommandSenderWorld()Lnet/minecraft/world/level/Level;"))
-    private static void ml$fixHardCast1(Supplier entitySupplier, Packet p, CallbackInfo ci,
-                             @Local Entity entity) {
-        if (!(entity.getCommandSenderWorld().getChunkSource() instanceof ServerChunkCache)) {
+            at = @At(value = "HEAD"))
+    private static void ml$fixHardCast1(Entity entity, CustomPacketPayload payload, CustomPacketPayload[] payloads, CallbackInfo ci) {
+        Level level = entity.getCommandSenderWorld();
+        if (!level.isClientSide && !(level.getChunkSource() instanceof ServerChunkCache)) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "lambda$trackingEntityAndSelf$7",
+    @Inject(method = "sendToPlayersTrackingEntityAndSelf",
             cancellable = true,
             remap = false,
             require = 0,
-            at = @At(value = "INVOKE",
-                    remap = true,
-                    target = "Lnet/minecraft/world/entity/Entity;getCommandSenderWorld()Lnet/minecraft/world/level/Level;"))
-    private static void ml$fixHardCast2(Supplier entitySupplier, Packet p, CallbackInfo ci,
-                             @Local Entity entity) {
-        if (!(entity.getCommandSenderWorld().getChunkSource() instanceof ServerChunkCache)) {
+            at = @At(value = "HEAD"))
+    private static void ml$fixHardCast2(Entity entity, CustomPacketPayload payload, CustomPacketPayload[] payloads, CallbackInfo ci) {
+        Level level = entity.getCommandSenderWorld();
+        if (!level.isClientSide && !(level.getChunkSource() instanceof ServerChunkCache)) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "lambda$trackingChunk$9",
-            cancellable = true,
-            remap = false,
-            require = 0,
-            at = @At(value = "INVOKE",
-                    remap = true,
-                    target = "Lnet/minecraft/world/level/chunk/LevelChunk;getLevel()Lnet/minecraft/world/level/Level;"))
-    private static void ml$fixHardCast3(Supplier entitySupplier, Packet p, CallbackInfo ci,
-                                        @Local LevelChunk chunk) {
-        if (!(chunk.getLevel().getChunkSource() instanceof ServerChunkCache)) {
-            ci.cancel();
-        }
-    }
 }
