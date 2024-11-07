@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.mehvahdjukaar.moonlight.api.misc.TriFunction;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -52,7 +51,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +64,7 @@ public class FakeLevel extends Level {
 
     private final Scoreboard scoreboard = new Scoreboard();
     private final RecipeManager recipeManager = new RecipeManager();
-    private final ChunkSource chunkManager = new DummyChunkManager();
+    private final ChunkSource chunkManager = new DummyChunkSource();
     private final DummyLevelEntityGetter<Entity> entityGetter = new DummyLevelEntityGetter<>();
 
     protected FakeLevel(boolean client, String id, RegistryAccess registryAccess) {
@@ -225,7 +223,7 @@ public class FakeLevel extends Level {
                 .get();
     }
 
-    private class DummyChunkManager extends ChunkSource {
+    private class DummyChunkSource extends ChunkSource {
 
         @Override
         public ChunkAccess getChunk(int x, int z, ChunkStatus leastStatus, boolean create) {
