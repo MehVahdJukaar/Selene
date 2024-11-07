@@ -47,6 +47,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,42 +59,44 @@ public class RegHelperImpl {
 
     public static final Map<ResourceKey<? extends Registry<?>>, Map<String, RegistryQueue<?>>> REGISTRIES = new LinkedHashMap<>();
 
-
-    public static final List<ResourceKey<? extends Registry<?>>> REG_PRIORITY = List.of(
-            Registries.SOUND_EVENT, Registries.FLUID, Registries.BLOCK, Registries.PARTICLE_TYPE,
-            Registries.ENTITY_TYPE, Registries.ARMOR_MATERIAL,
-            Registries.MOB_EFFECT, Registries.ITEM,
-            Registries.BLOCK_ENTITY_TYPE, Registries.PLACEMENT_MODIFIER_TYPE, Registries.STRUCTURE_TYPE,
-            Registries.STRUCTURE_PIECE, Registries.FEATURE, Registries.CONFIGURED_FEATURE,
-            Registries.PLACED_FEATURE
-    );
+    public static final List<ResourceKey<? extends Registry<?>>> REG_PRIORITY;
 
     //order is important here
     static {
+        List<ResourceKey<? extends Registry<?>>> list = new ArrayList<>();
+        //corrected forge registry order. same that forge does
+        list.add(Registries.ATTRIBUTE);
+        list.add(Registries.DATA_COMPONENT_TYPE);
+        list.add(Registries.ARMOR_MATERIAL);
+        list.addAll(BuiltInRegistries.LOADERS.keySet().stream()
+                .map(ResourceKey::createRegistryKey).toList());
+        REG_PRIORITY = list;
         REG_PRIORITY.forEach(e -> REGISTRIES.put(e, new LinkedHashMap<>()));
     }
 
     //call from mod setup
     @ApiStatus.Internal
     public static void lateRegisterEntries() {
-        for (var m : REGISTRIES.entrySet()) {
-            var v = m.getValue();
+        for (var entry : REGISTRIES.entrySet()) {
+            var map = entry.getValue();
             //freaking fabric just runs mod initializers in random order. hate this. we run in deterministic manner here
-            var sorted = v.keySet().stream().sorted().toList();
+            var sorted = map.keySet().stream().sorted().toList();
             for (var s : sorted) {
                 try {
-                    v.get(s).initializeEntries();
+                    map.get(s).initializeEntries();
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to initialize registry objects for namespace [" + s + "]", e);
                 }
             }
-            if (m.getKey() == Registries.BLOCK) {
+            if (entry.getKey() == Registries.BLOCK) {
                 //dynamic block registration after all blocks
                 BlockSetInternalImpl.initializeBlockSets();
             }
-            BlockSetInternalImpl.registerDynamicEntries(m.getKey());
+            BlockSetInternalImpl.registerDynamicEntries(entry.getKey());
         }
         BlockSetInternalImpl.finish();
+
+        REGISTRIES.clear();
     }
 
     static class SpawnPlacementsImpl implements RegHelper.SpawnPlacementEvent {
@@ -109,12 +112,12 @@ public class RegHelperImpl {
     }
 
     public static void finishRegistration(String modId) {
-        for (var r : REGISTRIES.entrySet()) {
-            var m = r.getValue();
-            var v = m.get(modId);
+        for (var entry : REGISTRIES.entrySet()) {
+            var map = entry.getValue();
+            var v = map.get(modId);
             if (v != null) {
                 v.initializeEntries();
-                m.remove(modId);
+                map.remove(modId);
             }
         }
     }
