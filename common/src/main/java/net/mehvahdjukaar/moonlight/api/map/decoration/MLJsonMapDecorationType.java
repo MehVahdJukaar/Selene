@@ -1,6 +1,9 @@
 package net.mehvahdjukaar.moonlight.api.map.decoration;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
@@ -23,18 +26,22 @@ import java.util.Optional;
 //Base type for simple data-driven type. Basically a simple version of CustomDecorationType that can be serialized
 public final class MLJsonMapDecorationType extends MLMapDecorationType<MLMapDecoration, SimpleMapMarker> {
 
+    static final Codec<MLJsonMapDecorationType> CODEC;
 
-    static final Codec<MLJsonMapDecorationType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            //purposefully lenient
-            RuleTest.CODEC.lenientOptionalFieldOf("target_block").forGetter(MLJsonMapDecorationType::getTarget),
-            ComponentSerialization.FLAT_CODEC.optionalFieldOf("name").forGetter(MLJsonMapDecorationType::getDisplayName),
-            Codec.FLOAT.optionalFieldOf("rotation", 0f).forGetter(MLJsonMapDecorationType::getRotation),
-            ColorUtils.CODEC.optionalFieldOf("map_color", 0).forGetter(MLJsonMapDecorationType::getDefaultMapColor),
-            RegistryCodecs.homogeneousList(Registries.STRUCTURE).optionalFieldOf("target_structures").forGetter(
-                    MLJsonMapDecorationType::getAssociatedStructure), Codec.STRING.xmap(PlatHelper::isModLoaded, b -> "minecraft")
-                    .optionalFieldOf("from_mod", true)
-                    .forGetter(t -> t.enabled)
-    ).apply(instance, MLJsonMapDecorationType::new));
+    static {
+        CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                //purposefully lenient
+                RuleTest.CODEC.lenientOptionalFieldOf("target_block").forGetter(MLJsonMapDecorationType::getTarget),
+                ComponentSerialization.FLAT_CODEC.optionalFieldOf("name").forGetter(MLJsonMapDecorationType::getDisplayName),
+                Codec.FLOAT.optionalFieldOf("rotation", 0f).forGetter(MLJsonMapDecorationType::getRotation),
+                ColorUtils.CODEC.optionalFieldOf("map_color", 0).forGetter(MLJsonMapDecorationType::getDefaultMapColor),
+                //purposefully lenient for the client codec so we silently fail and dont send info we dont need as they rely on tags and we arent given registry ops there
+                RegistryCodecs.homogeneousList(Registries.STRUCTURE).lenientOptionalFieldOf("target_structures").forGetter(
+                        MLJsonMapDecorationType::getAssociatedStructure), Codec.STRING.xmap(PlatHelper::isModLoaded, b -> "minecraft")
+                        .optionalFieldOf("from_mod", true)
+                        .forGetter(t -> t.enabled)
+        ).apply(instance, MLJsonMapDecorationType::new));
+    }
 
     //using this and not block predicate since it requires a worldLevelGen...
     private final Optional<RuleTest> target;

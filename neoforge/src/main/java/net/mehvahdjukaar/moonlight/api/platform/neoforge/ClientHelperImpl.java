@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.moonlight.api.platform.neoforge;
 
 import com.google.gson.JsonElement;
+import net.mehvahdjukaar.moonlight.api.client.util.RenderUtil;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.core.Moonlight;

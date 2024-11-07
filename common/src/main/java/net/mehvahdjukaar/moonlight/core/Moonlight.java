@@ -39,14 +39,11 @@ import net.minecraft.world.level.GameRules;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
-import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import java.util.Collection;
 
 @ApiStatus.Internal
 public class Moonlight {
@@ -97,7 +94,6 @@ public class Moonlight {
     }
 
 
-
     private static void commonSetup() {
         BlocksColorInternal.setup();
     }
@@ -131,7 +127,7 @@ public class Moonlight {
 
     @EventCalled
     public static void beforeServerStart() {
-       SoftFluidInternal.doPostInitServer();
+        SoftFluidInternal.doPostInitServer();
     }
 
     public static void assertInitPhase() {
@@ -174,6 +170,10 @@ public class Moonlight {
 
     public static void crashIfInDev() {
         if (PlatHelper.isDev()) throw new AssertionError();
+    }
+
+    public static void logIfInDev(String s) {
+        if (PlatHelper.isDev()) LOGGER.error(s);
     }
 
     public static void registerBuiltinFluidBehavior(DispenserHelper.Event event) {

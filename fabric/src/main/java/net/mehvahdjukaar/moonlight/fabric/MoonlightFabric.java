@@ -32,7 +32,7 @@ public class MoonlightFabric implements ModInitializer, DedicatedServerModInitia
     public void onInitialize() {
 
         Moonlight.commonInit();
-ResourceConditionsBridge
+
         ServerPlayConnectionEvents.JOIN.register((l, s, m) -> NetworkHelper.sendToClientPlayer(l.player,
                 new ClientBoundSendLoginPacket()));
         ServerLifecycleEvents.SERVER_STARTING.register(s -> {

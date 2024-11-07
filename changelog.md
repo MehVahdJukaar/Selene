@@ -1,1 +1,2 @@
-- fixed recipe templates not working with shaped recipes
+- fixed shared conditions not working in all cases on neoforge, added missing conditions there
+- fixed map markers json not working with tags when being sent to clients

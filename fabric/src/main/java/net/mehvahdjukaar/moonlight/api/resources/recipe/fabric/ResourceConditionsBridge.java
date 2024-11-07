@@ -22,6 +22,7 @@ public class ResourceConditionsBridge {
         try {
             ResourceConditions.register(ModLoadedCondition.TYPE);
             ResourceConditions.register(TagEmptyCondition.TYPE);
+            ResourceConditions.register(FALSE_TYPE);
         } catch (Exception e) {
             Moonlight.LOGGER.error("Failed to register fabric conditions", e);
         }
@@ -53,8 +54,8 @@ public class ResourceConditionsBridge {
         ).apply(instance, TagEmptyCondition::new));
 
 
-        public static final ResourceConditionType<ModLoadedCondition> TYPE = ResourceConditionType.create(
-                ResourceLocation.parse("fabric:tag_empty"), ModLoadedCondition.CODEC);
+        public static final ResourceConditionType<TagEmptyCondition> TYPE = ResourceConditionType.create(
+                ResourceLocation.parse("fabric:tag_empty"), TagEmptyCondition.CODEC);
 
         @Override
         public ResourceConditionType<?> getType() {
@@ -67,5 +68,23 @@ public class ResourceConditionsBridge {
             return opt.isEmpty() || opt.get().stream().findAny().isEmpty();
         }
     }
+
+
+
+    public static final ResourceCondition FALSE = new ResourceCondition() {
+
+        @Override
+        public ResourceConditionType<?> getType() {
+            return FALSE_TYPE;
+        }
+
+        @Override
+        public boolean test(HolderLookup.@Nullable Provider registryLookup) {
+            return false;
+        }
+    };
+
+    public static final ResourceConditionType<ResourceCondition> FALSE_TYPE = ResourceConditionType.create(
+            ResourceLocation.parse("fabric:false"), MapCodec.unit(FALSE));
 
 }
