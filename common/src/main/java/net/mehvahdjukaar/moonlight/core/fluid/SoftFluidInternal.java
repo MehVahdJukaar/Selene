@@ -4,10 +4,10 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidColors;
-import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.core.network.ClientBoundFinalizeFluidsMessage;
-import net.mehvahdjukaar.moonlight.core.network.ModNetworking;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,6 +42,7 @@ public class SoftFluidInternal {
         }
         return ITEM_MAP.get(registryAccess).get(item);
     }
+
     //needs to be called on both sides
     private static void populateSlaveMaps(RegistryAccess registryAccess) {
         var fludiMap = FLUID_MAP.computeIfAbsent(registryAccess, k -> new IdentityHashMap<>());
@@ -73,13 +74,17 @@ public class SoftFluidInternal {
     public static void postInitClient() {
         FLUID_MAP.clear();
         ITEM_MAP.clear();
+
+        for (var f : SoftFluidRegistry.getValues()) {
+            f.afterInit();
+        }
         //ok so here the extra registered fluids should have already been sent to the client
         SoftFluidColors.refreshParticleColors();
     }
 
     public static void onDataSyncToPlayer(ServerPlayer player, boolean isJoined) {
         //just sends on login
-        if(isJoined) {
+        if (isJoined) {
             NetworkHelper.sendToClientPlayer(player, new ClientBoundFinalizeFluidsMessage());
         }
     }
@@ -91,6 +96,10 @@ public class SoftFluidInternal {
         //registers existing fluids. also update the salve maps
         //we need to call this on bont server and client as this happens too late and these wont be sent
         registerExistingVanillaFluids(FLUID_MAP.get(reg), ITEM_MAP.get(reg));
+
+        for (var f : SoftFluidRegistry.getValues()) {
+            f.afterInit();
+        }
     }
 
     @ExpectPlatform

@@ -3,8 +3,8 @@ package net.mehvahdjukaar.moonlight.core.fluid.neoforge;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.minecraft.core.Holder;
 import net.mehvahdjukaar.moonlight.neoforge.MoonlightForge;
+import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -55,11 +55,6 @@ public class SoftFluidInternalImpl {
             }
         }
         reg.freeze();
-
-        //TODO: check
-        for(var v : SoftFluidRegistry.getValues()){
-            v.afterInit();
-        }
     }
 
     @SubscribeEvent

@@ -83,6 +83,10 @@ transitive-accessible field net/minecraft/world/entity/item/FallingBlockEntity c
 #arrow
 transitive-accessible field net/minecraft/world/entity/projectile/Projectile hasBeenShot Z
 
+#fake level shit
+accessible field net/minecraft/server/MinecraftServer storageSource Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;
+accessible field net/minecraft/server/level/ServerLevel serverLevelData Lnet/minecraft/world/level/storage/ServerLevelData;
+
 #fox sleeping for cages
 transitive-accessible method net/minecraft/world/entity/animal/Fox setSleeping (Z)V
 transitive-accessible method net/minecraft/world/entity/animal/Fox trusts (Ljava/util/UUID;)Z
