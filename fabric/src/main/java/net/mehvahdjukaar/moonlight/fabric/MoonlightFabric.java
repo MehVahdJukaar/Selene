@@ -13,6 +13,7 @@ import net.mehvahdjukaar.moonlight.api.platform.network.NetworkDir;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
 import net.mehvahdjukaar.moonlight.core.misc.FakeLevel;
+import net.mehvahdjukaar.moonlight.core.misc.FakeLevelManager;
 import net.mehvahdjukaar.moonlight.core.network.ClientBoundSendLoginPacket;
 import net.mehvahdjukaar.moonlight.core.network.ModMessages;
 import net.mehvahdjukaar.moonlight.core.network.fabric.ClientBoundOpenScreenMessage;
@@ -44,7 +45,7 @@ public class MoonlightFabric implements ModInitializer, DedicatedServerModInitia
         CommonLifecycleEvents.TAGS_LOADED.register(Moonlight::afterDataReload);
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> {
             currentServer = null;
-            FakeLevel.clearInstance();
+            FakeLevelManager.clearInstance();
         });
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(SoftFluidInternal::onDataSyncToPlayer);
         ServerPlayerEvents.COPY_FROM.register(Moonlight::onPlayerCloned);

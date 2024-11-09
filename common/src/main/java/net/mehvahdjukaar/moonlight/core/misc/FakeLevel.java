@@ -12,6 +12,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.AbortableIterationConsumer;
@@ -55,44 +56,49 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import static net.mehvahdjukaar.moonlight.core.misc.FakeLevelManager.INSTANCES;
+
+// this is always considered to be client side... has to be because places like to hardcase ti ServerLevel
 public class FakeLevel extends Level {
 
-    private static final Map<String, FakeLevel> INSTANCES = new Object2ObjectArrayMap<>();
 
     private final Scoreboard scoreboard = new Scoreboard();
     private final RecipeManager recipeManager = new RecipeManager();
     private final ChunkSource chunkManager = new DummyChunkSource();
     private final DummyLevelEntityGetter<Entity> entityGetter = new DummyLevelEntityGetter<>();
 
-    protected FakeLevel(boolean client, String id, RegistryAccess registryAccess) {
+    @Deprecated(forRemoval = true)
+    protected FakeLevel(boolean clientside, String id, RegistryAccess registryAccess) {
+        this(id, registryAccess);
+    }
+
+    protected FakeLevel(String id, RegistryAccess registryAccess) {
         super(new DummyData(),
                 ResourceKey.create(Registries.DIMENSION, new ResourceLocation(id)),
                 Preconditions.checkNotNull(registryAccess, "registry access cant be null!"),
                 registryAccess.registryOrThrow(Registries.DIMENSION_TYPE).getHolderOrThrow(BuiltinDimensionTypes.OVERWORLD),
                 () -> InactiveProfiler.INSTANCE,
-                client, //client side
+                true, //client side
                 false, //debug
                 0, 0);
     }
 
+    @Deprecated(forRemoval = true)
     public static FakeLevel getDefault(boolean client, RegistryAccess registryAccess) {
         return get("dummy_world", client, registryAccess, FakeLevel::new);
     }
 
+    @Deprecated(forRemoval = true)
     public static <T extends FakeLevel> T get(String id, boolean client, RegistryAccess registryAccess, TriFunction<Boolean, String, RegistryAccess, T> constructor) {
         if (client) {
             id = "client_" + id;
         }
         String finalId = id;
         return (T) INSTANCES.computeIfAbsent(id, k -> constructor.apply(client, finalId, registryAccess));
-    }
-
-    @ApiStatus.Internal
-    public static void clearInstance() {
-        INSTANCES.clear();
     }
 
     @Override
@@ -281,7 +287,7 @@ public class FakeLevel extends Level {
         }
     }
 
-    private static class DummyData implements WritableLevelData {
+    protected static class DummyData implements WritableLevelData {
 
         GameRules gameRules = new GameRules();
 
