@@ -75,7 +75,7 @@ public class PlatHelper {
     }
 
     /**
-     * A setup step that runs similar to resource reloads. RegistryAccess and tags are available here as this runs on world load
+     * A setup step that runs similar to resource reloads. RegistryAccess and tags are available here as this runs on tag load
      * Boolean given is if this is run on the client logical side
      */
     @ExpectPlatform

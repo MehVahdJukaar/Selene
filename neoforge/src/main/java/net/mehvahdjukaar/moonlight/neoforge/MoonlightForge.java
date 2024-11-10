@@ -122,7 +122,7 @@ public class MoonlightForge {
 
     @SubscribeEvent
     public static void beforeServerStart(ServerStoppedEvent event) {
-        FakeLevelManager.clearInstance();
+        FakeLevelManager.invalidateAll();
     }
 
     @SubscribeEvent

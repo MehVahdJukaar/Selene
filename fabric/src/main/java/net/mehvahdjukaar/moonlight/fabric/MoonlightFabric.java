@@ -36,7 +36,7 @@ public class MoonlightFabric implements ModInitializer, DedicatedServerModInitia
         });
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> {
             currentServer = null;
-            FakeLevelManager.clearInstance();
+            FakeLevelManager.invalidateAll();
         });
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(SoftFluidInternal::onDataSyncToPlayer);
         ServerPlayerEvents.COPY_FROM.register(Moonlight::onPlayerCloned);

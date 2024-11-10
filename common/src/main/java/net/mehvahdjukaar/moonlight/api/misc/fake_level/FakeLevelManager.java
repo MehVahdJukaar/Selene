@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.moonlight.api.misc.fake_level;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.mehvahdjukaar.moonlight.core.Moonlight;
+import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -16,8 +18,12 @@ public class FakeLevelManager {
 
     @ApiStatus.Internal
     @VisibleForTesting
-    public static void clearInstance() {
+    public static void invalidateAll() {
         INSTANCES.clear();
+    }
+
+    public static void invalidate(String name) {
+        INSTANCES.remove(name);
     }
 
     public static FakeLevel getDefaultClient(Level original) {
@@ -42,8 +48,8 @@ public class FakeLevelManager {
     }
 
     public static Level get(String id, Level original,
-                                               BiFunction<String, RegistryAccess, FakeLevel> clientConstr,
-                                               BiFunction<String, ServerLevel, FakeServerLevel> serverConstr) {
+                            BiFunction<String, RegistryAccess, FakeLevel> clientConstr,
+                            BiFunction<String, ServerLevel, FakeServerLevel> serverConstr) {
         if (original instanceof ServerLevel sl) {
             return getServer(id, sl, serverConstr);
         } else {
@@ -51,14 +57,13 @@ public class FakeLevelManager {
         }
     }
 
-    public static Level getDefault(Level original){
+    public static Level getDefault(Level original) {
         if (original instanceof ServerLevel sl) {
             return getDefaultServer(sl);
         } else {
             return getDefaultClient(original);
         }
     }
-
 
     public interface ILevelLike {
         Level cast();

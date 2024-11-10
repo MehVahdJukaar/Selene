@@ -73,18 +73,18 @@ public class FakeLevel extends Level {
     private final LevelTickAccess<Fluid> fluidTicks = new EmptyLevelTickAccess<>();
 
     @Deprecated(forRemoval = true)
-    protected FakeLevel(boolean clientside, String id, RegistryAccess registryAccess) {
-        this(id, registryAccess);
+    protected FakeLevel(String id, RegistryAccess registryAccess) {
+        this(true, id, registryAccess);
     }
 
-    protected FakeLevel(String id, RegistryAccess registryAccess) {
+    protected FakeLevel(boolean clientside, String id, RegistryAccess registryAccess) {
         super(new DummyData(),
                 ResourceKey.create(Registries.DIMENSION, ResourceLocation.tryParse(id)),
                 registryAccess,
                 registryAccess.registryOrThrow(Registries.DIMENSION_TYPE).getHolderOrThrow(BuiltinDimensionTypes.OVERWORLD),
                 () -> InactiveProfiler.INSTANCE,
                 true, //client side
-                false, //debug
+                clientside, //debug
                 0, 0);
         this.recipeManager = new RecipeManager(registryAccess);
     }
