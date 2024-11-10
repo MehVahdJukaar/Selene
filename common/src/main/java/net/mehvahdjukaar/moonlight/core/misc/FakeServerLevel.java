@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.moonlight.core.misc;
 
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -49,7 +50,7 @@ public class FakeServerLevel extends ServerLevel {
 
     public FakeServerLevel(String name, ServerLevel original) {
         super(original.getServer(),
-                DUMMY_EXECUTOR,
+                Util.backgroundExecutor(),
                 original.getServer().storageSource,
                 new ReadOlyServerLevelData(name, original.serverLevelData),
                 ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name)),
@@ -406,7 +407,4 @@ public class FakeServerLevel extends ServerLevel {
         }
     }
 
-
-    public static Executor DUMMY_EXECUTOR = (r) -> {
-    };
 }
