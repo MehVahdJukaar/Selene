@@ -31,11 +31,11 @@ public class FakeLevelManager {
     }
 
 
-    private static FakeServerLevel getDefaultServer(ServerLevel original) {
+    public static FakeServerLevel getDefaultServer(ServerLevel original) {
         return getServer("dummy_world", original, FakeServerLevel::new);
     }
 
-    private static <T extends FakeServerLevel> T getServer(String id, ServerLevel original, BiFunction<String, ServerLevel, FakeServerLevel> constructor) {
+    public static <T extends FakeServerLevel> T getServer(String id, ServerLevel original, BiFunction<String, ServerLevel, FakeServerLevel> constructor) {
         id = "server_" + id;
         String finalId = id;
         return (T) INSTANCES.computeIfAbsent(id, k -> constructor.apply(finalId, original));
@@ -59,4 +59,8 @@ public class FakeLevelManager {
         }
     }
 
+
+    public interface ILevelLike {
+        Level cast();
+    }
 }
