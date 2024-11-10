@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.moonlight.core.misc;
+package net.mehvahdjukaar.moonlight.api.misc.fake_level;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.core.RegistryAccess;

@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.moonlight.core.misc;
+package net.mehvahdjukaar.moonlight.api.misc.fake_level;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -24,18 +24,16 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.timers.TimerCallbacks;
 import net.minecraft.world.level.timers.TimerQueue;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -52,7 +50,7 @@ public class FakeServerLevel extends ServerLevel {
                 DUMMY_EXECUTOR,
                 original.getServer().storageSource,
                 new ReadOlyServerLevelData(name, original.serverLevelData),
-                ResourceKey.create(Registries.DIMENSION, new ResourceLocation(name)),
+                ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(name)),
                 new LevelStem(original.dimensionTypeRegistration(), original.getChunkSource().getGenerator()),
                 new DummyProgressListener(),
                 false,
@@ -103,7 +101,7 @@ public class FakeServerLevel extends ServerLevel {
     }
 
     @Override
-    public void gameEvent(GameEvent event, Vec3 position, GameEvent.Context context) {
+    public void gameEvent(Holder<GameEvent> gameEvent, BlockPos pos, GameEvent.Context context) {
     }
 
     @Override
@@ -134,14 +132,14 @@ public class FakeServerLevel extends ServerLevel {
     // map data
 
     @Override
-    public void setMapData(String mapName, MapItemSavedData data) {
+    public void setMapData(MapId mapId, MapItemSavedData mapData) {
+        super.setMapData(mapId, mapData);
     }
 
     @Override
-    public @Nullable MapItemSavedData getMapData(String mapName) {
+    public @Nullable MapItemSavedData getMapData(MapId mapId) {
         return null;
     }
-
 
     @Override
     public boolean setChunkForced(int chunkX, int chunkZ, boolean add) {
@@ -178,12 +176,6 @@ public class FakeServerLevel extends ServerLevel {
         return null;
     }
 
-
-    @Override
-    public @Nullable ChunkAccess getChunk(int x, int z, ChunkStatus requiredStatus, boolean nonnull) {
-        return super.getChunk(x, z, requiredStatus, nonnull); //add dummy chunk here at least?
-    }
-
     @Override
     public void tick(BooleanSupplier hasTimeLeft) {
     }
@@ -195,7 +187,7 @@ public class FakeServerLevel extends ServerLevel {
         }
 
         @Override
-        public void onStatusChange(ChunkPos chunkPosition, @Nullable ChunkStatus newStatus) {
+        public void onStatusChange(ChunkPos chunkPos, @Nullable net.minecraft.world.level.chunk.status.ChunkStatus chunkStatus) {
         }
 
         @Override
@@ -304,8 +296,8 @@ public class FakeServerLevel extends ServerLevel {
         }
 
         @Override
-        public boolean getAllowCommands() {
-            return wrapped.getAllowCommands();
+        public boolean isAllowCommands() {
+            return wrapped.isAllowCommands();
         }
 
         @Override
@@ -326,34 +318,8 @@ public class FakeServerLevel extends ServerLevel {
         }
 
         @Override
-        public void setXSpawn(int xSpawn) {
-        }
-
-        @Override
-        public void setYSpawn(int ySpawn) {
-        }
-
-        @Override
-        public void setZSpawn(int zSpawn) {
-        }
-
-        @Override
-        public void setSpawnAngle(float spawnAngle) {
-        }
-
-        @Override
-        public int getXSpawn() {
-            return wrapped.getXSpawn();
-        }
-
-        @Override
-        public int getYSpawn() {
-            return wrapped.getYSpawn();
-        }
-
-        @Override
-        public int getZSpawn() {
-            return wrapped.getZSpawn();
+        public BlockPos getSpawnPos() {
+            return wrapped.getSpawnPos();
         }
 
         @Override
@@ -403,6 +369,10 @@ public class FakeServerLevel extends ServerLevel {
         @Override
         public boolean isDifficultyLocked() {
             return wrapped.isDifficultyLocked();
+        }
+
+        @Override
+        public void setSpawn(BlockPos spawnPoint, float spawnAngle) {
         }
     }
 

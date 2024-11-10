@@ -1,7 +1,6 @@
-package net.mehvahdjukaar.moonlight.api.misc;
+package net.mehvahdjukaar.moonlight.api.misc.fake_level;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.misc.TriFunction;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,7 +10,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.AbortableIterationConsumer;
@@ -50,19 +48,16 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.LevelTickAccess;
 import net.minecraft.world.ticks.ScheduledTick;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-import static net.mehvahdjukaar.moonlight.core.misc.FakeLevelManager.INSTANCES;
+import static net.mehvahdjukaar.moonlight.api.misc.fake_level.FakeLevelManager.INSTANCES;
 
 // this is always considered to be client side... has to be because places like to hardcase ti ServerLevel
 public class FakeLevel extends Level {
@@ -92,20 +87,6 @@ public class FakeLevel extends Level {
                 false, //debug
                 0, 0);
         this.recipeManager = new RecipeManager(registryAccess);
-    }
-
-    @Deprecated(forRemoval = true)
-    public static FakeLevel getDefault(boolean client, RegistryAccess registryAccess) {
-        return get("dummy_world", client, registryAccess, FakeLevel::new);
-    }
-
-    @Deprecated(forRemoval = true)
-    public static <T extends FakeLevel> T get(String id, boolean client, RegistryAccess registryAccess, TriFunction<Boolean, String, RegistryAccess, T> constructor) {
-        if (client) {
-            id = "client_" + id;
-        }
-        String finalId = id;
-        return (T) INSTANCES.computeIfAbsent(id, k -> constructor.apply(client, finalId, registryAccess));
     }
 
     @Override
@@ -207,7 +188,6 @@ public class FakeLevel extends Level {
 
     @Override
     public void gameEvent(Holder<GameEvent> gameEvent, Vec3 pos, GameEvent.Context context) {
-
     }
 
     @Override
