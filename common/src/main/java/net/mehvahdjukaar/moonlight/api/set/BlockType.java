@@ -200,9 +200,6 @@ public abstract class BlockType {
         if (child instanceof BlockItem bi) {
             return inverse.get(bi.getBlock());
         }
-        if (child instanceof ItemLike il) {
-            return inverse.get(il.asItem());
-        }
         return null;
     }
 

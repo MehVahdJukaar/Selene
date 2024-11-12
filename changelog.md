@@ -1,2 +1,1 @@
-- improved new entity packet on fabric, possibly fixing some issues
-- fixed map markers data not being sent correctly on servers due to a bug in the marker class
+- fixed a bug causing a method from block set class called early to initialze a block item object too early
