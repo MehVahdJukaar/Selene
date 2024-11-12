@@ -62,7 +62,9 @@ public class MapDataInternal {
     public static MLSpecialMapDecorationType<?, ?> createCustomType(ResourceLocation factoryID) {
         var factory = Objects.requireNonNull(CODE_TYPES_FACTORIES.getValue(factoryID),
                 "No map decoration type with id: " + factoryID);
-        return factory.get();
+        var specialType = factory.get();
+        specialType.factoryID = factoryID;
+        return specialType;
     }
 
     public static MLMapDecorationType<?, ?> getAssociatedType(Holder<Structure> structure) {

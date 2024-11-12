@@ -7,12 +7,14 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
+import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.level.BlockGetter;
@@ -26,6 +28,7 @@ import java.util.Optional;
 //Base type for simple data-driven type. Basically a simple version of CustomDecorationType that can be serialized
 public final class MLJsonMapDecorationType extends MLMapDecorationType<MLMapDecoration, SimpleMapMarker> {
 
+    private static final ResourceLocation FACTORY_ID = Moonlight.res("json_decoration_type");
     static final Codec<MLJsonMapDecorationType> CODEC;
 
     static {
@@ -73,6 +76,10 @@ public final class MLJsonMapDecorationType extends MLMapDecorationType<MLMapDeco
         this.enabled = enabled;
     }
 
+    @Override
+    public ResourceLocation getCustomFactoryID() {
+        return FACTORY_ID;
+    }
 
     public Optional<RuleTest> getTarget() {
         return target;

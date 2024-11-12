@@ -11,6 +11,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockGetter;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 // Equivalent of TileEntityType.
@@ -21,6 +22,10 @@ public final class MLSpecialMapDecorationType<D extends MLMapDecoration, M exten
     static final Codec<MLSpecialMapDecorationType<?, ?>> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("custom_type").forGetter(MLSpecialMapDecorationType::getCustomFactoryID)
     ).apply(instance, MapDataInternal::createCustomType));
+
+    @ApiStatus.Internal
+    public ResourceLocation factoryID;
+
 
     //creates marker from world
     @Nullable
@@ -72,5 +77,10 @@ public final class MLSpecialMapDecorationType<D extends MLMapDecoration, M exten
     @Nullable
     public M createMarkerFromWorld(BlockGetter reader, BlockPos pos) {
         return markerFromWorldFactory != null ? markerFromWorldFactory.apply(wrapAsHolder(), reader, pos) : null;
+    }
+
+    @Override
+    public ResourceLocation getCustomFactoryID() {
+        return factoryID;
     }
 }

@@ -1,1 +1,2 @@
-- fixed registration order on fabric, causing issues with components
+- improved new entity packet on fabric, possibly fixing some issues
+- fixed map markers data not being sent correctly on servers due to a bug in the marker class

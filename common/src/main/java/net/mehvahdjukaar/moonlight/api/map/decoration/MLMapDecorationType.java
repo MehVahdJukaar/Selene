@@ -66,9 +66,7 @@ public sealed abstract class MLMapDecorationType<D extends MLMapDecoration, M ex
     @ApiStatus.Internal
     abstract boolean isFromWorld();
 
-    public ResourceLocation getCustomFactoryID() {
-        return ResourceLocation.parse("");
-    }
+    public abstract ResourceLocation getCustomFactoryID();
 
     @Nullable
     public abstract M createMarkerFromWorld(BlockGetter reader, BlockPos pos);
