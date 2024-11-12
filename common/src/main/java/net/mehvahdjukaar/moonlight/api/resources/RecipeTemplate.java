@@ -67,6 +67,8 @@ public class RecipeTemplate {
     static {
         register(ShapedRecipe.class, RecipeTemplate::createShaped);
         registerSimple(ShapelessRecipe.class, ShapelessRecipe::new);
+        registerSimple(StonecutterRecipe.class, (group, category, result, ingredients) ->
+                new StonecutterRecipe(group, ingredients.getFirst(), result));
     }
 
 

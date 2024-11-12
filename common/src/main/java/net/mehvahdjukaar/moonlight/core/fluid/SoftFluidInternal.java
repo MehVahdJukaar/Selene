@@ -5,8 +5,10 @@ import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidColors;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.network.ClientBoundFinalizeFluidsMessage;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -14,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.IdentityHashMap;
@@ -52,10 +55,24 @@ public class SoftFluidInternal {
         for (var h : getHolders()) {
             var s = h.value();
             if (s.isEnabled()) {
+                for (var eq : s.getEquivalentFluids()) {
+                    Fluid value = eq.value();
+                    if (value == Fluids.EMPTY) {
+                        Moonlight.LOGGER.error("!!Invalid fluid for fluid. This is a bug! {}", h);
+                        if (PlatHelper.isDev())
+                            throw new AssertionError("Invalid fluid for fluid. This is a bug! " + h);
+                    }
+                    fludiMap.put(value, h);
+                }
                 s.getEquivalentFluids().forEach(f -> fludiMap.put(f.value(), h));
                 s.getContainerList().getPossibleFilled().forEach(i -> {
                     //don't associate water to potion bottle
                     if (i != Items.POTION || !BuiltInSoftFluids.WATER.is(h)) {
+                        if (i == Items.AIR) {
+                            Moonlight.LOGGER.error("!!Invalid item for fluid. This is a bug! {}", h);
+                            if (PlatHelper.isDev())
+                                throw new AssertionError("Invalid item for fluid. This is a bug! " + h);
+                        }
                         itemMap.put(i, h);
                     }
                 });
