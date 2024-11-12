@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.moonlight.core.network.fabric;
 
+import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.mehvahdjukaar.moonlight.api.entity.IExtraClientSpawnData;
@@ -7,7 +8,6 @@ import net.mehvahdjukaar.moonlight.api.platform.network.Message;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.Mth;
@@ -37,7 +37,7 @@ public class ClientBoundSpawnCustomEntityMessage implements Message {
     private final int velX;
     private final int velY;
     private final int velZ;
-    private final RegistryFriendlyByteBuf buf;
+    private final RegistryFriendlyByteBuf extraBuf;
 
     public ClientBoundSpawnCustomEntityMessage(Entity e) {
         this.entity = e;
@@ -57,9 +57,10 @@ public class ClientBoundSpawnCustomEntityMessage implements Message {
         this.velX = (int) (d1 * 8000.0);
         this.velY = (int) (d2 * 8000.0);
         this.velZ = (int) (d3 * 8000.0);
-        this.buf = null;
-
-        //idk why this is needed but synced data fails to load correctly sometimes
+        this.extraBuf = new RegistryFriendlyByteBuf(Unpooled.buffer(), e.level().registryAccess());
+        if (this.entity instanceof IExtraClientSpawnData spawnData) {
+            spawnData.writeSpawnData(extraBuf);
+        }
     }
 
     public ClientBoundSpawnCustomEntityMessage(RegistryFriendlyByteBuf buf) {
@@ -76,7 +77,7 @@ public class ClientBoundSpawnCustomEntityMessage implements Message {
         this.velX = buf.readShort();
         this.velY = buf.readShort();
         this.velZ = buf.readShort();
-        this.buf = new RegistryFriendlyByteBuf(buf.copy(), buf.registryAccess());
+        this.extraBuf = new RegistryFriendlyByteBuf(buf.copy(), buf.registryAccess());
         buf.clear();
     }
 
@@ -95,10 +96,7 @@ public class ClientBoundSpawnCustomEntityMessage implements Message {
         buf.writeShort(this.velX);
         buf.writeShort(this.velY);
         buf.writeShort(this.velZ);
-        if (this.entity instanceof IExtraClientSpawnData spawnData) {
-            spawnData.writeSpawnData(buf);
-        }
-
+        buf.writeByteArray(this.extraBuf.readByteArray());
     }
 
     @Override
@@ -120,10 +118,10 @@ public class ClientBoundSpawnCustomEntityMessage implements Message {
 
             e.lerpMotion(this.velX / 8000.0, this.velY / 8000.0, this.velZ / 8000.0);
             if (e instanceof IExtraClientSpawnData spawnData) {
-                spawnData.readSpawnData(this.buf);
+                spawnData.readSpawnData(this.extraBuf);
             }
         }
-        this.buf.clear();
+        this.extraBuf.clear();
     }
 
     @Environment(EnvType.CLIENT)
