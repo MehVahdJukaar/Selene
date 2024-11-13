@@ -5,6 +5,7 @@ import net.mehvahdjukaar.moonlight.api.integration.MapAtlasCompat;
 import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapDecorationType;
 import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapMarker;
 import net.mehvahdjukaar.moonlight.api.map.decoration.SimpleMapMarker;
+import net.mehvahdjukaar.moonlight.core.map.MapDataInternal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -16,12 +17,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.component.MapDecorations;
 import net.minecraft.world.item.component.MapItemColor;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 import static net.mehvahdjukaar.moonlight.core.CompatHandler.MAP_ATLASES;
@@ -128,6 +131,17 @@ public class MapHelper {
             return true;
         }
         return false;
+    }
+
+    /**
+     * returns a list of suitable world markers associated to a position. called by mixin code
+     *
+     * @param reader world
+     * @param pos    world position
+     * @return markers found, empty list if none found
+     */
+    public static List<MLMapMarker<?>> getMarkersAtPos(BlockGetter reader, BlockPos pos) {
+        return MapDataInternal.getMarkersFromWorld(reader, pos);
     }
 
 }

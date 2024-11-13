@@ -51,6 +51,7 @@ public class DispenserHelper {
 
     @ApiStatus.Internal
     public static void reload(RegistryAccess registryAccess, boolean isClient) {
+        if (isClient) return;
         //clear all behaviors
         Set<Item> failed = new HashSet<>();
         Map<Item, DispenseItemBehavior> originals = new HashMap<>();

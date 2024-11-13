@@ -19,11 +19,11 @@ public class SoftFluidRegistry {
     public static final ResourceKey<Registry<SoftFluid>> KEY = ResourceKey.createRegistryKey(Moonlight.res("soft_fluid"));
 
     public static Holder<SoftFluid> getEmpty() {
-        return BuiltInSoftFluids.EMPTY;
+        return MLBuiltinSoftFluids.EMPTY.getHolderUnsafe();
     }
 
     public static SoftFluid empty() {
-        return BuiltInSoftFluids.EMPTY.value();
+        return MLBuiltinSoftFluids.EMPTY.getUnsafe();
     }
 
     public static Registry<SoftFluid> hackyGetRegistry() {

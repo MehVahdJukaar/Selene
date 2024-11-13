@@ -3,6 +3,7 @@ package net.mehvahdjukaar.moonlight.api.fluids;
 import net.mehvahdjukaar.moonlight.api.misc.DynamicHolder;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 
+@Deprecated(forRemoval = true)
 public class BuiltInSoftFluids {
 
     public static final DynamicHolder<SoftFluid> EMPTY = create("empty");

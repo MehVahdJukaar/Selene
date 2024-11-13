@@ -3,7 +3,6 @@ package net.mehvahdjukaar.moonlight.api.resources;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.codec.IdDispatchCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -120,7 +119,7 @@ public class RecipeTemplate {
             // Add the constructed row to the pattern.
             pattern.add(rowPattern.toString());
         }
-        return  new ShapedRecipePattern.Data(key, pattern);
+        return new ShapedRecipePattern.Data(key, pattern);
     }
 
     @Nullable

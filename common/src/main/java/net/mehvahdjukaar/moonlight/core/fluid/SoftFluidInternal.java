@@ -1,7 +1,7 @@
 package net.mehvahdjukaar.moonlight.core.fluid;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.mehvahdjukaar.moonlight.api.fluids.BuiltInSoftFluids;
+import net.mehvahdjukaar.moonlight.api.fluids.MLBuiltinSoftFluids;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidColors;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
@@ -67,7 +67,7 @@ public class SoftFluidInternal {
                 s.getEquivalentFluids().forEach(f -> fludiMap.put(f.value(), h));
                 s.getContainerList().getPossibleFilled().forEach(i -> {
                     //don't associate water to potion bottle
-                    if (i != Items.POTION || !BuiltInSoftFluids.WATER.is(h)) {
+                    if (i != Items.POTION || !MLBuiltinSoftFluids.WATER.is(h)) {
                         if (i == Items.AIR) {
                             Moonlight.LOGGER.error("!!Invalid item for fluid. This is a bug! {}", h);
                             if (PlatHelper.isDev())

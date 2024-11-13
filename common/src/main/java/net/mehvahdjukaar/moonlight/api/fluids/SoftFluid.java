@@ -11,6 +11,7 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.api.util.math.ColorUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -319,7 +320,10 @@ public class SoftFluid {
     }
 
     public static final Codec<Holder<SoftFluid>> HOLDER_CODEC = RegistryFileCodec.create(SoftFluidRegistry.KEY, SoftFluid.CODEC);
-    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<SoftFluid>> STREAM_CODEC = ByteBufCodecs.holderRegistry(SoftFluidRegistry.KEY);
+
+    //dynamic holder impl is dumb... we must encode the key directly
+    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<SoftFluid>> STREAM_CODEC =
+            ByteBufCodecs.holderRegistry(SoftFluidRegistry.KEY);
 
     public static final Codec<Component> COMPONENT_CODEC = Codec.either(ComponentSerialization.FLAT_CODEC, Codec.STRING).xmap(
             either -> either.map(c -> c, Component::translatable), Either::left);

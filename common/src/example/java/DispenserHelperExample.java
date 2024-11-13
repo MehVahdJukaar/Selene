@@ -1,3 +1,4 @@
+import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidStack;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.DispenserHelper;
 import net.minecraft.core.BlockPos;
@@ -22,7 +23,6 @@ public class DispenserHelperExample {
     public static void registerDynamic(DispenserHelper.Event event) {
         // Dispenser helper is useful as it wraps all existing behaviors,
         // guaranteeing compatibility with other mods that do the same
-
         // Place block behavior for emerald
         event.registerPlaceBlock(Items.EMERALD_BLOCK);
 

@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
+import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
@@ -51,7 +52,7 @@ public class SoftFluidStack implements DataComponentHolder {
     ).apply(i, SoftFluidStack::of));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SoftFluidStack> STREAM_CODEC = StreamCodec.composite(
-            SoftFluid.STREAM_CODEC, SoftFluidStack::getFluid,
+            SoftFluid.STREAM_CODEC, SoftFluidStack::getHolder,
             ByteBufCodecs.VAR_INT, SoftFluidStack::getCount,
             DataComponentPatch.STREAM_CODEC, s -> s.components.asPatch(),
             SoftFluidStack::of
@@ -68,10 +69,12 @@ public class SoftFluidStack implements DataComponentHolder {
     protected SoftFluidStack(Holder<SoftFluid> fluid, int count, DataComponentPatch components) {
         this.fluidHolder = fluid;
         //validate
+        //cant have this becasue stuff likes to create these from netty thread
+        /*
         if (!fluid.canSerializeIn(SoftFluidRegistry.hackyGetRegistry().holderOwner())) {
             Moonlight.LOGGER.error("Fluid {} cannot be serialized in the current registry", fluid);
             if (PlatHelper.isDev()) throw new AssertionError();
-        }
+        }*/
         this.fluid = this.fluidHolder.value();
         this.components = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, Objects.requireNonNull(components));
         this.count = count;
@@ -127,7 +130,7 @@ public class SoftFluidStack implements DataComponentHolder {
     }
 
     public Component getDisplayName() {
-        if (BuiltInSoftFluids.POTION.is(this.fluidHolder)) {
+        if (MLBuiltinSoftFluids.POTION.is(this.fluidHolder)) {
             PotionBottleType bottle = PotionBottleType.getOrDefault(this);
             return bottle.getTranslatedName();
         }
@@ -149,6 +152,10 @@ public class SoftFluidStack implements DataComponentHolder {
         return CODEC.parse(lookupProvider.createSerializationContext(NbtOps.INSTANCE), tag).getOrThrow();
     }
 
+    public boolean is(HolderReference<SoftFluid> fluid) {
+        return fluid.is(this.fluidHolder);
+    }
+
     public boolean is(TagKey<SoftFluid> tag) {
         return getHolder().is(tag);
     }
@@ -166,6 +173,7 @@ public class SoftFluidStack implements DataComponentHolder {
         return fluid == this.fluidHolder || fluid.is(this.fluidKey());
     }
 
+    @Deprecated(forRemoval = true)
     private Holder<SoftFluid> getFluid() {
         return isEmptyCache ? SoftFluidRegistry.getEmpty() : fluidHolder;
     }
@@ -187,7 +195,7 @@ public class SoftFluidStack implements DataComponentHolder {
     }
 
     protected void updateEmpty() {
-        isEmptyCache = count <= 0 || BuiltInSoftFluids.EMPTY.is(fluidHolder);
+        isEmptyCache = count <= 0 || MLBuiltinSoftFluids.EMPTY.is(fluidHolder);
     }
 
     public int getCount() {
@@ -195,7 +203,7 @@ public class SoftFluidStack implements DataComponentHolder {
     }
 
     public void setCount(int count) {
-        if (BuiltInSoftFluids.EMPTY.is(fluidHolder)) {
+        if (MLBuiltinSoftFluids.EMPTY.is(fluidHolder)) {
             if (PlatHelper.isDev()) throw new AssertionError();
             return;
         }
@@ -240,7 +248,7 @@ public class SoftFluidStack implements DataComponentHolder {
      * Checks if the fluids and NBT Tags are equal. This does not check amounts.
      */
     public boolean isSameFluidSameComponents(SoftFluidStack other) {
-        if (!this.is(other.getFluid())) {
+        if (!this.is(other.getHolder())) {
             return false;
         } else {
             return this.isEmpty() && other.isEmpty() || Objects.equals(this.components, other.components);
@@ -252,7 +260,7 @@ public class SoftFluidStack implements DataComponentHolder {
      */
     public static int hashFluidAndComponents(@Nullable SoftFluidStack stack) {
         if (stack != null) {
-            int i = 31 + stack.getFluid().hashCode();
+            int i = 31 + stack.getHolder().hashCode();
             return 31 * i + stack.getComponents().hashCode();
         } else {
             return 0;
@@ -260,8 +268,20 @@ public class SoftFluidStack implements DataComponentHolder {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SoftFluidStack that)) return false;
+        return count == that.count && Objects.equals(fluidHolder.unwrapKey(), that.fluidHolder.unwrapKey()) && Objects.equals(components, that.components);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fluidHolder.unwrapKey(), count, components);
+    }
+
+    @Override
     public String toString() {
-        return this.getCount() + " " + this.getFluid();
+        return this.getCount() + " " + this.getHolder();
     }
 
     // item conversion
@@ -271,7 +291,7 @@ public class SoftFluidStack implements DataComponentHolder {
         Item filledContainer = itemStack.getItem();
         Holder<SoftFluid> fluid = SoftFluidInternal.fromVanillaItem(filledContainer, Utils.hackyGetRegistryAccess());
 
-        if (fluid != null && !BuiltInSoftFluids.EMPTY.is(fluid)) {
+        if (fluid != null && !MLBuiltinSoftFluids.EMPTY.is(fluid)) {
             var category = fluid.value().getContainerList()
                     .getCategoryFromFilled(filledContainer);
 
@@ -284,7 +304,7 @@ public class SoftFluidStack implements DataComponentHolder {
                 //convert potions to water bottles
                 PotionContents potion = itemStack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
                 if (potion.is(Potions.WATER)) {
-                    fluid = BuiltInSoftFluids.WATER;
+                    fluid = MLBuiltinSoftFluids.WATER.getHolderUnsafe();
                 }
                 //add tags to splash and lingering potions
                 else if (potion.hasEffects()) {
@@ -320,13 +340,13 @@ public class SoftFluidStack implements DataComponentHolder {
                 ItemStack filledStack = new ItemStack(category.getFirstFilled().get());
 
                 //hardcoded potion shit
-                if (emptyContainer.is(Items.GLASS_BOTTLE) && this.is(BuiltInSoftFluids.POTION)) {
+                if (emptyContainer.is(Items.GLASS_BOTTLE) && this.is(MLBuiltinSoftFluids.POTION)) {
                     PotionBottleType type = PotionBottleType.getOrDefault(this);
                     filledStack = type.getDefaultItem();
                 }
 
                 //converts water bottles into potions
-                if (emptyContainer.is(Items.GLASS_BOTTLE) && this.is(BuiltInSoftFluids.WATER)) {
+                if (emptyContainer.is(Items.GLASS_BOTTLE) && this.is(MLBuiltinSoftFluids.WATER)) {
                     filledStack = PotionContents.createItemStack(Items.POTION, Potions.WATER);
                 }
 
@@ -436,4 +456,6 @@ public class SoftFluidStack implements DataComponentHolder {
     public <T> T set(DataComponentType<? super T> type, @Nullable T component) {
         return this.components.set(type, component);
     }
+
+
 }

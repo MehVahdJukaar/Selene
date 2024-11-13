@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -21,6 +22,7 @@ import java.util.stream.Stream;
  * A soft reference to an object in a Data pack registry
  * Like registry object but can be invalidated and works for data pack registries
  */
+@Deprecated(forRemoval = true) //I cant get this to work well because the hacky get leve will never be good enough
 public class DynamicHolder<T> implements Supplier<T>, Holder<T> {
 
     @ApiStatus.Internal
@@ -155,5 +157,17 @@ public class DynamicHolder<T> implements Supplier<T>, Holder<T> {
     @Override
     public String toString() {
         return "DynamicHolder{" + key + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DynamicHolder<?> that)) return false;
+        return Objects.equals(registryKey, that.registryKey) && Objects.equals(key, that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(registryKey, key);
     }
 }
