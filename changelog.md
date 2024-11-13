@@ -1,1 +1,1 @@
-- fixed a bug causing a method from block set class called early to initialze a block item object too early
+- Fixed the recipe not being generated for StonecutterRecipe via **EveryCompat**
