@@ -3,6 +3,7 @@ package net.mehvahdjukaar.moonlight.api.resources;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.codec.IdDispatchCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -21,6 +22,9 @@ public class RecipeTemplate {
         register(type, (r, t) -> createSimple(r, factory, t));
     }
 
+    /**
+     * Register a recipe template for your recipe. Allows creating a copy of it with different ingredients
+     */
     public static <R extends Recipe<?>> void register(Class<R> type, BiFunction<R, UnaryOperator<ItemStack>, R> factory) {
         REMAPPERS.put(type, (r, t) -> factory.apply((R) r, t));
     }
@@ -28,19 +32,6 @@ public class RecipeTemplate {
     public interface RecipeFactory<R extends Recipe<?>> {
         R create(String group, CraftingBookCategory category, ItemStack result, NonNullList<Ingredient> ingredients);
     }
-
-
-    private static <R extends Recipe<?>> @NotNull List<Ingredient> convertIngredients(NonNullList<Ingredient> or, UnaryOperator<ItemStack> typeChanger) {
-        List<Ingredient> newList = new ArrayList<>(or);
-        for (var ingredient : or) {
-            if (ingredient.getItems().length > 0) {
-                ItemStack i = typeChanger.apply(ingredient.getItems()[0]);
-                if (i != null) newList.add(Ingredient.of(i));
-            }
-        }
-        return newList;
-    }
-
 
     public static <T extends BlockType, R extends Recipe<?>> RecipeHolder<?> makeSimilarRecipe(R original, T originalMat,
                                                                                                T destinationMat, String baseID) {
@@ -54,14 +45,6 @@ public class RecipeTemplate {
         var remapped = remapper.apply(original, (stack) -> convertItemStack(stack, originalMat, destinationMat));
 
         return new RecipeHolder<>(newId, remapped);
-    }
-
-    @Nullable
-    public static <T extends BlockType> ItemStack convertItemStack(ItemStack original, T originalMat, T destinationMat) {
-        var changed = BlockType.changeItemType(original.getItem(), originalMat, destinationMat);
-        if (changed == null) return null;
-        return original.transmuteCopy(changed);
-
     }
 
     static {
@@ -138,6 +121,25 @@ public class RecipeTemplate {
             pattern.add(rowPattern.toString());
         }
         return  new ShapedRecipePattern.Data(key, pattern);
+    }
+
+    @Nullable
+    public static <T extends BlockType> ItemStack convertItemStack(ItemStack original, T originalMat, T destinationMat) {
+        var changed = BlockType.changeItemType(original.getItem(), originalMat, destinationMat);
+        if (changed == null) return null;
+        return original.transmuteCopy(changed);
+
+    }
+
+    private static <R extends Recipe<?>> @NotNull List<Ingredient> convertIngredients(NonNullList<Ingredient> or, UnaryOperator<ItemStack> typeChanger) {
+        List<Ingredient> newList = new ArrayList<>(or);
+        for (var ingredient : or) {
+            if (ingredient.getItems().length > 0) {
+                ItemStack i = typeChanger.apply(ingredient.getItems()[0]);
+                if (i != null) newList.add(Ingredient.of(i));
+            }
+        }
+        return newList;
     }
 
 

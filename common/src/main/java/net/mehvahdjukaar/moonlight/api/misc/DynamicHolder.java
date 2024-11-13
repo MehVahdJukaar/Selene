@@ -151,4 +151,9 @@ public class DynamicHolder<T> implements Supplier<T>, Holder<T> {
         return getInstance().canSerializeIn(owner);
     }
 
+
+    @Override
+    public String toString() {
+        return "DynamicHolder{" + key + '}';
+    }
 }
