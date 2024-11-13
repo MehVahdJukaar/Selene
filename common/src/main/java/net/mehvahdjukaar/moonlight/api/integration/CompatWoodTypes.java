@@ -91,7 +91,7 @@ public class CompatWoodTypes {
                 uniqueWoodFinder("byg", "embur", "embur_planks", "pedu", "pedu_top"));
 
 
-        // mcreator mod with typos...
+// mcreator mod with typos...
         // Nethers Exoticism
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(
                 "nethers_exoticism", "jabuticaba", "jaboticaba_planks", "jabuticaba_log"));
