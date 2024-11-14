@@ -1,1 +1,2 @@
-- big internal changes related to datapack registry stuff. Should resolve some issues and be more stable
+- fixed recipe template system not converting shapeless recipes correctly
+- fixed fabric custom spawn packet being broken in last version

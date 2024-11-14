@@ -96,7 +96,7 @@ public class ClientBoundSpawnCustomEntityMessage implements Message {
         buf.writeShort(this.velX);
         buf.writeShort(this.velY);
         buf.writeShort(this.velZ);
-        buf.writeByteArray(this.extraBuf.readByteArray());
+        buf.writeBytes(this.extraBuf);
     }
 
     @Override

@@ -36,6 +36,7 @@ public abstract class DynResourceGenerator<T extends DynamicResourcePack> implem
         this.dynamicPack = pack;
         this.modId = modId;
         this.dynamicPack.addNamespaces(additionalNamespaces().toArray(new String[0]));
+        this.dynamicPack.addNamespaces(modId);
         this.dynamicPack.registerPack();
 
         MoonlightEventsHelper.addListener(this::onEarlyReload, EarlyPackReloadEvent.class);

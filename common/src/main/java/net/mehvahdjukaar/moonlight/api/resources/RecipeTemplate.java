@@ -132,11 +132,11 @@ public class RecipeTemplate {
 
     private static <R extends Recipe<?>> @NotNull List<Ingredient> convertIngredients(NonNullList<Ingredient> or, UnaryOperator<ItemStack> typeChanger) {
         List<Ingredient> newList = new ArrayList<>(or);
-        for (var ingredient : or) {
-            if (ingredient.getItems().length > 0) {
-                ItemStack i = typeChanger.apply(ingredient.getItems()[0]);
-                if (i != null) newList.add(Ingredient.of(i));
-            }
+        for (int i = 0; i < newList.size(); i++) {
+            Ingredient ingredient = or.get(i);
+            if (ingredient.isEmpty()) continue;
+            ItemStack intItem = typeChanger.apply(ingredient.getItems()[0]);
+            if (intItem != null) newList.set(i, Ingredient.of(intItem));
         }
         return newList;
     }
