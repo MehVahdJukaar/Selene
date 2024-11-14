@@ -56,7 +56,7 @@ public class SoftFluidTank {
 
     public SoftFluidTank makeCopy() {
         SoftFluidTank tank = create(this.capacity);
-        this.copyContent(tank);
+        tank.copyContent(this);
         return tank;
     }
 
