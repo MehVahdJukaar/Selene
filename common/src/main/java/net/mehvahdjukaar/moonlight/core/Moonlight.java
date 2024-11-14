@@ -12,6 +12,7 @@ import net.mehvahdjukaar.moonlight.api.map.MapDataRegistry;
 import net.mehvahdjukaar.moonlight.api.map.decoration.MLJsonMapDecorationType;
 import net.mehvahdjukaar.moonlight.api.misc.DynamicHolder;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
+import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
 import net.mehvahdjukaar.moonlight.api.misc.RegistryAccessJsonReloadListener;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
@@ -29,6 +30,7 @@ import net.mehvahdjukaar.moonlight.core.misc.VillagerAIInternal;
 import net.mehvahdjukaar.moonlight.core.network.ModNetworking;
 import net.mehvahdjukaar.moonlight.core.set.BlockSetInternal;
 import net.mehvahdjukaar.moonlight.core.set.BlocksColorInternal;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -124,29 +126,19 @@ public class Moonlight {
         RegistryAccessJsonReloadListener.runReloads(registryAccess);
         DynamicResourcePack.clearAfterReload(PackType.SERVER_DATA);
         DynamicHolder.clearCache();
+
+        HolderReference.clearCache();
         DispenserHelper.reload(registryAccess, client);
     }
 
     @EventCalled
-    public static void beforeServerStart() {
-        SoftFluidInternal.doPostInitServer();
+    public static void beforeServerStart(RegistryAccess ra) {
+        SoftFluidInternal.doPostInitServer(ra);
     }
 
     public static void assertInitPhase() {
         if (!PlatHelper.isInitializing() && PlatHelper.getPlatform().isForge()) {
             throw new AssertionError("Method has to be called during main mod initialization phase. Client and Server initializer are not valid, you must call in the main one");
-        }
-    }
-
-    private static void checkDatapackRegistry() {
-        try {
-            SoftFluidRegistry.getEmpty().value();
-            MapDataRegistry.getDefaultType();
-        } catch (Exception e) {
-            throw new RuntimeException("""
-                    Not all required entries were found in datapack registry. How did this happen?
-                    This MUST be some OTHER mod messing up datapack registries (currently Cyanide is known to cause this).
-                    Note that this could be caused by Paper or similar servers. Know that those are NOT meant to be used with mods""", e);
         }
     }
 

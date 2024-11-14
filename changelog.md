@@ -1,1 +1,1 @@
-- Fixed the recipe not being generated for StonecutterRecipe via **EveryCompat**
+- big internal changes related to datapack registry stuff. Should resolve some issues and be more stable

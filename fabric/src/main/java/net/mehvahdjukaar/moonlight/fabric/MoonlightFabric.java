@@ -32,7 +32,7 @@ public class MoonlightFabric implements ModInitializer, DedicatedServerModInitia
                 new ClientBoundSendLoginPacket()));
         ServerLifecycleEvents.SERVER_STARTING.register(s -> {
             currentServer = s;
-            Moonlight.beforeServerStart();
+            Moonlight.beforeServerStart(s.registryAccess());
         });
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> {
             currentServer = null;

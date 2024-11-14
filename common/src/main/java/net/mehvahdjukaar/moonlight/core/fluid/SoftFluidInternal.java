@@ -7,10 +7,10 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidColors;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
-import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.network.ClientBoundFinalizeFluidsMessage;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
@@ -22,8 +22,6 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
-
-import static net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry.getHolders;
 
 @ApiStatus.Internal
 public class SoftFluidInternal {
@@ -52,7 +50,7 @@ public class SoftFluidInternal {
         var itemMap = ITEM_MAP.computeIfAbsent(registryAccess, k -> new IdentityHashMap<>());
         fludiMap.clear();
         itemMap.clear();
-        for (var h : getHolders()) {
+        for (var h : SoftFluidRegistry.get(registryAccess).holders().toList()) {
             var s = h.value();
             if (s.isEnabled()) {
                 for (var eq : s.getEquivalentFluids()) {
@@ -88,11 +86,12 @@ public class SoftFluidInternal {
     //wtf is going on here
 
     //called by data sync to player
-    public static void postInitClient() {
+    public static void postInitClient(RegistryAccess ra) {
         FLUID_MAP.clear();
         ITEM_MAP.clear();
 
-        for (var f : SoftFluidRegistry.getValues()) {
+        var reg = SoftFluidRegistry.getRegistry(ra);
+        for (var f : reg) {
             f.afterInit();
         }
         //ok so here the extra registered fluids should have already been sent to the client
@@ -107,20 +106,19 @@ public class SoftFluidInternal {
     }
 
     //on data load
-    public static void doPostInitServer() {
-        var reg = Utils.hackyGetRegistryAccess();
-        populateSlaveMaps(reg);
+    public static void doPostInitServer(RegistryAccess ra) {
+        populateSlaveMaps(ra);
         //registers existing fluids. also update the salve maps
         //we need to call this on bont server and client as this happens too late and these wont be sent
-        registerExistingVanillaFluids(FLUID_MAP.get(reg), ITEM_MAP.get(reg));
+        registerExistingVanillaFluids(ra, FLUID_MAP.get(ra), ITEM_MAP.get(ra));
 
-        for (var f : SoftFluidRegistry.getValues()) {
+        for (var f : SoftFluidRegistry.get(ra)) {
             f.afterInit();
         }
     }
 
     @ExpectPlatform
-    private static void registerExistingVanillaFluids(Map<Fluid, Holder<SoftFluid>> fluidMap, Map<Item, Holder<SoftFluid>> itemMap) {
+    private static void registerExistingVanillaFluids(RegistryAccess ra, Map<Fluid, Holder<SoftFluid>> fluidMap, Map<Item, Holder<SoftFluid>> itemMap) {
         throw new AssertionError();
     }
 

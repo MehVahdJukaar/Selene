@@ -313,7 +313,7 @@ public class SoftFluidTank {
     }
 
     public void setFluid(SoftFluidStack fluid) {
-        this.fluidStack = fluid.isEmpty() ? SoftFluidStack.empty() : fluid;
+        this.fluidStack = fluid;
         refreshTintCache();
     }
 

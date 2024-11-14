@@ -83,6 +83,7 @@ public class MapDataInternal {
         throw new AssertionError();
     }
 
+    @Deprecated(forRemoval = true)
     public static Registry<MLMapDecorationType<?, ?>> hackyGetRegistry() {
         return Utils.hackyGetRegistryAccess().registryOrThrow(KEY);
     }
@@ -91,19 +92,23 @@ public class MapDataInternal {
         return registryAccess.registryOrThrow(KEY);
     }
 
+    @Deprecated(forRemoval = true)
     public static Collection<MLMapDecorationType<?, ?>> getValues() {
         return hackyGetRegistry().stream().toList();
     }
 
+    @Deprecated(forRemoval = true)
     public static Set<Map.Entry<ResourceKey<MLMapDecorationType<?, ?>>, MLMapDecorationType<?, ?>>> getEntries() {
         return hackyGetRegistry().entrySet();
     }
 
+    @Deprecated(forRemoval = true)
     @Nullable
     public static MLMapDecorationType<? extends MLMapDecoration, ?> getOrDefault(String id) {
         return getOrDefault(ResourceLocation.parse(id));
     }
 
+    @Deprecated(forRemoval = true)
     public static MLMapDecorationType<?, ?> getOrDefault(ResourceLocation id) {
         var reg = hackyGetRegistry();
         var r = reg.get(id);
@@ -111,11 +116,13 @@ public class MapDataInternal {
         return r;
     }
 
+    @Deprecated(forRemoval = true)
     @Nullable
     public static Holder<MLMapDecorationType<?, ?>> getHolder(ResourceLocation id) {
         return hackyGetRegistry().getHolder(id).orElse(null);
     }
 
+    @Deprecated(forRemoval = true)
     public static Optional<MLMapDecorationType<?, ?>> getOptional(ResourceLocation id) {
         return hackyGetRegistry().getOptional(id);
     }

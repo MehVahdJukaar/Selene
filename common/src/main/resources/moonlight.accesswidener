@@ -13,6 +13,9 @@ mutable field net/minecraft/client/renderer/RenderStateShard setupState Ljava/la
 
 accessible method net/minecraft/world/entity/ai/village/poi/PoiTypes registerBlockStates (Lnet/minecraft/core/Holder;Ljava/util/Set;)V
 
+# fluid holder hacks
+accessible field net/minecraft/core/Holder$Reference owner Lnet/minecraft/core/HolderOwner;
+
 #fabric reg oreder
 accessible field net/minecraft/core/registries/BuiltInRegistries LOADERS Ljava/util/Map;
 

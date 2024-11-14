@@ -6,9 +6,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
+import java.util.WeakHashMap;
 import java.util.function.Predicate;
 
 public class HolderReference<T> {
@@ -16,9 +19,25 @@ public class HolderReference<T> {
     private final ResourceKey<Registry<T>> registryKey;
     private final ResourceKey<T> key;
 
+    private final WeakHashMap<HolderLookup.Provider, Holder<T>> cache = new WeakHashMap<>();
+
+    private static final WeakHashSet<HolderReference<?>> REFERENCES = new WeakHashSet<>();
+
+    @ApiStatus.Internal
+    public static void clearCache() {
+        REFERENCES.forEach(HolderReference::invalidateCache);
+    }
+
+    private void invalidateCache() {
+        cache.clear();
+    }
+
+
     protected HolderReference(ResourceKey<Registry<T>> registryKey, ResourceKey<T> key) {
         this.registryKey = registryKey;
         this.key = key;
+
+        REFERENCES.add(this);
     }
 
     public static <A> HolderReference<A> of(String id, ResourceKey<Registry<A>> registry) {
@@ -37,6 +56,10 @@ public class HolderReference<T> {
         return get(Utils.hackyGetRegistryAccess());
     }
 
+    public T get(Entity entity) {
+        return get(entity.level());
+    }
+
     public T get(Level level) {
         return get(level.registryAccess());
     }
@@ -49,20 +72,32 @@ public class HolderReference<T> {
         return getHolder(Utils.hackyGetRegistryAccess());
     }
 
+    public Holder<T> getHolder(Entity entity) {
+        return getHolder(entity.level());
+    }
+
     public Holder<T> getHolder(Level level) {
         return getHolder(level.registryAccess());
     }
 
-    public Holder<T> getHolder(HolderLookup.Provider r) {
-        var lookupReg = r.lookup(registryKey);
-        var reg = lookupReg.get();
+    public Holder<T> lookup(HolderLookup.RegistryLookup<T> lookup) {
         try {
-            return reg.getOrThrow(key);
+            return lookup.getOrThrow(key);
         } catch (Exception e) {
             throw new RuntimeException("Failed to get object from registry: " + key +
                     ".\nCalled from " + Thread.currentThread() + ".\n" +
-                    "Registry content was: " + reg.listElements().map(b -> b.key().location()).toList(), e);
+                    "Registry content was: " + lookup.listElements().map(b -> b.key().location()).toList(), e);
         }
+    }
+
+    public Holder<T> getHolder(HolderLookup.Provider r) {
+        var holder = cache.get(r);
+        if (holder != null) return holder;
+        var lookupReg = r.lookup(registryKey);
+        var reg = lookupReg.get();
+        holder = lookup(reg);
+        cache.put(r, holder);
+        return holder;
     }
 
     public String getRegisteredName() {

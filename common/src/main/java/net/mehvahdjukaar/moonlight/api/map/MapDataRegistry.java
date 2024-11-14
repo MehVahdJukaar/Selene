@@ -87,14 +87,17 @@ public class MapDataRegistry {
         return MapDataInternal.getRegistry(registryAccess);
     }
 
+    @Deprecated(forRemoval = true)
     public static MLMapDecorationType<?, ?> getOrDefault(ResourceLocation id) {
         return MapDataInternal.getOrDefault(id);
     }
 
+    @Deprecated(forRemoval = true)
     public static Optional<MLMapDecorationType<?, ?>> getOptional(ResourceLocation id) {
         return MapDataInternal.getOptional(id);
     }
 
+    @Deprecated(forRemoval = true)
     @Nullable
     public static Holder<MLMapDecorationType<?, ?>> getHolder(ResourceLocation id) {
         return MapDataInternal.getHolder(id);

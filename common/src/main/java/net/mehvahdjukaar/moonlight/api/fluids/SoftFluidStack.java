@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
+import net.mehvahdjukaar.moonlight.api.map.MapDataRegistry;
 import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
@@ -19,11 +20,11 @@ import net.minecraft.core.component.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
@@ -65,6 +66,7 @@ public class SoftFluidStack implements DataComponentHolder {
     @NotNull
     private final PatchedDataComponentMap components;
     private boolean isEmptyCache;
+    private final Holder<SoftFluid> myEmptyFluid;
 
     protected SoftFluidStack(Holder<SoftFluid> fluid, int count, DataComponentPatch components) {
         this.fluidHolder = fluid;
@@ -79,6 +81,18 @@ public class SoftFluidStack implements DataComponentHolder {
         this.components = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, Objects.requireNonNull(components));
         this.count = count;
         this.updateEmpty();
+
+        this.myEmptyFluid = haxFindEmpty(fluidHolder);
+    }
+
+    private Holder<SoftFluid> haxFindEmpty(Holder<SoftFluid> fluidHolder) {
+        if (fluidHolder instanceof Holder.Reference<SoftFluid> ref) {
+            if (ref.owner instanceof HolderLookup.RegistryLookup<SoftFluid> ra) {
+                return MLBuiltinSoftFluids.EMPTY.lookup(ra);
+            }
+        }
+        Moonlight.LOGGER.warn("Failed to find empty fluid for {}", fluidHolder);
+        return MLBuiltinSoftFluids.EMPTY.getHolderUnsafe();
     }
 
     @ExpectPlatform
@@ -126,7 +140,7 @@ public class SoftFluidStack implements DataComponentHolder {
     }
 
     public static SoftFluidStack empty() {
-        return of(SoftFluidRegistry.getEmpty(), 0);
+        return of(SoftFluidRegistry.hackyGetEmpty(), 0);
     }
 
     public Component getDisplayName() {
@@ -175,15 +189,15 @@ public class SoftFluidStack implements DataComponentHolder {
 
     @Deprecated(forRemoval = true)
     private Holder<SoftFluid> getFluid() {
-        return isEmptyCache ? SoftFluidRegistry.getEmpty() : fluidHolder;
+        return isEmptyCache ? myEmptyFluid : fluidHolder;
     }
 
     public final Holder<SoftFluid> getHolder() {
-        return isEmptyCache ? SoftFluidRegistry.getEmpty() : fluidHolder;
+        return isEmptyCache ? myEmptyFluid : fluidHolder;
     }
 
     public final SoftFluid fluid() {
-        return isEmptyCache ? SoftFluidRegistry.empty() : fluid;
+        return isEmptyCache ? myEmptyFluid.value() : fluid;
     }
 
     public final ResourceKey<SoftFluid> fluidKey() {

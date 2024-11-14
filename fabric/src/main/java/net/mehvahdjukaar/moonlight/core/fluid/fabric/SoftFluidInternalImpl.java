@@ -8,6 +8,7 @@ import net.mehvahdjukaar.moonlight.core.mixins.fabric.MappedRegistryAccessor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.FlowingFluid;
@@ -22,9 +23,9 @@ public class SoftFluidInternalImpl {
         DynamicRegistries.registerSynced(SoftFluidRegistry.KEY, SoftFluid.CODEC, SoftFluid.CODEC, DynamicRegistries.SyncOption.SKIP_WHEN_EMPTY);
     }
 
-    public static void registerExistingVanillaFluids(Map<Fluid, Holder<SoftFluid>> fluidMap, Map<Item, Holder<SoftFluid>> itemMap) {
+    public static void registerExistingVanillaFluids(RegistryAccess ra, Map<Fluid, Holder<SoftFluid>> fluidMap, Map<Item, Holder<SoftFluid>> itemMap) {
         //only runs on the first object
-        MappedRegistry<SoftFluid> reg = (MappedRegistry<SoftFluid>) SoftFluidRegistry.hackyGetRegistry();
+        MappedRegistry<SoftFluid> reg = (MappedRegistry<SoftFluid>) SoftFluidRegistry.get(ra);
         ((MappedRegistryAccessor) reg).setFrozen(false);
         for (Fluid f : BuiltInRegistries.FLUID) {
             try {

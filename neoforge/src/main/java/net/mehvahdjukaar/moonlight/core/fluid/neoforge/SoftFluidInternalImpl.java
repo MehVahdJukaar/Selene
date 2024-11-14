@@ -7,6 +7,7 @@ import net.mehvahdjukaar.moonlight.neoforge.MoonlightForge;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -29,9 +30,9 @@ public class SoftFluidInternalImpl {
         bus.register(SoftFluidInternalImpl.class);
     }
 
-    public static void registerExistingVanillaFluids(Map<Fluid, Holder<SoftFluid>> fluidMap, Map<Item, Holder<SoftFluid>> itemMap) {
+    public static void registerExistingVanillaFluids(RegistryAccess ra, Map<Fluid, Holder<SoftFluid>> fluidMap, Map<Item, Holder<SoftFluid>> itemMap) {
         //only runs on the first object
-        MappedRegistry<SoftFluid> reg = (MappedRegistry<SoftFluid>) SoftFluidRegistry.hackyGetRegistry();
+        MappedRegistry<SoftFluid> reg = (MappedRegistry<SoftFluid>) SoftFluidRegistry.get(ra);
         reg.unfreeze();
         for (Fluid f : BuiltInRegistries.FLUID) {
             try {
