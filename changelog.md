@@ -1,2 +1,1 @@
-- fixed recipe template system not converting shapeless recipes correctly
-- fixed fabric custom spawn packet being broken in last version
+- Updated **Biomes O' Plenty**'s LeavesType for _Maple_ WoodType
