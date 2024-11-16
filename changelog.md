@@ -1,1 +1,2 @@
-- re published because for some reason last version had wrong version number on forge
+- fixed fire block mixin not working correctly on forge
+- fixed fake server levels not firing level unload events when being cleared

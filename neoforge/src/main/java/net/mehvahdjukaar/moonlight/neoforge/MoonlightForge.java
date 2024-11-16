@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.moonlight.neoforge;
 
 import net.mehvahdjukaar.moonlight.api.block.ItemDisplayTile;
+import net.mehvahdjukaar.moonlight.api.misc.fake_level.FakeLevelManager;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
@@ -12,7 +13,6 @@ import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.MoonlightClient;
 import net.mehvahdjukaar.moonlight.core.fake_player.FPClientAccess;
 import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
-import net.mehvahdjukaar.moonlight.api.misc.fake_level.FakeLevelManager;
 import net.mehvahdjukaar.moonlight.core.misc.neoforge.ModLootConditions;
 import net.mehvahdjukaar.moonlight.core.misc.neoforge.ModLootModifiers;
 import net.mehvahdjukaar.moonlight.core.network.ClientBoundSendLoginPacket;
@@ -121,8 +121,11 @@ public class MoonlightForge {
     }
 
     @SubscribeEvent
-    public static void beforeServerStart(ServerStoppedEvent event) {
-        FakeLevelManager.invalidateAll();
+    public static void onServerStopped(ServerStoppedEvent event) {
+        var oldLevels = FakeLevelManager.invalidateAll();
+        for (var level : oldLevels) {
+            NeoForge.EVENT_BUS.post(new LevelEvent.Unload(level)); //unload level with event shit
+        }
     }
 
     @SubscribeEvent
