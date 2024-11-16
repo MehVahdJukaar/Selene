@@ -177,11 +177,11 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "biomesoplenty", "flowering_oak", "flowering_oak_leaves", "oak"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "biomesoplenty", "maple", "maple_leaves", "oak"));
+                "biomesoplenty", "red_maple", "red_maple_leaves", "maple"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "biomesoplenty", "orange_autumn", "orange_autumn_leaves", "dark_oak"));
+                "biomesoplenty", "orange_maple", "orange_maple_leaves", "maple"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "biomesoplenty", "yellow_autumn", "yellow_autumn_leaves", "birch"));
+                "biomesoplenty", "yellow_maple", "yellow_maple_leaves", "maple"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "biomesoplenty", "rainbow_birch", "rainbow_birch_leaves", "birch"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
