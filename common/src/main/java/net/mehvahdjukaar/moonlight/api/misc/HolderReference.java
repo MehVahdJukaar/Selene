@@ -9,8 +9,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.WeakHashMap;
 import java.util.function.Predicate;
 
@@ -80,16 +82,6 @@ public class HolderReference<T> {
         return getHolder(level.registryAccess());
     }
 
-    public Holder<T> lookup(HolderLookup.RegistryLookup<T> lookup) {
-        try {
-            return lookup.getOrThrow(key);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get object from registry: " + key +
-                    ".\nCalled from " + Thread.currentThread() + ".\n" +
-                    "Registry content was: " + lookup.listElements().map(b -> b.key().location()).toList(), e);
-        }
-    }
-
     public Holder<T> getHolder(HolderLookup.Provider r) {
         var holder = cache.get(r);
         if (holder != null) return holder;
@@ -98,6 +90,16 @@ public class HolderReference<T> {
         holder = lookup(reg);
         cache.put(r, holder);
         return holder;
+    }
+
+    public Holder<T> lookup(HolderLookup.RegistryLookup<T> lookup) {
+        try {
+            return lookup.getOrThrow(key);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get object from registry: " + key +
+                    ".\nCalled from " + Thread.currentThread() + ".\n" +
+                    "Registry content was: " + lookup.listElements().map(b -> b.key().location()).toList(), e);
+        }
     }
 
     public String getRegisteredName() {
@@ -143,6 +145,84 @@ public class HolderReference<T> {
     @Override
     public int hashCode() {
         return Objects.hash(registryKey, key);
+    }
+
+    public static class Opt<T> extends HolderReference<T> {
+
+        protected Opt(ResourceKey<Registry<T>> registryKey, ResourceKey<T> key) {
+            super(registryKey, key);
+        }
+
+        public boolean isPresent(HolderLookup.Provider r) {
+            return getHolder(r) != null;
+        }
+
+        public Optional<Holder<T>> asOptionalHolder(HolderLookup.Provider r) {
+            return Optional.ofNullable(getHolder(r));
+        }
+
+        public Optional<T> asOptional(HolderLookup.Provider r) {
+            return Optional.ofNullable(get(r));
+        }
+
+        @Nullable
+        @Override
+        public T get(HolderLookup.Provider r) {
+            var h = super.getHolder(r);
+            return h != null ? h.value() : null;
+        }
+
+        @Nullable
+        @Override
+        public T get(Level level) {
+            return super.get(level);
+        }
+
+        @Nullable
+        @Override
+        public T get(Entity entity) {
+            return super.get(entity);
+        }
+
+        @Nullable
+        @Override
+        public T getUnsafe() {
+            return super.getUnsafe();
+        }
+
+        @Nullable
+        @Override
+        public Holder<T> getHolder(HolderLookup.Provider r) {
+            return super.getHolder(r);
+        }
+
+        @Nullable
+        @Override
+        public Holder<T> getHolder(Level level) {
+            return super.getHolder(level);
+        }
+
+        @Nullable
+        @Override
+        public Holder<T> getHolderUnsafe() {
+            return super.getHolderUnsafe();
+        }
+
+        @Nullable
+        @Override
+        public Holder<T> getHolder(Entity entity) {
+            return super.getHolder(entity);
+        }
+
+        @Nullable
+        @Override
+        public Holder<T> lookup(HolderLookup.RegistryLookup<T> lookup) {
+            try {
+                return super.lookup(lookup);
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
 }
 

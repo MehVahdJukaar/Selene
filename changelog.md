@@ -1,2 +1,1 @@
-- fixed recipe template system not converting shapeless recipes correctly
-- fixed fabric custom spawn packet being broken in last version
+- re published because for some reason last version had wrong version number on forge

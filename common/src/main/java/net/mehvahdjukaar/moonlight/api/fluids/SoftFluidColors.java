@@ -33,7 +33,7 @@ public class SoftFluidColors implements ResourceManagerReloadListener {
     public static void refreshParticleColors() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
-        var fluids = SoftFluidRegistry.getRegistry(mc.level.registryAccess()).entrySet();
+        var fluids = SoftFluidRegistry.get(mc.level.registryAccess()).entrySet();
 
         for (var entry : fluids) {
             SoftFluid fluid = entry.getValue();

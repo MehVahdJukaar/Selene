@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@Deprecated(forRemoval = true)
 public class OptionalHolder<T> extends DynamicHolder<T> {
     private boolean resolved = false;
     private boolean empty = false;

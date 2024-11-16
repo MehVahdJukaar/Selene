@@ -172,7 +172,7 @@ public class Moonlight {
 
     public static void registerBuiltinFluidBehavior(DispenserHelper.Event event) {
         Set<Item> itemSet = new HashSet<>();
-        for (SoftFluid f : SoftFluidRegistry.getRegistry(event.getRegistryAccess())) {
+        for (SoftFluid f : SoftFluidRegistry.get(event.getRegistryAccess())) {
             Collection<FluidContainerList.Category> categories = f.getContainerList().getCategories();
             for (FluidContainerList.Category c : categories) {
                 Item empty = c.getEmptyContainer();

@@ -90,7 +90,7 @@ public class SoftFluidInternal {
         FLUID_MAP.clear();
         ITEM_MAP.clear();
 
-        var reg = SoftFluidRegistry.getRegistry(ra);
+        var reg = SoftFluidRegistry.get(ra);
         for (var f : reg) {
             f.afterInit();
         }
