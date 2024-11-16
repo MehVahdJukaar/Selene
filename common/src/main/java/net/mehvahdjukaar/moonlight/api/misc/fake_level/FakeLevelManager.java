@@ -9,7 +9,9 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.VisibleForTesting;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 public class FakeLevelManager {
@@ -18,10 +20,13 @@ public class FakeLevelManager {
 
     @ApiStatus.Internal
     @VisibleForTesting
-    public static void invalidateAll() {
+    public static Collection<Level> invalidateAll() {
+        var toReturn = INSTANCES.values();
         INSTANCES.clear();
+        return toReturn;
     }
 
+    @ApiStatus.Internal
     public static void invalidate(String name) {
         INSTANCES.remove(name);
     }
