@@ -1,1 +1,2 @@
-- improved fake level api by adding an experimental fake server level
+- fixed fire block consumed event not working on forge
+- fixed fake server level not firing forge level unload event
