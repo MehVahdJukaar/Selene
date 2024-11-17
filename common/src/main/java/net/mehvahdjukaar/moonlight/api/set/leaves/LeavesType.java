@@ -2,7 +2,6 @@ package net.mehvahdjukaar.moonlight.api.set.leaves;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
@@ -26,6 +25,10 @@ public class LeavesType extends BlockType {
 
     public static Codec<LeavesType> CODEC;
     public static StreamCodec<FriendlyByteBuf, LeavesType> STREAM_CODEC;
+
+    static {
+        LeavesTypeRegistry.touch();
+    }
 
     public final Block leaves;
 

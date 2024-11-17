@@ -37,6 +37,9 @@ public class LeavesTypeRegistry extends BlockTypeRegistry<LeavesType> {
         LeavesType.STREAM_CODEC = this.getStreamCodec();
     }
 
+    static void touch() {
+    }
+
     @Override
     public LeavesType getDefaultType() {
         return OAK_TYPE;

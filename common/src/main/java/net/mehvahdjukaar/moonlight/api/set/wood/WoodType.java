@@ -29,6 +29,9 @@ public class WoodType extends BlockType {
 
     public static Codec<WoodType> CODEC;
     public static StreamCodec<FriendlyByteBuf, WoodType> STREAM_CODEC;
+    static{
+        WoodTypeRegistry.touch();
+    }
 
     public final Block planks;
     public final Block log;

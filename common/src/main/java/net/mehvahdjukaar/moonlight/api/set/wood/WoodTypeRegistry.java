@@ -52,6 +52,9 @@ public class WoodTypeRegistry extends BlockTypeRegistry<WoodType> {
         WoodType.STREAM_CODEC = this.getStreamCodec();
     }
 
+    static void touch() {
+    }
+
     @Override
     public WoodType getDefaultType() {
         return OAK_TYPE;
