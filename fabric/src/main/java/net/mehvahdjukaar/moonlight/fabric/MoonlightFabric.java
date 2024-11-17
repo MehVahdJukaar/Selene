@@ -39,9 +39,11 @@ public class MoonlightFabric implements ModInitializer, DedicatedServerModInitia
             FakeLevelManager.invalidateAll();
         });
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(SoftFluidInternal::onDataSyncToPlayer);
+        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(DataMapBridge::onDataSyncToPlayer);
         ServerPlayerEvents.COPY_FROM.register(Moonlight::onPlayerCloned);
 
         ResourceConditionsBridge.init();
+        DataMapBridge.init();
 
     }
 

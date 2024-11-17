@@ -130,7 +130,7 @@ public class RecipeTemplate {
 
     }
 
-    private static <R extends Recipe<?>> @NotNull List<Ingredient> convertIngredients(NonNullList<Ingredient> or, UnaryOperator<ItemStack> typeChanger) {
+    public static <R extends Recipe<?>> @NotNull List<Ingredient> convertIngredients(NonNullList<Ingredient> or, UnaryOperator<ItemStack> typeChanger) {
         List<Ingredient> newList = new ArrayList<>(or);
         for (int i = 0; i < newList.size(); i++) {
             Ingredient ingredient = or.get(i);

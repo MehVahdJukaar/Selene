@@ -6,6 +6,7 @@ import com.mojang.serialization.DynamicOps;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.component.DataComponentType;
@@ -56,6 +57,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -323,8 +325,13 @@ public class PlatHelper {
         throw new AssertionError();
     }
 
-    @ExpectPlatform
+    @Deprecated(forRemoval = true)
     public static void addServerReloadListener(PreparableReloadListener listener, ResourceLocation location) {
+        addServerReloadListener(provider -> listener, location);
+    }
+
+    @ExpectPlatform
+    public static void addServerReloadListener(Function<HolderLookup.Provider, PreparableReloadListener> listener, ResourceLocation location) {
         throw new AssertionError();
     }
 

@@ -8,6 +8,7 @@ import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.neoforge.MoonlightForge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.component.DataComponentType;
@@ -49,7 +50,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
@@ -71,6 +71,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class PlatHelperImpl {
@@ -136,7 +137,7 @@ public class PlatHelperImpl {
 
 
     public static boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-      return   state.isFlammable(level, pos, direction);
+        return state.isFlammable(level, pos, direction);
     }
 
     public static void onCaughtFire(BlockState state, Level level, BlockPos pos, Direction direction, @Nullable LivingEntity igniter) {
@@ -243,10 +244,10 @@ public class PlatHelperImpl {
 
     //maybe move these
 
-    public static void addServerReloadListener(PreparableReloadListener listener, ResourceLocation location) {
+    public static void addServerReloadListener(Function<HolderLookup.Provider, PreparableReloadListener> listener, ResourceLocation location) {
         Moonlight.assertInitPhase();
 
-        Consumer<AddReloadListenerEvent> eventConsumer = event -> event.addListener(listener);
+        Consumer<AddReloadListenerEvent> eventConsumer = event -> event.addListener(listener.apply(event.getRegistryAccess()));
         NeoForge.EVENT_BUS.addListener(eventConsumer);
     }
 

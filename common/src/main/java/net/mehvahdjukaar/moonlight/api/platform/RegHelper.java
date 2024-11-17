@@ -337,10 +337,12 @@ public class RegHelper {
         return register(name, type, Registries.ENTITY_TYPE);
     }
 
+    @Deprecated(forRemoval = true)
     public static void registerCompostable(ItemLike itemLike, float chance) {
         ComposterBlock.COMPOSTABLES.put(itemLike.asItem(), chance);
     }
 
+    @Deprecated(forRemoval = true)
     @ExpectPlatform //fabric
     public static void registerItemBurnTime(Item item, int burnTime) {
         throw new AssertionError();
