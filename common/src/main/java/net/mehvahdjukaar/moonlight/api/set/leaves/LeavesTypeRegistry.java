@@ -32,6 +32,9 @@ public class LeavesTypeRegistry extends BlockTypeRegistry<LeavesType> {
 
     public LeavesTypeRegistry() {
         super(LeavesType.class, "leaves_type");
+
+        LeavesType.CODEC = this.getCodec();
+        LeavesType.STREAM_CODEC = this.getStreamCodec();
     }
 
     @Override

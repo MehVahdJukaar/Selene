@@ -11,6 +11,7 @@ import java.util.Collection;
 
 
 // hack. dont use with shift
+@Deprecated(forRemoval = true)
 @InjectionPoint.AtCode(namespace = "moonlight", value = "INVOKE_UNRESTRICTED")
 public class InvokeUnrestricted extends BeforeInvoke {
 

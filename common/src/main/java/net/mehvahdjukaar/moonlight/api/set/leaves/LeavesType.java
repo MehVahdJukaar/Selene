@@ -9,6 +9,8 @@ import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -22,12 +24,8 @@ import java.util.function.Supplier;
 
 public class LeavesType extends BlockType {
 
-    public static final Codec<LeavesType> CODEC = ResourceLocation.CODEC.flatXmap(r -> {
-                LeavesType w = LeavesTypeRegistry.getValue(r);
-                if (w == null) return DataResult.error(() -> "No such leaves type: " + r);
-                return DataResult.success(w);
-            },
-            t -> DataResult.success(t.id));
+    public static Codec<LeavesType> CODEC;
+    public static StreamCodec<FriendlyByteBuf, LeavesType> STREAM_CODEC;
 
     public final Block leaves;
 

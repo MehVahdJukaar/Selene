@@ -97,6 +97,10 @@ public class MapRegistry<T> implements IdMap<T> , Codec<T> {
         return this.map.values();
     }
 
+    public T getValueOrDefault(ResourceLocation parse, T defaultType) {
+        return this.map.getOrDefault(parse, defaultType);
+    }
+
     public Set<Map.Entry<ResourceLocation, T>> getEntries() {
         return this.map.entrySet();
     }
@@ -152,6 +156,7 @@ public class MapRegistry<T> implements IdMap<T> , Codec<T> {
     public StreamCodec<FriendlyByteBuf, T> getStreamCodec() {
         return this.streamCodec;
     }
+
 
     private class StreamC implements StreamCodec<FriendlyByteBuf, T> {
         @Override

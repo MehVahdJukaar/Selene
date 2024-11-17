@@ -1,2 +1,1 @@
-- fixed fire block mixin not working correctly on forge
-- fixed fake server levels not firing level unload events when being cleared
+- added api to optionall parse and apply some of neoforge data maps (furnace fuel, composter, waxable and oxidisable)

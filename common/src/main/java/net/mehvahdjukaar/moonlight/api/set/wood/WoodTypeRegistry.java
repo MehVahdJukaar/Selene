@@ -27,6 +27,7 @@ public class WoodTypeRegistry extends BlockTypeRegistry<WoodType> {
         return INSTANCE.get(name);
     }
 
+    @Deprecated(forRemoval = true)
     public static WoodType fromNBT(String name) {
         return INSTANCE.getFromNBT(name);
     }
@@ -46,6 +47,9 @@ public class WoodTypeRegistry extends BlockTypeRegistry<WoodType> {
             b.addChild("stripped_log", Blocks.STRIPPED_BAMBOO_BLOCK);
             return Optional.of(b);
         });
+
+        WoodType.CODEC = this.getCodec();
+        WoodType.STREAM_CODEC = this.getStreamCodec();
     }
 
     @Override

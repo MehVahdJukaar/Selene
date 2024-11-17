@@ -2,13 +2,14 @@ package net.mehvahdjukaar.moonlight.api.set.wood;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.level.ItemLike;
@@ -26,12 +27,8 @@ import java.util.function.Supplier;
 
 public class WoodType extends BlockType {
 
-    public static final Codec<WoodType> CODEC = ResourceLocation.CODEC.flatXmap(r -> {
-                WoodType w = WoodTypeRegistry.getValue(r);
-                if (w == null) return DataResult.error(() -> "No such wood type: " + r);
-                return DataResult.success(w);
-            },
-            t -> DataResult.success(t.id));
+    public static Codec<WoodType> CODEC;
+    public static StreamCodec<FriendlyByteBuf, WoodType> STREAM_CODEC;
 
     public final Block planks;
     public final Block log;

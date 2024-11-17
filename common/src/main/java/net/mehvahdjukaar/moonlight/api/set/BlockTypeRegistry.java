@@ -1,10 +1,13 @@
 package net.mehvahdjukaar.moonlight.api.set;
 
-import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
+import net.mehvahdjukaar.moonlight.api.misc.MapRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.ItemLike;
@@ -14,20 +17,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class BlockTypeRegistry<T extends BlockType> {
+public abstract class BlockTypeRegistry<T extends BlockType>  {
 
     protected boolean frozen = false;
     private final String name;
     private final List<BlockType.SetFinder<T>> finders = new ArrayList<>();
     private final List<ResourceLocation> notInclude = new ArrayList<>();
     protected final List<T> builder = new ArrayList<>();
+    private final MapRegistry<T> valuesReg; //TODO: extend this instead
     private final Class<T> typeClass;
-    private Map<ResourceLocation, T> types = new LinkedHashMap<>();
     private final Object2ObjectOpenHashMap<Object, T> childrenToType = new Object2ObjectOpenHashMap<>();
 
     protected BlockTypeRegistry(Class<T> typeClass, String name) {
         this.typeClass = typeClass;
         this.name = name;
+        this.valuesReg = new MapRegistry<>(name);
     }
 
     public Class<T> getType() {
@@ -40,19 +44,28 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
      * @param name string resource location name of the type
      * @return wood type
      */
+    @Deprecated(forRemoval = true)
     public T getFromNBT(String name) {
-        return this.types.getOrDefault(ResourceLocation.parse(name), this.getDefaultType());
+        return valuesReg.getValueOrDefault(ResourceLocation.parse(name), this.getDefaultType());
     }
 
     @Nullable
     public T get(ResourceLocation res) {
-        return this.types.get(res);
+        return valuesReg.getValue(res);
+    }
+
+    public Codec<T> getCodec() {
+        return valuesReg;
+    }
+
+    public StreamCodec<FriendlyByteBuf, T> getStreamCodec() {
+        return valuesReg.getStreamCodec();
     }
 
     public abstract T getDefaultType();
 
     public Collection<T> getValues() {
-        return Collections.unmodifiableCollection(types.values());
+        return valuesReg.getValues();
     }
 
     public String typeName() {
@@ -110,19 +123,21 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
                 }
             });
         }
-        this.types = ImmutableMap.copyOf(linkedHashMap);
+        for (var e : linkedHashMap.entrySet()) {
+            valuesReg.register(e.getKey(), e.getValue());
+        }
         builder.clear();
         this.frozen = true;
     }
 
     @ApiStatus.Internal
     public void onBlockInit() {
-        this.types.values().forEach(BlockType::initializeChildrenBlocks);
+        this.getValues().forEach(BlockType::initializeChildrenBlocks);
     }
 
     @ApiStatus.Internal
     public void onItemInit() {
-        this.types.values().forEach(BlockType::initializeChildrenItems);
+        this.getValues().forEach(BlockType::initializeChildrenItems);
     }
 
     @ApiStatus.Internal
@@ -159,7 +174,7 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
     // we cant add items yet. item map has not been populated yet
     protected void mapObjectToType(Object itemLike, BlockType type) {
         this.childrenToType.put(itemLike, (T) type);
-        if(itemLike instanceof BlockItem bi){
+        if (itemLike instanceof BlockItem bi) {
             if (!this.childrenToType.containsKey(bi.getBlock()))
                 this.childrenToType.put(bi.getBlock(), (T) type);
         }
