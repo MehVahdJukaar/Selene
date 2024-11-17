@@ -17,6 +17,7 @@ import java.util.Map;
 /**
  * Used to parse objects with registry codecs
  */
+@Deprecated(forRemoval = true)
 public abstract class RegistryAccessJsonReloadListener extends SimpleJsonResourceReloadListener {
 
     private static final List<RegistryAccessJsonReloadListener> INSTANCES = new ArrayList<>();

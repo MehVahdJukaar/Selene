@@ -9,6 +9,7 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.registry.OxidizableBlocksRegistry;
+import net.mehvahdjukaar.moonlight.api.misc.RegistryAccessJsonReloadListener;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
@@ -22,11 +23,14 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
@@ -47,8 +51,8 @@ import java.util.function.Function;
 // bro totally unneeded lol
 public abstract class DataMapBridge<T, O> extends SimplePreparableReloadListener<List<JsonElement>> {
 
-    public static final Map<ResourceLocation, Function<HolderLookup.Provider, DataMapBridge<?, ?>>> FACTORIES = new HashMap<>();
-    private static final Map<ResourceLocation, DataMapBridge<?, ?>> SERVER_INSTANCES = new HashMap<>();
+    public static final Map<String, Function<HolderLookup.Provider, DataMapBridge<?, ?>>> FACTORIES = new HashMap<>();
+    private static final Map<String, DataMapBridge<?, ?>> SERVER_INSTANCES = new HashMap<>();
     private static final String ML_MARKER = "moonlight_parse_on_fabric";
 
 
@@ -60,8 +64,8 @@ public abstract class DataMapBridge<T, O> extends SimplePreparableReloadListener
         register(Waxables.WAXABLES, Waxables::new);
 
         for (var f : FACTORIES.entrySet()) {
-            ResourceLocation mapID = f.getKey();
-            ResourceLocation reloadID = Moonlight.res(mapID.getPath());
+            String mapID = f.getKey();
+            ResourceLocation reloadID = Moonlight.res(mapID);
             PlatHelper.addServerReloadListener(r -> {
                 DataMapBridge<?, ?> instance = f.getValue().apply(r);
                 SERVER_INSTANCES.put(mapID, instance);
@@ -72,27 +76,25 @@ public abstract class DataMapBridge<T, O> extends SimplePreparableReloadListener
 
     @ApiStatus.Internal
     public static void onDataSyncToPlayer(ServerPlayer player, boolean isJoined) {
-        if (isJoined) {
-            for (var entry : SERVER_INSTANCES.entrySet()) {
-                var map = entry.getValue();
-                NetworkHelper.sendToClientPlayer(player, new ClientBoundSyncDataMapsPacket(map));
-            }
+        for (var entry : SERVER_INSTANCES.entrySet()) {
+            var map = entry.getValue();
+            NetworkHelper.sendToClientPlayer(player, new ClientBoundSyncDataMapsPacket(map));
         }
     }
 
-    public static void register(ResourceLocation path, Function<HolderLookup.Provider, DataMapBridge<?, ?>> factory) {
+    public static void register(String path, Function<HolderLookup.Provider, DataMapBridge<?, ?>> factory) {
         FACTORIES.put(path, factory);
     }
 
 
     private static final Gson GSON = new Gson();
-    public final ResourceLocation path;
+    public final String path;
     private final HolderLookup.Provider registryAccess;
     public final Codec<Map<HolderSet<O>, T>> mapCodec;
     public final StreamCodec<RegistryFriendlyByteBuf, Map<HolderSet<O>, T>> streamCodec;
     public final Map<HolderSet<O>, T> map = new HashMap<>();
 
-    protected DataMapBridge(ResourceLocation path, HolderLookup.Provider registryAccess,
+    protected DataMapBridge(String path, HolderLookup.Provider registryAccess,
                             Codec<T> entryCodec, ResourceKey<? extends Registry<O>> reg) {
         this.path = path;
         this.registryAccess = registryAccess;
@@ -111,7 +113,11 @@ public abstract class DataMapBridge<T, O> extends SimplePreparableReloadListener
     @Override
     protected final List<JsonElement> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
         List<JsonElement> output = new ArrayList<>();
-        var list = resourceManager.getResourceStack(path);
+        var m = resourceManager.listResourceStacks(path, r->true);
+        var list = new ArrayList<Resource>();
+        for (var res : m.values()) {
+            list.addAll(res);
+        }
         for (var res : list) {
             try (Reader reader = res.openAsReader()) {
                 JsonElement jsonElement = GsonHelper.fromJson(GSON, reader, JsonElement.class);
@@ -159,7 +165,7 @@ public abstract class DataMapBridge<T, O> extends SimplePreparableReloadListener
 
 
     protected static class BurnTimes extends DataMapBridge<BurnTimes.FurnaceFuel, Item> {
-        protected static final ResourceLocation FUEL = ResourceLocation.tryParse("neoforge/data_maps/item/furnace_fuels.json");
+        protected static final String FUEL = "data_maps/item/furnace_fuels.json";
 
         protected BurnTimes(HolderLookup.Provider registryAccess) {
             super(FUEL, registryAccess, FurnaceFuel.CODEC, Registries.ITEM);
@@ -179,7 +185,7 @@ public abstract class DataMapBridge<T, O> extends SimplePreparableReloadListener
     }
 
     protected static class Compostables extends DataMapBridge<Compostables.Compostable, Item> {
-        protected static final ResourceLocation COMPOSTABLES = ResourceLocation.tryParse("neoforge/data_maps/item/compostables.json");
+        protected static final String COMPOSTABLES = "data_maps/item/compostables.json";
 
         protected Compostables(HolderLookup.Provider registryAccess) {
             super(COMPOSTABLES, registryAccess, Compostable.CODEC, Registries.ITEM);
@@ -205,7 +211,7 @@ public abstract class DataMapBridge<T, O> extends SimplePreparableReloadListener
     }
 
     protected static class Oxidisables extends DataMapBridge<Oxidisables.Oxidizable, Block> {
-        protected static final ResourceLocation OXIDISABLES = ResourceLocation.tryParse("neoforge/data_maps/block/oxidizables.json");
+        protected static final String OXIDISABLES = "data_maps/block/oxidizables.json";
 
         protected Oxidisables(HolderLookup.Provider registryAccess) {
             super(OXIDISABLES, registryAccess, Oxidizable.CODEC, Registries.BLOCK);
@@ -227,7 +233,7 @@ public abstract class DataMapBridge<T, O> extends SimplePreparableReloadListener
     }
 
     protected static class Waxables extends DataMapBridge<Waxables.Waxable, Block> {
-        protected static final ResourceLocation WAXABLES = ResourceLocation.tryParse("neoforge/data_maps/block/waxables.json");
+        protected static final String WAXABLES = "data_maps/block/waxables.json";
 
         protected Waxables(HolderLookup.Provider registryAccess) {
             super(WAXABLES, registryAccess, Waxable.CODEC, Registries.BLOCK);

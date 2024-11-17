@@ -18,14 +18,14 @@ public class ClientBoundSyncDataMapsPacket implements Message {
     }
 
     public ClientBoundSyncDataMapsPacket(RegistryFriendlyByteBuf buf) {
-        ResourceLocation path = buf.readResourceLocation();
+        String path = buf.readUtf();
         this.dataMapBridge = DataMapBridge.FACTORIES.get(path).apply(buf.registryAccess());
-
+        this.dataMapBridge.decode(buf);
     }
 
     @Override
     public void write(RegistryFriendlyByteBuf buf) {
-        buf.writeResourceLocation(this.dataMapBridge.path);
+        buf.writeUtf(this.dataMapBridge.path);
         this.dataMapBridge.encode(buf);
     }
 

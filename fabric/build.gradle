@@ -46,7 +46,7 @@ dependencies {
     //modRuntimeOnly("curse.maven:gardens-of-the-dead-683174:4784268")
     //modRuntimeOnly("curse.maven:architectury-api-419699:5137936")
 
-    modImplementation("maven.modrinth:flashback:0.11.0") // Get latest version from releases
+    modCompileOnly("maven.modrinth:flashback:0.11.0") // Get latest version from releases
 
     //modRuntimeOnly("curse.maven:terrablender-fabric-565956:5068219")
     //modRuntimeOnly("curse.maven:forge-config-api-port-fabric-547434:4583000")
