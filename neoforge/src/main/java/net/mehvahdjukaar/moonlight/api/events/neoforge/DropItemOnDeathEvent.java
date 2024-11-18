@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
+import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 
 public class DropItemOnDeathEvent extends Event implements IDropItemOnDeathEvent, ICancellableEvent {
     private final ItemStack itemStack;

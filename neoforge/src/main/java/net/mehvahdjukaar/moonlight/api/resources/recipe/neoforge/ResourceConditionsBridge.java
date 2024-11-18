@@ -3,8 +3,8 @@ package net.mehvahdjukaar.moonlight.api.resources.recipe.neoforge;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,7 +12,6 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.conditions.AndCondition;
 import net.neoforged.neoforge.common.conditions.ICondition;
@@ -24,7 +23,7 @@ import java.util.function.Function;
 public class ResourceConditionsBridge {
 
     private static final Codec<ICondition> REMAPPING_CODEC =
-            byNameCodecRemap(NeoForgeRegistries.CONDITION_SERIALIZERS, "fabric", "neoforge")
+            NeoForgeRegistries.CONDITION_SERIALIZERS.byNameCodec()
                     .dispatch("type", ICondition::codec, Function.identity());
     //we must use "type" key instead of "condition" that fabric uses as compound conditions do expect that
 
@@ -33,22 +32,12 @@ public class ResourceConditionsBridge {
             AndCondition::new);
 
 
-    private static <T> Codec<T> byNameCodecRemap(Registry<T> registry, String from, String to) {
-        return ResourceLocation.CODEC
-                .xmap(r -> ResourceLocation.fromNamespaceAndPath(r.getNamespace().replace(from, to),
-                        r.getPath()), Function.identity())
-                .comapFlatMap(
-                        arg -> registry.getOptional(arg)
-                                .map(DataResult::success)
-                                .orElseGet(() -> DataResult.error(() -> "Unknown registry key in " + registry.key() + ": " + arg)),
-                        registry::getKey
-                );
-    }
-
     public static boolean matchesForgeConditions(JsonObject obj, ICondition.IContext context, String conditionKey) {
         JsonElement conditionElement = obj.get(conditionKey);
         if (conditionElement != null) {
-            var newObj = replaceKeyInJsonRecursive(conditionElement, "condition", "type");
+            var newObj = replaceKeyInJsonRecursive(conditionElement,
+                    "condition", "type",
+                    "fabric", "neoforge");
             //very dumb incoming
             var c = SINGLE_OR_LIST.parse(JsonOps.INSTANCE, newObj);
             if (c.result().isPresent()) {
@@ -90,13 +79,14 @@ public class ResourceConditionsBridge {
         }
     }
 
-    private static JsonElement replaceKeyInJsonRecursive(JsonElement json, String from, String to) {
+    private static JsonElement replaceKeyInJsonRecursive(JsonElement json, String from, String to,
+                                                         String valueFrom, String valueTo) {
         if (json.isJsonObject()) {
             JsonObject newObj = new JsonObject();
 
             for (var entry : json.getAsJsonObject().entrySet()) {
                 String key = entry.getKey().equals(from) ? to : entry.getKey();
-                newObj.add(key, replaceKeyInJsonRecursive(entry.getValue(), from, to));
+                newObj.add(key, replaceKeyInJsonRecursive(entry.getValue(), from, to, valueFrom, valueTo));
             }
 
             return newObj;
@@ -104,10 +94,15 @@ public class ResourceConditionsBridge {
             JsonArray newArray = new JsonArray();
 
             for (var element : json.getAsJsonArray()) {
-                newArray.add(replaceKeyInJsonRecursive(element, from, to));
+                newArray.add(replaceKeyInJsonRecursive(element, from, to, valueFrom, valueTo));
             }
 
             return newArray;
+        } else if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
+            String value = json.getAsString();
+            if (value.contains(valueFrom)) {
+                return new JsonPrimitive(value.replace(valueFrom, valueTo));
+            }
         }
 
         return json; // Return the element itself if it's neither an object nor an array
