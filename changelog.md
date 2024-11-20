@@ -1,2 +1,1 @@
-- fixed fire block consumed event not working on forge
-- fixed fake server level not firing forge level unload event
+- Corrected **Better End**'s & **Better Nether**'s unique ID for _wood_ and _stripped_wood_ [related to Issue#689](https://github.com/MehVahdJukaar/WoodGood/issues/689)
