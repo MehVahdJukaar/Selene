@@ -197,8 +197,8 @@ public class RegHelperImpl {
     public static void registerItemBurnTime(Item item, int burnTime) {
     }
 
-    public static void registerBlockFlammability(Block item, int fireSpread, int flammability) {
-        ((FireBlock) Blocks.FIRE).setFlammable(item, fireSpread, flammability);
+    public static void registerBlockFlammability(Block item, int igniteOdds, int burnOdds) {
+        ((FireBlock) Blocks.FIRE).setFlammable(item, igniteOdds, burnOdds);
     }
 
     public static void addAttributeRegistration(Consumer<RegHelper.AttributeEvent> eventListener) {

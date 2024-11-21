@@ -187,8 +187,8 @@ public class RegHelperImpl {
         FuelRegistry.INSTANCE.add(item, burnTime);
     }
 
-    public static void registerBlockFlammability(Block item, int fireSpread, int flammability) {
-        FlammableBlockRegistry.getDefaultInstance().add(item, fireSpread, flammability);
+    public static void registerBlockFlammability(Block item, int igniteOddsSpread, int burnOdds) {
+        FlammableBlockRegistry.getDefaultInstance().add(item, burnOdds, igniteOddsSpread);
     }
 
     public static void registerVillagerTrades(VillagerProfession profession, int level, Consumer<List<VillagerTrades.ItemListing>> factories) {

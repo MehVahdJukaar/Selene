@@ -5,15 +5,22 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
+import net.mehvahdjukaar.moonlight.api.block.IFlammable;
+import net.mehvahdjukaar.moonlight.api.misc.fake_level.FakeLevelManager;
 import net.mehvahdjukaar.moonlight.api.platform.configs.fabric.FabricConfigHolder;
 import net.mehvahdjukaar.moonlight.api.platform.fabric.RegHelperImpl;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.moonlight.api.resources.recipe.fabric.ResourceConditionsBridge;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
-import net.mehvahdjukaar.moonlight.api.misc.fake_level.FakeLevelManager;
 import net.mehvahdjukaar.moonlight.core.network.ClientBoundSendLoginPacket;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.EmptyBlockGetter;
+import net.minecraft.world.level.block.Block;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -51,6 +58,7 @@ public class MoonlightFabric implements ModInitializer, DedicatedServerModInitia
     // we can register extra stuff here that depends on those before client and server common setup is fired
     static void commonSetup() {
 
+        registerFlammableBlocks();
 
         RegHelperImpl.lateRegisterEntries();
         FabricConfigHolder.loadAllConfigs();
@@ -63,6 +71,19 @@ public class MoonlightFabric implements ModInitializer, DedicatedServerModInitia
         PRE_SETUP_WORK.clear();
         COMMON_SETUP_WORK.clear();
         AFTER_SETUP_WORK.clear();
+    }
+
+    private static void registerFlammableBlocks() {
+        EmptyBlockGetter level = EmptyBlockGetter.INSTANCE;
+        var reg = FlammableBlockRegistry.getDefaultInstance();
+        for (Block b : BuiltInRegistries.BLOCK) {
+            if (b instanceof IFlammable f) {
+                int flammability = f.getFlammability(b.defaultBlockState(), level, BlockPos.ZERO, Direction.UP);
+                int spreadSpeed = f.getFireSpreadSpeed(b.defaultBlockState(), level, BlockPos.ZERO, Direction.UP);
+
+                reg.add(b, flammability, spreadSpeed);
+            }
+        }
     }
 
     @Override

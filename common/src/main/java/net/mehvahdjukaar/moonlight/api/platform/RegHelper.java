@@ -348,8 +348,9 @@ public class RegHelper {
         throw new AssertionError();
     }
 
-    @ExpectPlatform //Works on both. On forge, however, consider using block method overrides
-    public static void registerBlockFlammability(Block item, int fireSpread, int flammability) {
+    @Deprecated
+    @ExpectPlatform
+    public static void registerBlockFlammability(Block item, int igniteOdds, int burnOdds) {
         throw new AssertionError();
     }
 
