@@ -1,1 +1,1 @@
-removed invoke unrestricted custom mixin injection type
+added compat for net ease mod
