@@ -1,2 +1,1 @@
-- fixed fire block consumed event not working on forge
-- fixed fake server level not firing forge level unload event
+removed invoke unrestricted custom mixin injection type
