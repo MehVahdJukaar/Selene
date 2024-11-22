@@ -18,7 +18,7 @@ public abstract class ClientPacketListenerMixin {
 
     @WrapOperation(method = "handleMapItemData",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/MapRenderer;update(Lnet/minecraft/world/level/saveddata/maps/MapId;Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;)V"))
-    private void handleExtraData(MapRenderer instance, MapId mapId, MapItemSavedData mapData, Operation<Void> operation,
+    private void ml$handleExtraData(MapRenderer instance, MapId mapId, MapItemSavedData mapData, Operation<Void> operation,
                                  @Local(argsOnly = true) ClientboundMapItemDataPacket packet) {
         IMapDataPacketExtension ext = (IMapDataPacketExtension) (Object) packet;
         var customServerData = ext.moonlight$getDirtyCustomData();
