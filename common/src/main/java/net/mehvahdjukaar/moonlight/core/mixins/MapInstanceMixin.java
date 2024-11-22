@@ -24,7 +24,7 @@ public abstract class MapInstanceMixin {
             require = 0,
             at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/texture/DynamicTexture;upload()V"))
-    public void forceMipMap(DynamicTexture instance, Operation<Void> op) {
+    public void ml$forceMipMap(DynamicTexture instance, Operation<Void> op) {
         MoonlightClient.setMipMap(true);
         op.call(instance);
         MoonlightClient.setMipMap(false);
@@ -39,7 +39,7 @@ public abstract class MapInstanceMixin {
                     remap = false
             )}
     )
-    private DynamicTexture forceMipMapOn(int width, int height, boolean useCalloc, Operation<DynamicTexture> original) {
+    private DynamicTexture ml$forceMipMapOn(int width, int height, boolean useCalloc, Operation<DynamicTexture> original) {
         MoonlightClient.setMipMap(true);
         var t = original.call(width, height, useCalloc);
         MoonlightClient.setMipMap(false);
