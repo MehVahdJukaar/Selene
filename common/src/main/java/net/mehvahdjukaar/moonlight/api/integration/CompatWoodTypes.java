@@ -17,6 +17,79 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(new ResourceLocation("domum_ornamentum:cactus_extra"),
                 new ResourceLocation("domum_ornamentum:cactus_extra"), new ResourceLocation("cactus")));
 
+        // Better End
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "end_lotus", "end_lotus_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "jellyshroom", "jellyshroom_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "lucernia", "lucernia_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "mossy_glowshroom", "mossy_glowshroom_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "pythadendron", "pythadendron_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "dragon_tree", "dragon_tree_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "helix_tree", "helix_tree_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "lacugrove", "lacugrove_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "tenanea", "tenanea_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betterend", "umbrella_tree", "umbrella_tree_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+
+        // Better Nether
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betternether", "anchor_tree", "anchor_tree_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betternether", "mushroom_fir", "mushroom_fir_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betternether", "nether_sakura", "nether_sakura_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betternether", "rubeus", "rubeus_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betternether", "stalagnate", "stalagnate_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betternether", "wart", "wart_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "betternether", "willow", "willow_planks",
+                        "log", "bark",
+                        "log", "stripped_bark"));
+
         // Jaden's Nether Expansion
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
                 woodTypeFinder(true, "netherexp", "cerebrage_claret", "claret_planks",
@@ -456,7 +529,7 @@ public class CompatWoodTypes {
     @SuppressWarnings("SameParameterValue")
     private static WoodType.@NotNull Finder woodTypeFinder(boolean nameAlt, String modId, String nameWood, String planks,
                                                        String suffixLog, String suffixWood, String suffixStrippedLog, String suffixStrippedWood) {
-                                                                                                // stripped_claret_stem   // stripped_claret_hyphae
+
         // Creating Ids of log & stripped_log
         String prefixLog = (suffixStrippedLog.contains("stripped")) ? "" : "stripped_";
         String log = (suffixLog.isBlank()) ? nameWood : nameWood +"_"+ suffixLog;
