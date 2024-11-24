@@ -1,1 +1,1 @@
-added compat for net ease mod
+fixed some possible concurrency issues with the mod own data structures
