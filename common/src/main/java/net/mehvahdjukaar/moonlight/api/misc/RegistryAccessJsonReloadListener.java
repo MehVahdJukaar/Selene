@@ -11,6 +11,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ import java.util.Map;
 @Deprecated(forRemoval = true)
 public abstract class RegistryAccessJsonReloadListener extends SimpleJsonResourceReloadListener {
 
-    private static final List<RegistryAccessJsonReloadListener> INSTANCES = new ArrayList<>();
+    private static final List<RegistryAccessJsonReloadListener> INSTANCES = Collections.synchronizedList(new ArrayList<>());;
 
     @ApiStatus.Internal
     public static void runReloads(RegistryAccess access){

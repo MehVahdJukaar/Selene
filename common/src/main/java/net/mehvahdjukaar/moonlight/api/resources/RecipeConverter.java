@@ -14,11 +14,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
+@Deprecated(forRemoval = true)
 public class RecipeConverter {
 
     private static final Map<Class<?>, RecipeConverter> CONVERTERS = new HashMap<>();
 
-    private List<Field> fieldToConvert = new ArrayList<>();
+    private final List<Field> fieldToConvert;
 
     private RecipeConverter(List<Field> fields) {
         this.fieldToConvert = fields;

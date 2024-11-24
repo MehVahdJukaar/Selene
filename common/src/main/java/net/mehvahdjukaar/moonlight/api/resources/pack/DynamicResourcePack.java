@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 public abstract class DynamicResourcePack implements PackResources {
-    private static final List<DynamicResourcePack> INSTANCES = new ArrayList<>();
+    private static final List<DynamicResourcePack> INSTANCES = Collections.synchronizedList(new ArrayList<>());
 
     @ApiStatus.Internal
     public static void clearAfterReload(PackType targetType) {

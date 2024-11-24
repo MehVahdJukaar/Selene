@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -26,7 +27,7 @@ public class AdditionalItemPlacementsAPI {
     private static boolean isAfterRegistration = false;
     private static WeakReference<Map<Block, Item>> blockToItemsMap = new WeakReference<>(null);
 
-    private static final List<Consumer<Event>> registrationListeners = new ArrayList<>();
+    private static final List<Consumer<Event>> REGISTRATION_LISTENERS = Collections.synchronizedList(new ArrayList<>());;
 
     private static final List<Pair<Supplier<? extends AdditionalItemPlacement>, Supplier<? extends Item>>> PLACEMENTS = new ArrayList<>();
     private static final List<Pair<Function<Item, ? extends AdditionalItemPlacement>, Predicate<Item>>> PLACEMENTS_GENERIC = new ArrayList<>();
@@ -36,7 +37,7 @@ public class AdditionalItemPlacementsAPI {
      */
     public static void addRegistration(Consumer<Event> eventConsumer){
         Moonlight.assertInitPhase();
-        registrationListeners.add(eventConsumer);
+        REGISTRATION_LISTENERS.add(eventConsumer);
     }
 
     @Nullable
@@ -75,7 +76,7 @@ public class AdditionalItemPlacementsAPI {
                 }
             }
             Event ev = (target, instance) -> PLACEMENTS.add(Pair.of(() -> instance, () -> target));
-            for (var l : registrationListeners) {
+            for (var l : REGISTRATION_LISTENERS) {
                 l.accept(ev);
             }
             PLACEMENTS_GENERIC.clear();
