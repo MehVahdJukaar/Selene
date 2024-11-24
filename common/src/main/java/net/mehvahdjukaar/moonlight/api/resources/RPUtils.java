@@ -236,7 +236,12 @@ public class RPUtils {
         return Recipe.CODEC.encodeStart(JsonOps.INSTANCE, recipe).getOrThrow();
     }
 
+    @Deprecated(forRemoval = true)
     public static <T extends BlockType> RecipeHolder<?> makeSimilarRecipe(Recipe<?> original, T originalMat, T destinationMat, String baseID) {
+        return makeSimilarRecipe(original, originalMat, destinationMat, ResourceLocation.parse(baseID));
+    }
+
+    public static <T extends BlockType> RecipeHolder<?> makeSimilarRecipe(Recipe<?> original, T originalMat, T destinationMat, ResourceLocation baseID) {
         return RecipeTemplate.makeSimilarRecipe(original, originalMat, destinationMat, baseID);
     }
 

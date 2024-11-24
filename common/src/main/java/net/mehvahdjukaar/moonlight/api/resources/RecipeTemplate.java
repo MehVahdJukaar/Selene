@@ -32,14 +32,22 @@ public class RecipeTemplate {
         R create(String group, CraftingBookCategory category, ItemStack result, NonNullList<Ingredient> ingredients);
     }
 
+    @Deprecated(forRemoval = true)
     public static <T extends BlockType, R extends Recipe<?>> RecipeHolder<?> makeSimilarRecipe(R original, T originalMat,
-                                                                                               T destinationMat, String baseID) {
+                                                                                               T destinationMat,
+                                                                                               String baseID) {
+        return makeSimilarRecipe(original, originalMat, destinationMat, ResourceLocation.parse(baseID));
+    }
+
+    public static <T extends BlockType, R extends Recipe<?>> RecipeHolder<?> makeSimilarRecipe(R original, T originalMat,
+                                                                                               T destinationMat,
+                                                                                               ResourceLocation baseID) {
         var clazz = original.getClass();
         var remapper = REMAPPERS.get(clazz);
         if (remapper == null) {
             throw new UnsupportedOperationException("Recipe class " + clazz + " not supported. You must register it using RecipeTemplate.register()");
         }
-        ResourceLocation newId = ResourceLocation.parse(baseID + "/" + destinationMat.getAppendableId());
+        ResourceLocation newId = baseID.withPath(p -> p + "/" + destinationMat.getAppendableId());
 
         var remapped = remapper.apply(original, (stack) -> convertItemStack(stack, originalMat, destinationMat));
 
