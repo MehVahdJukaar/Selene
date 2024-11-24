@@ -1,0 +1,22 @@
+{
+  "color": "#0",
+  "containers": [
+    {
+      "filled": [
+        "minecraft:ominous_bottle"
+      ],
+      "empty": "minecraft:glass_bottle",
+      "capacity": "BOTTLE"
+    }
+  ],
+  "preserved_components_from_item": [
+    "ominous_bottle_amplifier"
+  ],
+  "food": {
+    "divider": "BOTTLE",
+    "item": "minecraft:ominous_bottle"
+  },
+  "flowing_texture": "moonlight:block/soft_fluids/potion_flow",
+  "still_texture": "moonlight:block/soft_fluids/milk_liquid",
+  "translation_key": "item.minecraft.ominous_bottle"
+}

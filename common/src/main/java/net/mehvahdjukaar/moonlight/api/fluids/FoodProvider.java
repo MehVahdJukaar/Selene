@@ -23,10 +23,15 @@ import java.util.function.Consumer;
 
 public class FoodProvider {
 
-    public static final Codec<FoodProvider> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
+    private static final Codec<FoodProvider> CODEC_FULL = RecordCodecBuilder.create((instance) -> instance.group(
             Utils.optionalRegistryCodec(BuiltInRegistries.ITEM, Items.AIR).fieldOf("item").forGetter(f -> f.foodItem),
             SoftFluid.Capacity.INT_CODEC.optionalFieldOf("divider", 1).forGetter(f -> f.divider)
     ).apply(instance, FoodProvider::create));
+
+    private static final Codec<FoodProvider> CODEC_SIMPLE = Utils.optionalRegistryCodec(BuiltInRegistries.ITEM, Items.AIR)
+            .xmap(a -> new FoodProvider(a, 1), FoodProvider::getFoodItem);
+
+    public static final Codec<FoodProvider> CODEC = Codec.withAlternative(CODEC_FULL, CODEC_SIMPLE);
 
     public static final FoodProvider EMPTY = new FoodProvider(Items.AIR, 1);
 
