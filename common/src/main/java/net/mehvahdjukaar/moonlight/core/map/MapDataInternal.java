@@ -194,8 +194,8 @@ public class MapDataInternal {
 
     //dynamic markers
 
-    private static final List<TriFunction<Player, Integer, MapItemSavedData, Set<MapBlockMarker<?>>>> DYNAMIC_SERVER = new ArrayList<>();
-    private static final List<BiFunction<Integer, MapItemSavedData, Set<MapBlockMarker<?>>>> DYNAMIC_CLIENT = new ArrayList<>();
+    private static final List<TriFunction<Player, Integer, MapItemSavedData, Set<MapBlockMarker<?>>>> DYNAMIC_SERVER = Collections.synchronizedList(new ArrayList<>());;
+    private static final List<BiFunction<Integer, MapItemSavedData, Set<MapBlockMarker<?>>>> DYNAMIC_CLIENT = Collections.synchronizedList(new ArrayList<>());;
 
 
     public static void addDynamicClientMarkersEvent(BiFunction<Integer, MapItemSavedData, Set<MapBlockMarker<?>>> event) {

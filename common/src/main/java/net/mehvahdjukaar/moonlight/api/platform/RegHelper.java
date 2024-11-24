@@ -319,7 +319,7 @@ public class RegHelper {
         throw new AssertionError();
     }
 
-    private static final List<ResourceLocation> DEFAULT_AFTER_ENTRIES = java.util.List.of(CreativeModeTabs.SPAWN_EGGS.location());
+    private static final List<ResourceLocation> DEFAULT_AFTER_ENTRIES = List.of(CreativeModeTabs.SPAWN_EGGS.location());
 
     public static RegSupplier<CreativeModeTab> registerCreativeModeTab(ResourceLocation name, Consumer<CreativeModeTab.Builder> configurator) {
         return registerCreativeModeTab(name, false, configurator);
