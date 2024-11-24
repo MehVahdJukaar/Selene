@@ -52,10 +52,7 @@ import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
@@ -261,7 +258,7 @@ public class ClientHelperImpl {
         }
     }
 
-    public static final List<Consumer<ClientHelper.ShaderEvent>> SHADER_REGISTRATIONS = new ArrayList<>();
+    public static final List<Consumer<ClientHelper.ShaderEvent>> SHADER_REGISTRATIONS = Collections.synchronizedList(new ArrayList<>());;
 
     public static void addShaderRegistration(Consumer<ClientHelper.ShaderEvent> eventListener) {
         Moonlight.assertInitPhase();
