@@ -1,1 +1,2 @@
-- added api to optionall parse and apply some of neoforge data maps (furnace fuel, composter, waxable and oxidisable)
+- fixed some concurrency issues with mod own data structures
+- improved recipe template methods
