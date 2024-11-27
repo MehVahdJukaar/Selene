@@ -1,1 +1,1 @@
-- Corrected **Better End**'s & **Better Nether**'s unique ID for _wood_ and _stripped_wood_ [related to Issue#689](https://github.com/MehVahdJukaar/WoodGood/issues/689)
+- Corrected stripped_log ID from **Better End**'s & **Better Nether**
