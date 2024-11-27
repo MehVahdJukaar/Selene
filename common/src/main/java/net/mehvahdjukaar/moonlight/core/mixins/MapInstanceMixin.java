@@ -24,38 +24,35 @@ public abstract class MapInstanceMixin {
             require = 0,
             at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/texture/DynamicTexture;upload()V"))
-    public void forceMipMap(DynamicTexture instance, Operation<Void> op) {
+    public void ml$forceMipMap(DynamicTexture instance, Operation<Void> op) {
         MoonlightClient.setMipMap(true);
         op.call(instance);
         MoonlightClient.setMipMap(false);
     }
 
-    @Inject(
+    @WrapOperation(
             method = {"<init>"},
             require = 0,
             at = {@At(
-                    value = "moonlight:INVOKE_UNRESTRICTED",
-                    target = "Ljava/lang/Object;<init>()V",
+                    value = "NEW",
+                    target ="(IIZ)Lnet/minecraft/client/renderer/texture/DynamicTexture;",
                     remap = false
             )}
     )
-    private void forceMipMapOn(MapRenderer arg, int i, MapItemSavedData arg2, CallbackInfo ci) {
+    private DynamicTexture ml$forceMipMapOn(int width, int height, boolean useCalloc, Operation<DynamicTexture> original) {
         MoonlightClient.setMipMap(true);
-    }
-
-    @Inject(method = "<init>",
-            require = 0,
-            at = @At("RETURN"))
-    public void forceMipMapOff(MapRenderer r, int pId, MapItemSavedData pData, CallbackInfo ci) {
+        var t = original.call(width, height, useCalloc);
         MoonlightClient.setMipMap(false);
+        return t;
     }
 
     @WrapOperation(method = "<init>",
             require = 0,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;text(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/RenderType;"))
-    private RenderType getTextMipMap(ResourceLocation pLocation, Operation<RenderType> op) {
+    private RenderType ml$getTextMipMap(ResourceLocation pLocation, Operation<RenderType> op) {
         if (ClientConfigs.MAPS_MIPMAP.get() != 0) {
             return RenderUtil.getTextMipmapRenderType(pLocation);
         } else return op.call(pLocation);
     }
+
 }

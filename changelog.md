@@ -1,1 +1,1 @@
-- Corrected stripped_log ID from **Better End**'s & **Better Nether**
+fixed some possible concurrency issues with the mod own data structures

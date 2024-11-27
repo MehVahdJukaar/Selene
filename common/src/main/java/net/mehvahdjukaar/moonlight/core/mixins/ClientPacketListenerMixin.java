@@ -16,10 +16,10 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPacketListenerMixin {
 
-    @WrapOperation(method = "handleMapItemData",
+    @WrapOperation(method = {"handleMapItemData", "handleMapItemDataOld"}, // handleMapItemDataOld from NetEase MC 1.20.1
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/MapRenderer;update(ILnet/minecraft/world/level/saveddata/maps/MapItemSavedData;)V"))
-    private void handleExtraData(MapRenderer instance, int mapId, MapItemSavedData mapData, Operation<Void> operation,
-                                 @Local ClientboundMapItemDataPacket packet) {
+    private void ml$handleExtraData(MapRenderer instance, int mapId, MapItemSavedData mapData, Operation<Void> operation,
+                                 @Local(argsOnly = true) ClientboundMapItemDataPacket packet) {
         IMapDataPacketExtension ext = (IMapDataPacketExtension) packet;
         CompoundTag customServerData = ext.moonlight$getCustomMapDataTag();
         boolean updateTexture = ext.moonlight$getColorPatch() != null;
