@@ -114,7 +114,6 @@ public abstract class BlockTypeSwapIngredient<T extends BlockType> {
                 }
             };
 
-
     private static @NotNull MapCodec<BlockTypeSwapIngredient<?>> makeCodec(boolean nonEmpty) {
         return new MapCodec<>() {
             @Override

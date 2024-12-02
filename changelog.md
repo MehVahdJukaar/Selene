@@ -1,2 +1,4 @@
 - fixed some concurrency issues with mod own data structures
 - improved recipe template methods
+- Recipe conversion code now allows converting recipes that use special ingredients and ingredients with tags
+- fixed an issue with custom post shaders on fabric not working

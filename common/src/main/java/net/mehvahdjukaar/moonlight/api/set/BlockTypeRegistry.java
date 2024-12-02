@@ -181,7 +181,16 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
 
     @Nullable
     public T getBlockTypeOf(ItemLike itemLike) {
-        return childrenToType.getOrDefault(itemLike, null);
+        //we must check items and blocks correctly here since map might just contain blocks or items
+        var t = childrenToType.get(itemLike);
+        if (t != null) return t;
+        if (itemLike instanceof BlockItem bi) {
+            return childrenToType.get(bi.getBlock());
+        }
+        if (itemLike instanceof Block b) {
+            return childrenToType.get(b.asItem());
+        }
+        return null;
     }
 
     // we cant add items yet. item map has not been populated yet
