@@ -45,6 +45,10 @@ public abstract class BlockTypeSwapIngredient<T extends BlockType> {
         this.registry = reg;
     }
 
+    public Ingredient getInner() {
+        return inner;
+    }
+
     public boolean test(ItemStack stack) {
         if (stack != null) {
             for (ItemStack itemStack : this.getMatchingStacks()) {
@@ -56,27 +60,30 @@ public abstract class BlockTypeSwapIngredient<T extends BlockType> {
         return false;
     }
 
-    public List<ItemStack> getMatchingStacks() {
-        if (this.items == null) {
-            var original = this.inner.getItems();
-            List<ItemStack> newItems = new ArrayList<>();
-            boolean success = false;
-            for (ItemStack it : this.items) {
-                var type = this.registry.getBlockTypeOf(it.getItem());
-                if (type != this.fromType) {
-                    break;
-                } else {
-                    var newItem = BlockType.changeItemType(it.getItem(), this.fromType, this.toType);
-                    if (newItem != null) {
-                        newItems.add(new ItemStack(newItem));
-                        success = true;
-                    }
+    public final List<ItemStack> convertItems(List<ItemStack> toConvert){
+        List<ItemStack> newItems = new ArrayList<>();
+        boolean success = false;
+        for (ItemStack it : toConvert) {
+            var type = this.registry.getBlockTypeOf(it.getItem());
+            if (type != this.fromType) {
+                break;
+            } else {
+                var newItem = BlockType.changeItemType(it.getItem(), this.fromType, this.toType);
+                if (newItem != null) {
+                    newItems.add(it.transmuteCopy(newItem));
+                    success = true;
                 }
             }
-            if (!success) {
-                newItems.addAll(Arrays.stream(original).toList());
-            }
-            this.items = newItems;
+        }
+        if (!success) {
+            newItems.addAll(toConvert);
+        }
+        return newItems;
+    }
+
+    public List<ItemStack> getMatchingStacks() {
+        if (this.items == null) {
+            this.items = convertItems(Arrays.asList(this.inner.getItems()));
         }
         return this.items;
     }
