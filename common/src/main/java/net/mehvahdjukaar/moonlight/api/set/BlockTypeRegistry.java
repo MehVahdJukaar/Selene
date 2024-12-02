@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.moonlight.api.set;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
 import net.mehvahdjukaar.moonlight.api.misc.MapRegistry;
@@ -19,10 +18,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class BlockTypeRegistry<T extends BlockType>  {
+public abstract class BlockTypeRegistry<T extends BlockType> {
 
-    public static Codec<BlockTypeRegistry<?>> getRegistryCodec(){
+    public static Codec<BlockTypeRegistry<?>> getRegistryCodec() {
         return BlockSetInternal.REGISTRIES_BY_NAME;
+    }
+
+    public static StreamCodec<FriendlyByteBuf, BlockTypeRegistry<?>> getRegistryStreamCodec() {
+        return BlockSetInternal.REGISTRIES_BY_NAME.getStreamCodec();
     }
 
     protected boolean frozen = false;
@@ -58,6 +61,10 @@ public abstract class BlockTypeRegistry<T extends BlockType>  {
     @Nullable
     public T get(ResourceLocation res) {
         return valuesReg.getValue(res);
+    }
+
+    public ResourceLocation getKey(T input) {
+        return valuesReg.getKey(input);
     }
 
     public Codec<T> getCodec() {
@@ -185,4 +192,6 @@ public abstract class BlockTypeRegistry<T extends BlockType>  {
                 this.childrenToType.put(bi.getBlock(), (T) type);
         }
     }
+
+
 }

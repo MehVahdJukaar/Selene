@@ -11,6 +11,7 @@ import net.mehvahdjukaar.moonlight.api.misc.fake_level.FakeLevelManager;
 import net.mehvahdjukaar.moonlight.api.platform.configs.fabric.FabricConfigHolder;
 import net.mehvahdjukaar.moonlight.api.platform.fabric.RegHelperImpl;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
+import net.mehvahdjukaar.moonlight.api.resources.recipe.fabric.BlockTypeSwapIngredientImpl;
 import net.mehvahdjukaar.moonlight.api.resources.recipe.fabric.ResourceConditionsBridge;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
@@ -51,6 +52,7 @@ public class MoonlightFabric implements ModInitializer, DedicatedServerModInitia
 
         ResourceConditionsBridge.init();
         DataMapBridge.init();
+        BlockTypeSwapIngredientImpl.register();
 
     }
 

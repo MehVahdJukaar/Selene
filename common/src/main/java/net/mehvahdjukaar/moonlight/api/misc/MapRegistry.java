@@ -6,6 +6,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import net.minecraft.core.DefaultedMappedRegistry;
@@ -17,6 +18,8 @@ import net.minecraft.network.VarInt;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +27,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class MapRegistry<T> implements IdMap<T> , Codec<T> {
-    private final StreamCodec<FriendlyByteBuf, T> streamCodec = new StreamC();
+    private final StreamCodec<FriendlyByteBuf, T> streamCodec;
 
     private final String name;
 
@@ -38,6 +41,8 @@ public class MapRegistry<T> implements IdMap<T> , Codec<T> {
         this.idToT = Lists.newArrayListWithExpectedSize(32);
         this.tToId = new Reference2IntOpenHashMap<>(32);
         this.tToId.defaultReturnValue(-1);
+        this.streamCodec = new StreamC();
+
     }
 
     public static <B> CodecMapRegistry<B> ofCodec(String name) {

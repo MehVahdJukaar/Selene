@@ -12,10 +12,10 @@ public class CompatWoodTypes {
     public static void init() {
 
         // Domum Oranmentum
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(new ResourceLocation("domum_ornamentum:cactus"),
-                new ResourceLocation("domum_ornamentum:green_cactus_extra"), new ResourceLocation("cactus")));
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(new ResourceLocation("domum_ornamentum:cactus_extra"),
-                new ResourceLocation("domum_ornamentum:cactus_extra"), new ResourceLocation("cactus")));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(ResourceLocation.parse("domum_ornamentum:cactus"),
+                ResourceLocation.parse("domum_ornamentum:green_cactus_extra"), ResourceLocation.parse("cactus")));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(ResourceLocation.parse("domum_ornamentum:cactus_extra"),
+                ResourceLocation.parse("domum_ornamentum:cactus_extra"), ResourceLocation.parse("cactus")));
 
         // Better End
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
@@ -209,25 +209,25 @@ public class CompatWoodTypes {
         var floweringAzalea = WoodType.Finder.simple(
                 "ecologics", "flowering_azalea", "flowering_azalea_planks", "flowering_azalea_log");
         floweringAzalea.addChild("stripped_log", "stripped_azalea_log");
-        floweringAzalea.addChild("leaves", new ResourceLocation("minecraft:flowering_azalea_leaves"));
+        floweringAzalea.addChild("leaves", ResourceLocation.parse("minecraft:flowering_azalea_leaves"));
         BlockSetAPI.addBlockTypeFinder(WoodType.class, floweringAzalea);
 
         var azalea = WoodType.Finder.simple(
                 "ecologics", "azalea", "azalea_planks", "azalea_log");
-        azalea.addChild("leaves", new ResourceLocation("minecraft:azalea_leaves"));
+        azalea.addChild("leaves", ResourceLocation.parse("minecraft:azalea_leaves"));
         BlockSetAPI.addBlockTypeFinder(WoodType.class, azalea);
 
         // Quark
         var quarkAzalea = WoodType.Finder.simple(
                 "quark", "azalea", "azalea_planks", "azalea_log");
-        quarkAzalea.addChild("leaves", new ResourceLocation("minecraft:azalea_leaves"));
+        quarkAzalea.addChild("leaves", ResourceLocation.parse("minecraft:azalea_leaves"));
         BlockSetAPI.addBlockTypeFinder(WoodType.class, quarkAzalea);
 
 
 // LEAVES
         // Ecologics
         var coconut = LeavesType.Finder.simple("ecologics", "coconut", "coconut_leaves", "ecologics:coconut");
-        coconut.addChild("sapling", new ResourceLocation("ecologics:coconut_seedling"));
+        coconut.addChild("sapling", ResourceLocation.parse("ecologics:coconut_seedling"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, coconut);
 
         // Ars Nouveau
@@ -544,19 +544,19 @@ public class CompatWoodTypes {
 
         WoodType.Finder wf;
         if (planks.contains(":")) // some addons like ars_elemental are using ars_nouveau's planks
-            wf = WoodType.Finder.simple(new ResourceLocation(modId, nameWood), new ResourceLocation(planks), new ResourceLocation(modId, log));
+            wf = WoodType.Finder.simple(ResourceLocation.fromNamespaceAndPath(modId, nameWood), ResourceLocation.parse(planks), ResourceLocation.fromNamespaceAndPath(modId, log));
         else
             wf = WoodType.Finder.simple(modId, nameWood, planks, log);
 
         // WoodType.Finder has a null check for below, so don't worry about it
         wf.addChild("wood", wood);
         if (suffixStrippedLog.contains(":"))
-            wf.addChild("stripped_log", new ResourceLocation(suffixStrippedLog));
+            wf.addChild("stripped_log", ResourceLocation.parse(suffixStrippedLog));
         else
             wf.addChild("stripped_log", stripped_log);
 
         if (suffixStrippedWood.contains(":"))
-            wf.addChild("stripped_wood", new ResourceLocation(suffixStrippedWood));
+            wf.addChild("stripped_wood", ResourceLocation.parse(suffixStrippedWood));
         else
             wf.addChild("stripped_wood", stripped_wood);
 

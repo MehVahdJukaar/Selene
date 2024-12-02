@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.moonlight.core.set;
 
 import com.google.common.base.Stopwatch;
+import com.mojang.serialization.*;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
@@ -10,15 +11,13 @@ import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public class BlockSetInternal {
@@ -121,4 +120,41 @@ public class BlockSetInternal {
     public static BlockTypeRegistry<?> getByName(String name) {
         return REGISTRIES_BY_NAME.getValue(name);
     }
+
+
+    //very dumb
+    // experimental. Returns first block type in a map codec
+    public static MapCodec<BlockType> createGenericCodec() {
+        return new MapCodec<BlockType>() {
+            @Override
+            public <T> Stream<T> keys(DynamicOps<T> ops) {
+                return REGISTRIES_BY_NAME.keySet().stream().map(ResourceLocation::toString).map(ops::createString);
+            }
+
+            @Override
+            public <T> DataResult<BlockType> decode(DynamicOps<T> ops, MapLike<T> input) {
+                for (var e : input.entries().toList()) {
+                    T keyStr = e.getFirst();
+                    T valueStr = e.getSecond();
+                    var registry = REGISTRIES_BY_NAME.decode(ops, keyStr).getOrThrow().getFirst();
+                    var value = registry.getCodec().decode(ops, valueStr).getOrThrow();
+                    return DataResult.success(value.getFirst());
+                }
+                return DataResult.error(() -> "No block type found");
+            }
+
+            @Override
+            public <T> RecordBuilder<T> encode(BlockType input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+                BlockTypeRegistry<?> registry = input.getRegistry();
+                ResourceLocation key = REGISTRIES_BY_NAME.getKey(registry);
+                if (key != null) {
+                    Codec<BlockType> codec = (Codec<BlockType>) registry.getCodec();
+                    return prefix.add(ops.createString(key.toString()),
+                            codec.encodeStart(ops, input));
+                }
+                return prefix;
+            }
+        };
+    }
+
 }
