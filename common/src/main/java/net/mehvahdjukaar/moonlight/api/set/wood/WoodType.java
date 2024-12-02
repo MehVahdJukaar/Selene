@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CeilingHangingSignBlock;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -174,6 +175,7 @@ public class WoodType extends BlockType {
         this.addChild("hanging_sign", this.findRelatedEntry("hanging_sign", BuiltInRegistries.BLOCK));
         this.addChild("wall_hanging_sign", this.findRelatedEntry("wall_hanging_sign", BuiltInRegistries.BLOCK));
         this.addChild("sign", this.findRelatedEntry("sign", BuiltInRegistries.BLOCK));
+        this.addChild("wall_sign", this.findRelatedEntry("wall_sign", BuiltInRegistries.BLOCK));
     }
 
     @Override

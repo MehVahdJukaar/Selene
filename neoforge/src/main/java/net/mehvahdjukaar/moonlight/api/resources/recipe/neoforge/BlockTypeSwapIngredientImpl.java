@@ -1,21 +1,13 @@
 package net.mehvahdjukaar.moonlight.api.resources.recipe.neoforge;
 
-import com.mojang.serialization.MapCodec;
 import net.mehvahdjukaar.moonlight.api.resources.recipe.BlockTypeSwapIngredient;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
-import net.mehvahdjukaar.moonlight.core.Moonlight;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.common.crafting.IngredientType;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class BlockTypeSwapIngredientImpl<T extends BlockType> extends BlockTypeSwapIngredient<T> implements ICustomIngredient {
@@ -47,7 +39,6 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends BlockTypeS
         return new BlockTypeSwapIngredientImpl<>(original, from, to, from.getRegistry())
                 .toVanilla();
     }
-
 
 
 }

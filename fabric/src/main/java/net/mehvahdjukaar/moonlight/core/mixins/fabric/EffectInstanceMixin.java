@@ -2,6 +2,7 @@ package net.mehvahdjukaar.moonlight.core.mixins.fabric;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.client.renderer.EffectInstance;
 import net.minecraft.resources.ResourceLocation;
@@ -12,15 +13,16 @@ import org.spongepowered.asm.mixin.injection.At;
 public class EffectInstanceMixin {
 
     @WrapOperation(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/ResourceLocation;withDefaultNamespace(Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;"))
-    private ResourceLocation ml$allowModShaderRes(String string, Operation<ResourceLocation> original) {
+    private ResourceLocation ml$allowModShaderRes(String string, Operation<ResourceLocation> original,
+                                                  @Local(argsOnly = true) String name) {
         try {
-            var res = original.call(string);
-            if (Moonlight.isDependant(res.getNamespace())) {
-                return res;
+            ResourceLocation id = ResourceLocation.tryParse(name);
+            if (id != null && Moonlight.isDependant(id.getNamespace())) {
+                return id.withPath("shaders/program/" + id.getPath() + ".json");
             }
         } catch (Exception e) {
             //ignore
         }
-        return ResourceLocation.tryParse(string);
+        return original.call(string);
     }
 }
