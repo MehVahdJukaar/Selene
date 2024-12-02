@@ -27,7 +27,7 @@ public interface IRecipeTemplate<R extends FinishedRecipe> {
     List<Object> getConditions();
 
     static <T extends BlockType> Ingredient convertIngredients(T originalMat, T destinationMat, Ingredient ing) {
-        return BlockSetSwapIngredient.create(ing, originalMat, destinationMat);
+        return BlockTypeSwapIngredient.create(ing, originalMat, destinationMat);
     }
 
     default RecipeCategory determineBookCategory(CraftingBookCategory recipeCategory) {

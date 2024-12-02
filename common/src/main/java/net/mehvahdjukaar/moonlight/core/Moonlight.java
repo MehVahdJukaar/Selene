@@ -15,6 +15,7 @@ import net.mehvahdjukaar.moonlight.api.misc.RegistryAccessJsonReloadListener;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicResourcePack;
+import net.mehvahdjukaar.moonlight.api.resources.recipe.BlockTypeSwapIngredient;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.leaves.LeavesTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
@@ -74,6 +75,7 @@ public class Moonlight {
         ModMessages.init();
 
         VillagerAIInternal.init();
+        BlockTypeSwapIngredient.init();
         MapDataInternal.init();
         SoftFluidInternal.init();
         RegHelper.addDynamicDispenserBehaviorRegistration(Moonlight::registerBuiltinFluidBehavior);

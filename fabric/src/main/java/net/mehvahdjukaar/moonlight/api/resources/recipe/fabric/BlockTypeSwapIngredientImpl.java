@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockSetSwapIngredientImpl<T extends BlockType> implements CustomIngredient {
+public class BlockTypeSwapIngredientImpl<T extends BlockType> implements CustomIngredient {
 
-    private static final ResourceLocation ID = Moonlight.res("block_set_swap");
+    private static final ResourceLocation ID = Moonlight.res("block_type_swap");
 
     private final Ingredient inner;
     private final T fromType;
@@ -27,7 +27,7 @@ public class BlockSetSwapIngredientImpl<T extends BlockType> implements CustomIn
 
     private List<ItemStack> items;
 
-    public BlockSetSwapIngredientImpl(Ingredient inner, T fromType, T toType, BlockTypeRegistry<T> reg) {
+    public BlockTypeSwapIngredientImpl(Ingredient inner, T fromType, T toType, BlockTypeRegistry<T> reg) {
         super();
         this.inner = inner;
         this.fromType = fromType;
@@ -80,51 +80,58 @@ public class BlockSetSwapIngredientImpl<T extends BlockType> implements CustomIn
     }
 
     @Override
-    public CustomIngredientSerializer<BlockSetSwapIngredientImpl<?>> getSerializer() {
-        return new CustomIngredientSerializer<>() {
-            @Override
-            public ResourceLocation getIdentifier() {
-                return ID;
-            }
+    public CustomIngredientSerializer<BlockTypeSwapIngredientImpl<?>> getSerializer() {
+        return SERIALIZER;
+    }
 
-            @Override
-            public BlockSetSwapIngredientImpl<?> read(JsonObject json) {
-                var reg = BlockSetInternal.REGISTRIES_BY_NAME.getValue(json.get("registry").getAsString());
-                var from = reg.getFromNBT(json.get("from").getAsString());
-                var to = reg.getFromNBT(json.get("to").getAsString());
-                var ing = Ingredient.fromJson(json.get("inner"));
-                return new BlockSetSwapIngredientImpl<>(ing, from, to, (BlockTypeRegistry) reg);
-            }
+    public static CustomIngredientSerializer<BlockTypeSwapIngredientImpl<?>> SERIALIZER =
+            new CustomIngredientSerializer<>() {
+                @Override
+                public ResourceLocation getIdentifier() {
+                    return ID;
+                }
 
-            @Override
-            public void write(JsonObject json, BlockSetSwapIngredientImpl<?> ingredient) {
+                @Override
+                public BlockTypeSwapIngredientImpl<?> read(JsonObject json) {
+                    var reg = BlockSetInternal.REGISTRIES_BY_NAME.getValue(json.get("registry").getAsString());
+                    var from = reg.getFromNBT(json.get("from").getAsString());
+                    var to = reg.getFromNBT(json.get("to").getAsString());
+                    var ing = Ingredient.fromJson(json.get("inner"));
+                    return new BlockTypeSwapIngredientImpl<>(ing, from, to, (BlockTypeRegistry) reg);
+                }
+
+                @Override
+                public void write(JsonObject json, BlockTypeSwapIngredientImpl<?> ingredient) {
                     json.addProperty("registry", ingredient.registry.typeName());
                     json.addProperty("from", ingredient.fromType.getAppendableId());
                     json.addProperty("to", ingredient.toType.getAppendableId());
                     json.add("inner", ingredient.inner.toJson());
-            }
+                }
 
-            @Override
-            public BlockSetSwapIngredientImpl<?> read(FriendlyByteBuf buf) {
-                var reg = BlockSetInternal.getByName(buf.readUtf());
-                var from = reg.getFromNBT(buf.readUtf());
-                var to = reg.getFromNBT(buf.readUtf());
-                var ing = Ingredient.fromNetwork(buf);
-                return new BlockSetSwapIngredientImpl<>(ing, from, to, (BlockTypeRegistry) reg);
-            }
+                @Override
+                public BlockTypeSwapIngredientImpl<?> read(FriendlyByteBuf buf) {
+                    var reg = BlockSetInternal.getByName(buf.readUtf());
+                    var from = reg.getFromNBT(buf.readUtf());
+                    var to = reg.getFromNBT(buf.readUtf());
+                    var ing = Ingredient.fromNetwork(buf);
+                    return new BlockTypeSwapIngredientImpl<>(ing, from, to, (BlockTypeRegistry) reg);
+                }
 
-            @Override
-            public void write(FriendlyByteBuf buf, BlockSetSwapIngredientImpl<?> ing) {
-                buf.writeUtf(ing.registry.typeName());
-                buf.writeUtf(ing.fromType.getAppendableId());
-                buf.writeUtf(ing.toType.getAppendableId());
-                ing.inner.toNetwork(buf);
-            }
-        };
-    }
+                @Override
+                public void write(FriendlyByteBuf buf, BlockTypeSwapIngredientImpl<?> ing) {
+                    buf.writeUtf(ing.registry.typeName());
+                    buf.writeUtf(ing.fromType.getAppendableId());
+                    buf.writeUtf(ing.toType.getAppendableId());
+                    ing.inner.toNetwork(buf);
+                }
+            };
 
     public static <T extends BlockType> Ingredient create(Ingredient original, T from, T to) {
-        return new BlockSetSwapIngredientImpl<>(original, from, to, from.getRegistry())
+        return new BlockTypeSwapIngredientImpl<>(original, from, to, from.getRegistry())
                 .toVanilla();
+    }
+
+    public static void init() {
+        CustomIngredientSerializer.register(SERIALIZER);
     }
 }
