@@ -1,1 +1,1 @@
-fixed some possible concurrency issues with the mod own data structures
+improved recipe conversion code. added a new ingredient type to delay converting ingredients with tags since they are not ready when conversion happens

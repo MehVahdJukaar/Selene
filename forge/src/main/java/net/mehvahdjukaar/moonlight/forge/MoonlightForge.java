@@ -9,7 +9,6 @@ import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.fake_player.FPClientAccess;
 import net.mehvahdjukaar.moonlight.core.fake_player.FakeGenericPlayer;
 import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
-import net.mehvahdjukaar.moonlight.core.misc.FakeLevel;
 import net.mehvahdjukaar.moonlight.core.misc.FakeLevelManager;
 import net.mehvahdjukaar.moonlight.core.misc.forge.ModLootConditions;
 import net.mehvahdjukaar.moonlight.core.misc.forge.ModLootModifiers;
@@ -93,7 +92,10 @@ public class MoonlightForge {
 
     @SubscribeEvent
     public static void beforeServerStart(ServerStoppedEvent event) {
-        FakeLevelManager.invalidateAll();
+        var oldLevels = FakeLevelManager.invalidateAll();
+        for (var level : oldLevels) {
+            MinecraftForge.EVENT_BUS.post(new LevelEvent.Unload(level)); //unload level with event shit
+        }
     }
 
     @SubscribeEvent

@@ -5,10 +5,8 @@ import net.minecraft.data.recipes.CraftingRecipeBuilder;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,23 +27,13 @@ public interface IRecipeTemplate<R extends FinishedRecipe> {
     List<Object> getConditions();
 
     @Nullable
-     static <T extends BlockType> Ingredient convertIngredients(T originalMat, T destinationMat, Ingredient ing) {
-        for (var in : ing.getItems()) {
-            Item it = in.getItem();
-            if (it != Items.BARRIER) {
-                ItemLike i = BlockType.changeItemType(it, originalMat, destinationMat);
-                if (i != null) {
-                    //converts first ingredient it finds
-                    return Ingredient.of(i);
-                }
-            }
-        }
-        return null;
+    static <T extends BlockType> Ingredient convertIngredients(T originalMat, T destinationMat, Ingredient ing) {
+        return BlockSetSwapIngredient.create(ing, originalMat, destinationMat);
     }
 
     default RecipeCategory determineBookCategory(CraftingBookCategory recipeCategory) {
-        for(var v : RecipeCategory.values()){
-            if(recipeCategory == CraftingRecipeBuilder.determineBookCategory(v)) return v;
+        for (var v : RecipeCategory.values()) {
+            if (recipeCategory == CraftingRecipeBuilder.determineBookCategory(v)) return v;
         }
         return RecipeCategory.MISC;
     }

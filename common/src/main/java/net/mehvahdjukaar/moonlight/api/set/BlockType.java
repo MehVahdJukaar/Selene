@@ -83,6 +83,10 @@ public abstract class BlockType {
         return this.getNamespace().equals("minecraft");
     }
 
+    public <T extends BlockType> BlockTypeRegistry<T> getRegistry() {
+        return (BlockTypeRegistry<T>) BlockSetInternal.getRegistry(this.getClass());
+    }
+
     @FunctionalInterface
     public interface SetFinder<T extends BlockType> extends Supplier<Optional<T>> {
         Optional<T> get();
