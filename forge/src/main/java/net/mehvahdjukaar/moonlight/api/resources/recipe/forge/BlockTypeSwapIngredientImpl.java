@@ -2,6 +2,7 @@ package net.mehvahdjukaar.moonlight.api.resources.recipe.forge;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.mehvahdjukaar.moonlight.api.resources.recipe.BlockTypeSwapIngredient;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIngredient {
+public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIngredient implements BlockTypeSwapIngredient {
 
     private final Ingredient inner;
     private final T fromType;
@@ -35,32 +36,42 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
     }
 
     @Override
+    public Ingredient getInner() {
+        return inner;
+    }
+
+    @Override
     public boolean isSimple() {
         return false;
+    }
+
+    @Override
+    public List<ItemStack> convertItems(List<ItemStack> toConvert) {
+        List<ItemStack> newItems = new ArrayList<>();
+        boolean success = false;
+        for (ItemStack it : toConvert) {
+            var type = this.registry.getBlockTypeOf(it.getItem());
+            if (type != this.fromType) {
+                break;
+            } else {
+                var newItem = BlockType.changeItemType(it.getItem(), this.fromType, this.toType);
+                if (newItem != null) {
+                    newItems.add(new ItemStack(newItem));
+                    success = true;
+                }
+            }
+        }
+        if (!success) {
+            newItems.addAll(toConvert);
+        }
+        return newItems;
     }
 
     @Override
     public ItemStack[] getItems() {
         if (this.items == null) {
             var original = this.inner.getItems();
-            List<ItemStack> newItems = new ArrayList<>();
-            boolean success = false;
-            for (ItemStack it : this.items) {
-                var type = this.registry.getBlockTypeOf(it.getItem());
-                if (type != this.fromType) {
-                    break;
-                } else {
-                    var newItem = BlockType.changeItemType(it.getItem(), this.fromType, this.toType);
-                    if (newItem != null) {
-                        newItems.add(new ItemStack(newItem));
-                        success = true;
-                    }
-                }
-            }
-            if (!success) {
-                newItems.addAll(Arrays.stream(original).toList());
-            }
-            this.items = newItems.toArray(new ItemStack[0]);
+            this.items = convertItems(Arrays.asList(original)).toArray(new ItemStack[0]);
         }
         return this.items;
     }

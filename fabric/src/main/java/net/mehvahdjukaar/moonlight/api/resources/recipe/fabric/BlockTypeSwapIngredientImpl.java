@@ -3,6 +3,7 @@ package net.mehvahdjukaar.moonlight.api.resources.recipe.fabric;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
+import net.mehvahdjukaar.moonlight.api.resources.recipe.BlockTypeSwapIngredient;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockTypeSwapIngredientImpl<T extends BlockType> implements CustomIngredient {
+public class BlockTypeSwapIngredientImpl<T extends BlockType> implements CustomIngredient, BlockTypeSwapIngredient {
 
     private static final ResourceLocation ID = Moonlight.res("block_type_swap");
 
@@ -37,6 +38,11 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> implements CustomI
 
 
     @Override
+    public Ingredient getInner() {
+        return inner;
+    }
+
+    @Override
     public boolean test(ItemStack stack) {
         if (stack != null) {
             for (ItemStack itemStack : this.getMatchingStacks()) {
@@ -49,27 +55,32 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> implements CustomI
     }
 
     @Override
+    public List<ItemStack> convertItems(List<ItemStack> toConvert) {
+        List<ItemStack> newItems = new ArrayList<>();
+        boolean success = false;
+        for (ItemStack it : toConvert) {
+            var type = this.registry.getBlockTypeOf(it.getItem());
+            if (type != this.fromType) {
+                break;
+            } else {
+                var newItem = BlockType.changeItemType(it.getItem(), this.fromType, this.toType);
+                if (newItem != null) {
+                    newItems.add(new ItemStack(newItem));
+                    success = true;
+                }
+            }
+        }
+        if (!success) {
+            newItems.addAll(toConvert);
+        }
+        return newItems;
+    }
+
+    @Override
     public List<ItemStack> getMatchingStacks() {
         if (this.items == null) {
             var original = this.inner.getItems();
-            List<ItemStack> newItems = new ArrayList<>();
-            boolean success = false;
-            for (ItemStack it : this.items) {
-                var type = this.registry.getBlockTypeOf(it.getItem());
-                if (type != this.fromType) {
-                    break;
-                } else {
-                    var newItem = BlockType.changeItemType(it.getItem(), this.fromType, this.toType);
-                    if (newItem != null) {
-                        newItems.add(new ItemStack(newItem));
-                        success = true;
-                    }
-                }
-            }
-            if (!success) {
-                newItems.addAll(Arrays.stream(original).toList());
-            }
-            this.items = newItems;
+            this.items = convertItems(Arrays.asList(original));
         }
         return this.items;
     }
