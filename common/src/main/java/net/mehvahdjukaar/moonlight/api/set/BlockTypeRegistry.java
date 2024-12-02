@@ -1,10 +1,12 @@
 package net.mehvahdjukaar.moonlight.api.set;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
 import net.mehvahdjukaar.moonlight.api.misc.MapRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
+import net.mehvahdjukaar.moonlight.core.set.BlockSetInternal;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,6 +20,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public abstract class BlockTypeRegistry<T extends BlockType>  {
+
+    public static Codec<BlockTypeRegistry<?>> getRegistryCodec(){
+        return BlockSetInternal.REGISTRIES_BY_NAME;
+    }
 
     protected boolean frozen = false;
     private final String name;

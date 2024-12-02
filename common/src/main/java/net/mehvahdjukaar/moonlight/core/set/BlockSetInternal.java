@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
+import net.mehvahdjukaar.moonlight.api.misc.MapRegistry;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
@@ -14,19 +15,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.*;
 
+@ApiStatus.Internal
 public class BlockSetInternal {
 
     //Frick mod loading is multithreaded, so we need to beware of concurrent access
-    private static final Map<Class<? extends BlockType>, BlockTypeRegistry<?>> BLOCK_SET_CONTAINERS = new ConcurrentHashMap<>();
-    private static final ConcurrentLinkedDeque<Runnable> FINDER_ADDER = new ConcurrentLinkedDeque<>();
-    private static final ConcurrentLinkedDeque<Runnable> REMOVER_ADDER = new ConcurrentLinkedDeque<>();
+    private static final Queue<Runnable> FINDER_ADDER = new ArrayDeque<>();
+    private static final Queue<Runnable> REMOVER_ADDER = new ArrayDeque<>();
+
+    private static final Map<Class<? extends BlockType>, BlockTypeRegistry<?>> REGISTRIES_BY_CLASS = new HashMap<>();
+    public static final MapRegistry<BlockTypeRegistry<?>> REGISTRIES_BY_NAME = new MapRegistry<>("block_set_registry");
 
     public static void initializeBlockSets() {
         Stopwatch sw = Stopwatch.createStarted();
@@ -34,8 +36,8 @@ public class BlockSetInternal {
         FINDER_ADDER.forEach(Runnable::run);
         FINDER_ADDER.clear();
 
-        BLOCK_SET_CONTAINERS.values().forEach(BlockTypeRegistry::buildAll);
-        BLOCK_SET_CONTAINERS.values().forEach(BlockTypeRegistry::onBlockInit);
+        REGISTRIES_BY_CLASS.values().forEach(BlockTypeRegistry::buildAll);
+        REGISTRIES_BY_CLASS.values().forEach(BlockTypeRegistry::onBlockInit);
 
         //remove not wanted ones
         REMOVER_ADDER.forEach(Runnable::run);
@@ -49,15 +51,16 @@ public class BlockSetInternal {
         throw new AssertionError();
     }
 
-    public static <T extends BlockType> void registerBlockSetDefinition(BlockTypeRegistry<T> typeRegistry) {
+    public synchronized static <T extends BlockType> void registerBlockSetDefinition(BlockTypeRegistry<T> typeRegistry) {
         if (hasFilledBlockSets()) {
             throw new UnsupportedOperationException(
                     String.format("Tried to register block set definition %s after registry events", typeRegistry));
         }
-        BLOCK_SET_CONTAINERS.put(typeRegistry.getType(), typeRegistry);
+        REGISTRIES_BY_CLASS.put(typeRegistry.getType(), typeRegistry);
+        REGISTRIES_BY_NAME.register(typeRegistry.typeName(), typeRegistry);
     }
 
-    public static <T extends BlockType> void addBlockTypeFinder(Class<T> type, BlockType.SetFinder<T> blockFinder) {
+    public synchronized static <T extends BlockType> void addBlockTypeFinder(Class<T> type, BlockType.SetFinder<T> blockFinder) {
         if (hasFilledBlockSets()) {
             throw new UnsupportedOperationException(
                     String.format("Tried to register block %s finder %s after registry events", type, blockFinder));
@@ -68,7 +71,7 @@ public class BlockSetInternal {
         });
     }
 
-    public static <T extends BlockType> void addBlockTypeRemover(Class<T> type, ResourceLocation id) {
+    public synchronized static <T extends BlockType> void addBlockTypeRemover(Class<T> type, ResourceLocation id) {
         if (hasFilledBlockSets()) {
             throw new UnsupportedOperationException(
                     String.format("Tried to remove block type %s for type %s after registry events", id, type));
@@ -81,7 +84,7 @@ public class BlockSetInternal {
 
     @SuppressWarnings("unchecked")
     public static <T extends BlockType> BlockTypeRegistry<T> getBlockSet(Class<T> type) {
-        return (BlockTypeRegistry<T>) BLOCK_SET_CONTAINERS.get(type);
+        return (BlockTypeRegistry<T>) REGISTRIES_BY_CLASS.get(type);
     }
 
     @EventCalled
@@ -98,12 +101,12 @@ public class BlockSetInternal {
 
 
     public static Collection<BlockTypeRegistry<?>> getRegistries() {
-        return BLOCK_SET_CONTAINERS.values();
+        return REGISTRIES_BY_CLASS.values();
     }
 
     @Nullable
     public static <T extends BlockType> BlockTypeRegistry<T> getRegistry(Class<T> typeClass) {
-        return (BlockTypeRegistry<T>) BLOCK_SET_CONTAINERS.get(typeClass);
+        return (BlockTypeRegistry<T>) REGISTRIES_BY_CLASS.get(typeClass);
     }
 
     @Nullable
@@ -113,5 +116,9 @@ public class BlockSetInternal {
             return r.getBlockTypeOf(itemLike);
         }
         return null;
+    }
+
+    public static BlockTypeRegistry<?> getByName(String name) {
+        return REGISTRIES_BY_NAME.getValue(name);
     }
 }
