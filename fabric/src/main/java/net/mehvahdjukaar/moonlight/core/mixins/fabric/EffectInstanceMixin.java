@@ -25,4 +25,18 @@ public class EffectInstanceMixin {
         }
         return original.call(string);
     }
+
+    @WrapOperation(method = "getOrCreate", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/ResourceLocation;withDefaultNamespace(Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;"))
+    private static ResourceLocation ml$allowModPostShaderRes(String string, Operation<ResourceLocation> original,
+                                                             @Local(argsOnly = true) String name) {
+        try {
+            ResourceLocation id = ResourceLocation.tryParse(name);
+            if (id != null && Moonlight.isDependant(id.getNamespace())) {
+                return id.withPath("shaders/program/" + id.getPath() + ".json");
+            }
+        } catch (Exception e) {
+            //ignore
+        }
+        return original.call(string);
+    }
 }
