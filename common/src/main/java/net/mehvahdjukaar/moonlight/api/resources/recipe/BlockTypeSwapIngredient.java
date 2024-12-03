@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public abstract class BlockTypeSwapIngredient<T extends BlockType> {
@@ -43,6 +44,17 @@ public abstract class BlockTypeSwapIngredient<T extends BlockType> {
         this.fromType = fromType;
         this.toType = toType;
         this.registry = reg;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof BlockTypeSwapIngredient<?> ing && this.inner.equals(ing.inner)
+                && this.fromType == ing.fromType && this.toType == ing.toType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inner, fromType, toType);
     }
 
     public Ingredient getInner() {

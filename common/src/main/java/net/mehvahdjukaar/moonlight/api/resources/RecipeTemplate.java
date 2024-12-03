@@ -120,7 +120,7 @@ public class RecipeTemplate {
                     // Check if ingredient already has an assigned symbol in the map.
                     Character symbol = null;
                     for (Map.Entry<Character, Ingredient> entry : key.entrySet()) {
-                        if (entry.getValue().equals(ingredient)) {
+                        if (entry.getValue() == ingredient) {
                             symbol = entry.getKey();
                             break;
                         }
@@ -164,11 +164,12 @@ public class RecipeTemplate {
     public static <R extends Recipe<?>> @NotNull List<Ingredient> convertIngredients(NonNullList<Ingredient> or,
                                                                                      BlockType from, BlockType to) {
         List<Ingredient> newList = new ArrayList<>();
+        Map<Ingredient, Ingredient> convertedMap = new HashMap<>();
         for (Ingredient ingredient : or) {
             if (ingredient.isEmpty()) {
                 newList.add(ingredient);
             } else {
-                newList.add(BlockTypeSwapIngredient.create(ingredient, from, to));
+                newList.add(convertedMap.computeIfAbsent(ingredient, i -> BlockTypeSwapIngredient.create(i, from, to)));
             }
         }
         return newList;
