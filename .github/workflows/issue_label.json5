@@ -15,7 +15,9 @@
     'duplicate',
     'help wanted',
     'invalid',
-    'details'
+    'details',
+    'Supplementaries',
+    'EveryCompat'
   ],
   //defaultLabels: ['bug']
 }
