@@ -23,7 +23,7 @@ public class BlockSetAPI {
      *                     gets formed
      * @param <T>          IBlockType
      */
-    public static <T extends BlockType> void registerBlockSetDefinition(BlockTypeRegistry<T> typeRegistry) {
+    public static synchronized <T extends BlockType> void registerBlockSetDefinition(BlockTypeRegistry<T> typeRegistry) {
         BlockSetInternal.registerBlockSetDefinition(typeRegistry);
     }
 
@@ -35,7 +35,7 @@ public class BlockSetAPI {
      * @param type        the block type class you are registering this for (WoodType.class, LeafType.class...)
      * @param blockFinder Finder object that will provide the modded block type when the time is right
      */
-    public static <T extends BlockType> void addBlockTypeFinder(Class<T> type, BlockType.SetFinder<T> blockFinder) {
+    public static synchronized <T extends BlockType> void addBlockTypeFinder(Class<T> type, BlockType.SetFinder<T> blockFinder) {
         BlockSetInternal.addBlockTypeFinder(type, blockFinder);
     }
 
@@ -45,7 +45,7 @@ public class BlockSetAPI {
      *
      * @param id id of the block that is getting erroneously added and should be removed
      */
-    public static <T extends BlockType> void addBlockTypeRemover(Class<T> type, ResourceLocation id) {
+    public static synchronized <T extends BlockType> void addBlockTypeRemover(Class<T> type, ResourceLocation id) {
         BlockSetInternal.addBlockTypeRemover(type, id);
     }
 
@@ -66,17 +66,17 @@ public class BlockSetAPI {
      *
      * @param registrationFunction registry function
      */
-    public static <T extends BlockType> void addDynamicBlockRegistration(
+    public synchronized static <T extends BlockType> void addDynamicBlockRegistration(
             BlockTypeRegistryCallback<Block, T> registrationFunction, Class<T> blockType) {
         addDynamicRegistration(registrationFunction, blockType, BuiltInRegistries.BLOCK);
     }
 
-    public static <T extends BlockType> void addDynamicItemRegistration(
+    public static synchronized <T extends BlockType> void addDynamicItemRegistration(
             BlockTypeRegistryCallback<Item, T> registrationFunction, Class<T> blockType) {
         addDynamicRegistration(registrationFunction, blockType, BuiltInRegistries.ITEM);
     }
 
-    public static <T extends BlockType, E> void addDynamicRegistration(
+    public static synchronized <T extends BlockType, E> void addDynamicRegistration(
             BlockSetAPI.BlockTypeRegistryCallback<E, T> registrationFunction, Class<T> blockType,
             Registry<E> registry) {
         BlockSetInternal.addDynamicRegistration(registrationFunction, blockType, registry);
@@ -91,7 +91,7 @@ public class BlockSetAPI {
     }
 
     @Nullable
-    public static<T extends BlockType> BlockTypeRegistry<T> getTypeRegistry(Class<T> typeClass) {
+    public static <T extends BlockType> BlockTypeRegistry<T> getTypeRegistry(Class<T> typeClass) {
         return BlockSetInternal.getRegistry(typeClass);
     }
 
@@ -99,7 +99,7 @@ public class BlockSetAPI {
      * @return BlockType of the provided block
      */
     @Nullable
-    public static <T extends BlockType> T getBlockTypeOf(ItemLike itemLike, Class<T> typeClass){
+    public static <T extends BlockType> T getBlockTypeOf(ItemLike itemLike, Class<T> typeClass) {
         return BlockSetInternal.getBlockTypeOf(itemLike, typeClass);
     }
 

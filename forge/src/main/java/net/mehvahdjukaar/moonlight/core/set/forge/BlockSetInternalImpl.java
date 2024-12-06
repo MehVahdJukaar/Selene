@@ -7,6 +7,7 @@ import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
 import net.mehvahdjukaar.moonlight.core.set.BlockSetInternal;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -18,8 +19,10 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +33,8 @@ public class BlockSetInternalImpl {
 
     //maps containing mod ids and block and items runnable. Block one is ready to run, items needs the bus supplied to it
     //they will be run each mod at a time block first then items
-    private static final Map<String, List<Runnable>> LATE_REGISTRATION_QUEUE = new ConcurrentHashMap<>();
+    private static final Map<String,
+            Map<ResourceKey<? extends Registry<?>>, List<Runnable>>> LATE_REGISTRATION_QUEUE = new ConcurrentHashMap<>();
 
     private static boolean hasFilledBlockSets = false;
 
@@ -45,7 +49,7 @@ public class BlockSetInternalImpl {
             throw new IllegalArgumentException("Fluid and Sound Events registry not supported here");
         } else {
             //ensure has filled block set
-            getOrAddQueue();
+            getOrAddQueue(null);
             //other entries
             RegHelper.registerInBatch(registry, e -> registrationFunction.accept(e, BlockSetAPI.getBlockSet(blockType).getValues()));
         }
@@ -58,7 +62,7 @@ public class BlockSetInternalImpl {
 
         Consumer<RegisterEvent> eventConsumer;
 
-        List<Runnable> registrationQueues = getOrAddQueue();
+        List<Runnable> registrationQueues = getOrAddQueue(reg.getRegistryKey());
 
         //if block makes a function that just adds the bus and runnable to the queue whenever reg block is fired
         eventConsumer = e -> {
@@ -84,16 +88,17 @@ public class BlockSetInternalImpl {
     }
 
     @NotNull
-    private static List<Runnable> getOrAddQueue() {
+    private static <R> List<Runnable> getOrAddQueue(@Nullable ResourceKey<Registry<R>> reg) {
         //this is horrible. worst shit ever
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         //get the queue corresponding to this certain mod
         String modId = ModLoadingContext.get().getActiveContainer().getModId();
-        return LATE_REGISTRATION_QUEUE.computeIfAbsent(modId, s -> {
-            //if absent we register its registration callback
-            bus.addListener(EventPriority.HIGHEST, BlockSetInternalImpl::registerLateBlockAndItems);
-            return new ArrayList<>();
-        });
+        return LATE_REGISTRATION_QUEUE.computeIfAbsent(modId,
+                r -> {
+                    bus.addListener(EventPriority.HIGHEST, BlockSetInternalImpl::registerLateBlockAndItems);
+                    return new HashMap<>();
+                }).computeIfAbsent(reg,
+                r -> new ArrayList<>());
     }
 
 
@@ -123,8 +128,20 @@ public class BlockSetInternalImpl {
             var registrationQueues = LATE_REGISTRATION_QUEUE.get(modId);
 
             if (registrationQueues != null) {
-                //register blocks
-                registrationQueues.forEach(Runnable::run);
+                var blockQueue = registrationQueues.remove(ForgeRegistries.BLOCKS.getRegistryKey());
+                if (blockQueue != null) {
+                    //register blocks
+                    blockQueue.forEach(Runnable::run);
+                }
+                var itemQueue = registrationQueues.remove(ForgeRegistries.ITEMS.getRegistryKey());
+                if (itemQueue != null) {
+                    //register items
+                    itemQueue.forEach(Runnable::run);
+                }
+                //other
+                for (var e : registrationQueues.entrySet()) {
+                    e.getValue().forEach(Runnable::run);
+                }
             }
             //clears stuff that's been executed. not really needed but just to be safe its here
             LATE_REGISTRATION_QUEUE.remove(modId);

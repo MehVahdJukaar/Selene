@@ -1,8 +1,10 @@
 package net.mehvahdjukaar.moonlight.api.events.fabric;
 
+import net.fabricmc.fabric.mixin.recipe.ingredient.IngredientMixin;
 import net.mehvahdjukaar.moonlight.api.events.IFireConsumeBlockEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;

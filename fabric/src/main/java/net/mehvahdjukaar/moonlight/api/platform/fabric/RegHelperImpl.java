@@ -75,8 +75,8 @@ public class RegHelperImpl {
     //call from mod setup
     @ApiStatus.Internal
     public static void lateRegisterEntries() {
-        for (var m : REGISTRIES.entrySet()) {
-            var v = m.getValue();
+        for (var reg : REGISTRIES.entrySet()) {
+            var v = reg.getValue();
             //freaking fabric just runs mod initializers in random order. hate this. we run in deterministic manner here
             var sorted = v.keySet().stream().sorted().toList();
             for (var s : sorted) {
@@ -86,11 +86,11 @@ public class RegHelperImpl {
                     throw new RuntimeException("Failed to initialize registry objects for namespace [" + s + "]", e);
                 }
             }
-            if (m.getKey() == Registries.BLOCK) {
+            if (reg.getKey() == Registries.BLOCK) {
                 //dynamic block registration after all blocks
                 BlockSetInternalImpl.initializeBlockSets();
             }
-            BlockSetInternalImpl.registerDynamicEntries(m.getKey());
+            BlockSetInternalImpl.registerDynamicEntries(reg.getKey());
         }
         BlockSetInternalImpl.finish();
     }

@@ -39,12 +39,11 @@ public class BlockSetInternalImpl {
 
     public static <T extends Registry<?>> void registerDynamicEntries(ResourceKey<? extends T> id) {
         Registry<T> registry = BuiltInRegistries.REGISTRY.get((ResourceKey) id);
-        var q = QUEUES.get(registry);
+        var q = QUEUES.remove(registry);
         if (q != null) {
             for (var e : q.entrySet()) {
                 e.getValue().registerEntries();
             }
-            QUEUES.remove(registry);
         }
     }
 
