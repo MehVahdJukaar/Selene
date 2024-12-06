@@ -1,1 +1,1 @@
-- fixed an issue with recipe conversion and shaped recipes
+backported a fix from 1.21 which fixed an issue that made dynamic items not register after dynamic blocks all the times
