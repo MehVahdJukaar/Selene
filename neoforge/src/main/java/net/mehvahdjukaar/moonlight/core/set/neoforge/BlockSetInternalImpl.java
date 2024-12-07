@@ -32,7 +32,7 @@ public class BlockSetInternalImpl {
     //maps containing mod ids and block and items runnable. Block one is ready to run, items needs the bus supplied to it
     //they will be run each mod at a time block first then items
     private static final Map<String,
-            Map<ResourceKey<Registry<?>>, List<Runnable>>> LATE_REGISTRATION_QUEUE = new ConcurrentHashMap<>();
+            Map<ResourceKey<? extends Registry<?>>, List<Runnable>>> LATE_REGISTRATION_QUEUE = new ConcurrentHashMap<>();
 
     private static boolean hasFilledBlockSets = false;
 
@@ -68,12 +68,12 @@ public class BlockSetInternalImpl {
     public static <T extends BlockType, E> void addEvent(Registry<E> reg,
                                                          BlockSetAPI.BlockTypeRegistryCallback<E, T> registrationFunction,
                                                          Class<T> blockType) {
-        List<Runnable> registrationQueues = getOrAddQueue((ResourceKey<Registry<?>>) reg.key());
+        List<Runnable> registrationQueues = getOrAddQueue( reg.key());
 
         //if block makes a function that just adds the bus and runnable to the queue whenever reg block is fired
         //actual runnable which will registers the blocks
         Runnable lateRegistration = () -> {
-            registrationFunction.accept((r, o) -> Registry.register(reg, r, o),
+            registrationFunction.accept((r, o) -> net.minecraft.core.Registry.register(reg, r, o),
                     BlockSetAPI.getBlockSet(blockType).getValues());
         };
         //when this reg block event fires we only add a runnable to the queue
@@ -81,7 +81,7 @@ public class BlockSetInternalImpl {
     }
 
     @NotNull
-    private static List<Runnable> getOrAddQueue(@Nullable ResourceKey<Registry<?>> regKey) {
+    private static List<Runnable> getOrAddQueue(@Nullable ResourceKey<? extends Registry<?>> regKey) {
         //this is horrible. worst shit ever
         IEventBus bus = MoonlightForge.getCurrentBus();
         //get the queue corresponding to this certain mod
@@ -89,7 +89,7 @@ public class BlockSetInternalImpl {
 
         return LATE_REGISTRATION_QUEUE.computeIfAbsent(modId,
                 m -> {
-                    Map<ResourceKey<Registry<?>>, List<Runnable>> map = new HashMap<>();
+                    Map<ResourceKey<? extends Registry<?>>, List<Runnable>> map = new HashMap<>();
                     //if absent we register its registration callback
                     Consumer<RegisterEvent> eventConsumer = r -> {
                         BlockSetInternalImpl.registerLateBlockAndItems(r, map);
@@ -103,7 +103,7 @@ public class BlockSetInternalImpl {
 
     //shittiest code ever lol
     protected static void registerLateBlockAndItems(RegisterEvent event,
-                                                    Map<ResourceKey<Registry<?>>, List<Runnable>> toRun) {
+                                                    Map<ResourceKey<? extends Registry<?>>, List<Runnable>> toRun) {
         //fires right after blocks
         if (event.getRegistryKey().equals(BuiltInRegistries.ENTITY_TYPE.key())) {
             if (!hasFilledBlockSets) {
