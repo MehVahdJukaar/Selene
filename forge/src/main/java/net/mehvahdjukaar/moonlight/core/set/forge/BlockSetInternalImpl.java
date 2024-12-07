@@ -7,6 +7,7 @@ import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
 import net.mehvahdjukaar.moonlight.core.set.BlockSetInternal;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -50,7 +51,7 @@ public class BlockSetInternalImpl {
             throw new IllegalArgumentException("Fluid and Sound Events registry not supported here");
         } else {
             //ensure has filled block set
-            getOrAddQueue(null);
+            getOrAddQueue(Registries.BLOCK_ENTITY_TYPE); //dummy key
             //other entries
             RegHelper.registerInBatch(registry, e -> registrationFunction.accept(e, BlockSetAPI.getBlockSet(blockType).getValues()));
         }
@@ -89,7 +90,7 @@ public class BlockSetInternalImpl {
     }
 
     @NotNull
-    private static <R> List<Runnable> getOrAddQueue(@Nullable ResourceKey<Registry<R>> reg) {
+    private static <R> List<Runnable> getOrAddQueue(ResourceKey<Registry<R>> reg) {
         //this is horrible. worst shit ever
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         //get the queue corresponding to this certain mod
