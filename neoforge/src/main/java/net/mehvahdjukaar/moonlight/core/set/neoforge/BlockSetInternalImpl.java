@@ -58,7 +58,7 @@ public class BlockSetInternalImpl {
             throw new IllegalArgumentException("Fluid and Sound Events registry not supported here");
         } else {
             //ensure has filled block set
-            getOrAddQueue(null);
+            getOrAddQueue(Registries.BLOCK_ENTITY);
             //other entries
             RegHelper.registerInBatch(registry, e -> registrationFunction.accept(e, BlockSetAPI.getBlockSet(blockType).getValues()));
         }
