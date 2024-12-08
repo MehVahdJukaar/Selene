@@ -74,8 +74,8 @@ public class Moonlight {
 
         ModMessages.init();
 
-        VillagerAIInternal.init();
         BlockTypeSwapIngredient.init();
+        VillagerAIInternal.init();
         MapDataInternal.init();
         SoftFluidInternal.init();
         RegHelper.addDynamicDispenserBehaviorRegistration(Moonlight::registerBuiltinFluidBehavior);

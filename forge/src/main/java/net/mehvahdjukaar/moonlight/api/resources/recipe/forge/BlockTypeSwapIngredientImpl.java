@@ -100,7 +100,7 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
 
                 @Override
                 public BlockTypeSwapIngredientImpl<?> parse(JsonObject jsonObject) {
-                    var reg = BlockSetInternal.REGISTRIES_BY_NAME.getValue(jsonObject.get("registry").getAsString());
+                    var reg = BlockSetInternal.REGISTRIES_BY_NAME.getValue(jsonObject.get("block_type").getAsString());
                     var from = reg.getFromNBT(jsonObject.get("from").getAsString());
                     var to = reg.getFromNBT(jsonObject.get("to").getAsString());
                     var ing = Ingredient.fromJson(jsonObject.get("inner"));
@@ -119,7 +119,7 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
     @Override
     public JsonElement toJson() {
         var obj = new JsonObject();
-        obj.addProperty("registry", this.registry.typeName());
+        obj.addProperty("block_type", this.registry.typeName());
         obj.addProperty("from", this.fromType.getAppendableId());
         obj.addProperty("to", this.toType.getAppendableId());
         obj.add("inner", this.inner.toJson());

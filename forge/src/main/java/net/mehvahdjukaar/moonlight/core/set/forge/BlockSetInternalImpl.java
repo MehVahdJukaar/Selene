@@ -10,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -71,7 +72,6 @@ public class BlockSetInternalImpl {
             if (e.getRegistryKey().equals(reg.getRegistryKey())) {
                 //actual runnable which will registers the blocks
                 Runnable lateRegistration = () -> {
-
                     IForgeRegistry<E> registry = e.getForgeRegistry();
                     if (registry instanceof ForgeRegistry<?> fr) {
                         boolean frozen = fr.isLocked();
