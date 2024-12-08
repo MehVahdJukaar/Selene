@@ -101,7 +101,7 @@ public abstract class BlockTypeSwapIngredient<T extends BlockType> {
     }
 
 
-    public static final ResourceLocation ID = Moonlight.res("block_set_swap");
+    public static final ResourceLocation ID = Moonlight.res("block_type_swap");
 
     public static final MapCodec<BlockTypeSwapIngredient<?>> CODEC = makeCodec(false);
     public static final MapCodec<BlockTypeSwapIngredient<?>> CODEC_NONEMPTY = makeCodec(true);
