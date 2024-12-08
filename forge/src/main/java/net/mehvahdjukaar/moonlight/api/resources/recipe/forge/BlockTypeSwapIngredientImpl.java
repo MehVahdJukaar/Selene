@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.AbstractIngredient;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
                     var reg = BlockSetInternal.REGISTRIES_BY_NAME.getValue(jsonObject.get("block_type").getAsString());
                     var from = reg.getFromNBT(jsonObject.get("from").getAsString());
                     var to = reg.getFromNBT(jsonObject.get("to").getAsString());
-                    var ing = Ingredient.fromJson(jsonObject.get("inner"));
+                    var ing = Ingredient.fromJson(jsonObject.get("ingredient"));
                     return new BlockTypeSwapIngredientImpl<>(ing, from, to, (BlockTypeRegistry) reg);
                 }
 
@@ -122,7 +123,8 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
         obj.addProperty("block_type", this.registry.typeName());
         obj.addProperty("from", this.fromType.getAppendableId());
         obj.addProperty("to", this.toType.getAppendableId());
-        obj.add("inner", this.inner.toJson());
+        obj.add("ingredient", this.inner.toJson());
+        obj.addProperty("type", CraftingHelper.getID(SERIALIZER).toString());
         return obj;
     }
 

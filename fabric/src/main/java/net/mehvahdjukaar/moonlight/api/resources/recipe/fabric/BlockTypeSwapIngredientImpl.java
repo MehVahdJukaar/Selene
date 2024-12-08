@@ -104,19 +104,19 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> implements CustomI
 
                 @Override
                 public BlockTypeSwapIngredientImpl<?> read(JsonObject json) {
-                    var reg = BlockSetInternal.REGISTRIES_BY_NAME.getValue(json.get("registry").getAsString());
+                    var reg = BlockSetInternal.REGISTRIES_BY_NAME.getValue(json.get("block_type").getAsString());
                     var from = reg.getFromNBT(json.get("from").getAsString());
                     var to = reg.getFromNBT(json.get("to").getAsString());
-                    var ing = Ingredient.fromJson(json.get("inner"));
+                    var ing = Ingredient.fromJson(json.get("ingredient"));
                     return new BlockTypeSwapIngredientImpl<>(ing, from, to, (BlockTypeRegistry) reg);
                 }
 
                 @Override
                 public void write(JsonObject json, BlockTypeSwapIngredientImpl<?> ingredient) {
-                    json.addProperty("registry", ingredient.registry.typeName());
-                    json.addProperty("from", ingredient.fromType.getAppendableId());
-                    json.addProperty("to", ingredient.toType.getAppendableId());
-                    json.add("inner", ingredient.inner.toJson());
+                    json.addProperty("block_type", ingredient.registry.typeName());
+                    json.addProperty("from", ingredient.fromType.getId().toString());
+                    json.addProperty("to", ingredient.toType.getId().toString());
+                    json.add("ingredient", ingredient.inner.toJson());
                 }
 
                 @Override

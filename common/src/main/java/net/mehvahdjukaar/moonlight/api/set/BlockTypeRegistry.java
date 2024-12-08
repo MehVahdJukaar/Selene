@@ -18,7 +18,7 @@ import java.util.*;
 
 public abstract class BlockTypeRegistry<T extends BlockType> {
 
-    public static Codec<BlockTypeRegistry<?>> getRegistryCodec(){
+    public static Codec<BlockTypeRegistry<?>> getRegistryCodec() {
         return BlockSetInternal.REGISTRIES_BY_NAME;
     }
 
@@ -159,7 +159,12 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
 
     @Nullable
     public T getBlockTypeOf(ItemLike itemLike) {
-        return childrenToType.getOrDefault(itemLike, null);
+        var fist = childrenToType.getOrDefault(itemLike, null);
+        if (fist != null) return fist;
+        if (itemLike instanceof BlockItem bi) {
+            return childrenToType.getOrDefault(bi.getBlock(), null);
+        }
+        return null;
     }
 
     protected void mapObjectToType(Object itemLike, BlockType type) {
