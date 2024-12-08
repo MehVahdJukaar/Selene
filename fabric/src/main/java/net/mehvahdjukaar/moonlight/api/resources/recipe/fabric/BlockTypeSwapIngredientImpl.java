@@ -131,8 +131,8 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> implements CustomI
                 @Override
                 public void write(FriendlyByteBuf buf, BlockTypeSwapIngredientImpl<?> ing) {
                     buf.writeUtf(ing.registry.typeName());
-                    buf.writeUtf(ing.fromType.getAppendableId());
-                    buf.writeUtf(ing.toType.getAppendableId());
+                    buf.writeUtf(ing.fromType.getId().toString());
+                    buf.writeUtf(ing.toType.getId().toString());
                     ing.inner.toNetwork(buf);
                 }
             };

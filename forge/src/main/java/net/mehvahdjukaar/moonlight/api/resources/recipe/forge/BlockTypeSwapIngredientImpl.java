@@ -111,8 +111,8 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
                 @Override
                 public void write(FriendlyByteBuf buf, BlockTypeSwapIngredientImpl ing) {
                     buf.writeUtf(ing.registry.typeName());
-                    buf.writeUtf(ing.fromType.getAppendableId());
-                    buf.writeUtf(ing.toType.getAppendableId());
+                    buf.writeUtf(ing.fromType.getId().toString());
+                    buf.writeUtf(ing.toType.getId().toString());
                     ing.inner.toNetwork(buf);
                 }
             };
@@ -121,8 +121,8 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
     public JsonElement toJson() {
         var obj = new JsonObject();
         obj.addProperty("block_type", this.registry.typeName());
-        obj.addProperty("from", this.fromType.getAppendableId());
-        obj.addProperty("to", this.toType.getAppendableId());
+        obj.addProperty("from", this.fromType.getId().toString());
+        obj.addProperty("to", this.toType.getId().toString());
         obj.add("ingredient", this.inner.toJson());
         obj.addProperty("type", CraftingHelper.getID(SERIALIZER).toString());
         return obj;
