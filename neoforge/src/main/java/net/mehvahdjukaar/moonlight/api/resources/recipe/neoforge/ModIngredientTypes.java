@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class ModIngredientTypes {
 
-    public static final Supplier<IngredientType<?>> BLOCK_SET_SWAP = RegHelper.register(BlockTypeSwapIngredient.ID,
+    public static final Supplier<IngredientType<?>> BLOCK_TYPE_SWAP = RegHelper.register(BlockTypeSwapIngredient.ID,
             () -> new IngredientType<>(
                     (MapCodec<ICustomIngredient>) (Object) BlockTypeSwapIngredient.CODEC,
                     (StreamCodec<? super RegistryFriendlyByteBuf, ICustomIngredient>) (Object) BlockTypeSwapIngredient.STREAM_CODEC

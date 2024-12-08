@@ -20,6 +20,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
@@ -381,7 +382,7 @@ public class Utils {
      * Lenient holder set
      */
     public static <E> Codec<HolderSet<E>> lenientHomogeneousList(ResourceKey<? extends Registry<E>> registryKey) {
-        return null;
+        return LenientHolderSetCodec.create(registryKey, RegistryFixedCodec.create(registryKey), false);
     }
 
     public static <T extends Enum<T>> StreamCodec<FriendlyByteBuf, T> enumStreamCodec(Class<T> enumClass) {

@@ -28,7 +28,7 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends BlockTypeS
 
     @Override
     public IngredientType<?> getType() {
-        return ModIngredientTypes.BLOCK_SET_SWAP.get();
+        return ModIngredientTypes.BLOCK_TYPE_SWAP.get();
     }
 
     public static <T extends BlockType> BlockTypeSwapIngredient<T> create(Ingredient original, T from, T to, BlockTypeRegistry<T> reg) {
