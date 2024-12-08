@@ -20,7 +20,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
@@ -188,13 +187,42 @@ public class Utils {
             case DamageType t -> getID(t);
             case StatType<?> t -> getID(t);
             default -> throw new UnsupportedOperationException("Unsupported class type " +
-                            object.getClass() + ". Expected a registry entry for a call to Utils.getID()");
+                    object.getClass() + ". Expected a registry entry for a call to Utils.getID()");
         };
     }
 
     @Deprecated(forRemoval = true)
     public static <T> boolean isTagged(T entry, Registry<T> registry, TagKey<T> tag) {
         return registry.wrapAsHolder(entry).is(tag);
+    }
+
+    // finds the right registry access to which a data pack entry belongs to
+    public static <T> HolderLookup.RegistryLookup<T> hackyFindRegistryOf(
+            Holder<T> holder, ResourceKey<Registry<T>> registryKey) {
+        if (holder instanceof Holder.Reference<T> ref) {
+            if (ref.owner instanceof HolderLookup.RegistryLookup<T> ra) {
+                return ra;
+            }
+        }
+        if (PlatHelper.getPhysicalSide().isClient()) {
+            var level = Minecraft.getInstance().level;
+            if (level != null) {
+                var clientRa = level.registryAccess();
+                Registry<T> r = clientRa.registryOrThrow(registryKey);
+                if (holder.canSerializeIn(r.holderOwner())) {
+                    return clientRa.lookupOrThrow(registryKey);
+                }
+            }
+        }
+        var s = PlatHelper.getCurrentServer();
+        if (s != null) {
+            var serverRa = s.registryAccess();
+            Registry<T> r = serverRa.registryOrThrow(registryKey);
+            if (holder.canSerializeIn(r.holderOwner())) {
+                return serverRa.lookupOrThrow(registryKey);
+            }
+        }
+        throw new UnsupportedOperationException("Failed to find registry access for " + holder);
     }
 
     //very very hacky
@@ -353,7 +381,7 @@ public class Utils {
      * Lenient holder set
      */
     public static <E> Codec<HolderSet<E>> lenientHomogeneousList(ResourceKey<? extends Registry<E>> registryKey) {
-        return LenientHolderSetCodec.create(registryKey, RegistryFixedCodec.create(registryKey), false);
+        return null;
     }
 
     public static <T extends Enum<T>> StreamCodec<FriendlyByteBuf, T> enumStreamCodec(Class<T> enumClass) {

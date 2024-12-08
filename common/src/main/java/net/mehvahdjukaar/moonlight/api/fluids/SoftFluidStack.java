@@ -5,7 +5,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
-import net.mehvahdjukaar.moonlight.api.map.MapDataRegistry;
 import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.util.PotionBottleType;
@@ -72,11 +71,6 @@ public class SoftFluidStack implements DataComponentHolder {
         this.fluidHolder = fluid;
         //validate
         //cant have this becasue stuff likes to create these from netty thread
-        /*
-        if (!fluid.canSerializeIn(SoftFluidRegistry.hackyGetRegistry().holderOwner())) {
-            Moonlight.LOGGER.error("Fluid {} cannot be serialized in the current registry", fluid);
-            if (PlatHelper.isDev()) throw new AssertionError();
-        }*/
         this.fluid = this.fluidHolder.value();
         this.components = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, Objects.requireNonNull(components));
         this.count = count;
@@ -86,13 +80,8 @@ public class SoftFluidStack implements DataComponentHolder {
     }
 
     private Holder<SoftFluid> haxFindEmpty(Holder<SoftFluid> fluidHolder) {
-        if (fluidHolder instanceof Holder.Reference<SoftFluid> ref) {
-            if (ref.owner instanceof HolderLookup.RegistryLookup<SoftFluid> ra) {
-                return MLBuiltinSoftFluids.EMPTY.lookup(ra);
-            }
-        }
-        Moonlight.LOGGER.warn("Failed to find empty fluid for {}", fluidHolder);
-        return MLBuiltinSoftFluids.EMPTY.getHolderUnsafe();
+        var ra = Utils.hackyFindRegistryOf(fluidHolder, SoftFluidRegistry.KEY);
+        return MLBuiltinSoftFluids.EMPTY.lookup(ra);
     }
 
     @ExpectPlatform
@@ -139,8 +128,13 @@ public class SoftFluidStack implements DataComponentHolder {
         return fromFluid(fluid.getType(), SoftFluid.BUCKET_COUNT, DataComponentPatch.EMPTY);
     }
 
+    @Deprecated
     public static SoftFluidStack empty() {
         return of(SoftFluidRegistry.hackyGetEmpty(), 0);
+    }
+
+    public static SoftFluidStack empty(HolderLookup.Provider lookupProvider) {
+        return of(SoftFluidRegistry.getEmpty(lookupProvider), 0);
     }
 
     public Component getDisplayName() {
