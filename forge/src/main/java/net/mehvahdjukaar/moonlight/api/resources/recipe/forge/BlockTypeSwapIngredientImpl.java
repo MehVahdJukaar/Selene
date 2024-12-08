@@ -12,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.AbstractIngredient;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 
 import java.util.ArrayList;
@@ -84,6 +83,11 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
     }
 
     @Override
+    public boolean isEmpty() {
+        return this.inner.isEmpty();
+    }
+
+    @Override
     public IIngredientSerializer<BlockTypeSwapIngredientImpl<?>> getSerializer() {
         return SERIALIZER;
     }
@@ -95,6 +99,7 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
                     var reg = BlockSetInternal.getByName(arg.readUtf());
                     var from = reg.getFromNBT(arg.readUtf());
                     var to = reg.getFromNBT(arg.readUtf());
+
                     var ing = Ingredient.fromNetwork(arg);
                     return new BlockTypeSwapIngredientImpl<>(ing, from, to, (BlockTypeRegistry) reg);
                 }

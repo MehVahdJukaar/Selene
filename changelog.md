@@ -1,1 +1,1 @@
-improved recipe conversion code. added a new ingredient type to delay converting ingredients with tags since they are not ready when conversion happens
+fixed new recipe type being considered empty all the time on forge
