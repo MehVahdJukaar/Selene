@@ -58,7 +58,7 @@ public class BlockSetInternalImpl {
             throw new IllegalArgumentException("Fluid and Sound Events registry not supported here");
         } else {
             //ensure has filled block set
-            getOrAddQueue(Registries.BLOCK_ENTITY);
+            getOrAddQueue(Registries.BLOCK_ENTITY_TYPE);
             //other entries
             RegHelper.registerInBatch(registry, e -> registrationFunction.accept(e, BlockSetAPI.getBlockSet(blockType).getValues()));
         }
@@ -73,7 +73,7 @@ public class BlockSetInternalImpl {
         //if block makes a function that just adds the bus and runnable to the queue whenever reg block is fired
         //actual runnable which will registers the blocks
         Runnable lateRegistration = () -> {
-            registrationFunction.accept((r, o) -> net.minecraft.core.Registry.register(reg, r, o),
+            registrationFunction.accept((r, o) -> Registry.register(reg, r, o),
                     BlockSetAPI.getBlockSet(blockType).getValues());
         };
         //when this reg block event fires we only add a runnable to the queue
