@@ -23,9 +23,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -34,7 +35,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -221,7 +221,7 @@ public class RegHelperImpl {
 
     public static void addItemsToTabsRegistration(Consumer<RegHelper.ItemToTabEvent> eventListener) {
         Moonlight.assertInitPhase();
-         MoonlightFabric.AFTER_SETUP_WORK.add(() -> {
+        MoonlightFabric.AFTER_SETUP_WORK.add(() -> {
             RegHelper.ItemToTabEvent event = new RegHelper.ItemToTabEvent((tab, target, after, items) -> {
                 ItemGroupEvents.modifyEntriesEvent(tab).register(entries -> {
                     if (target == null) {
@@ -270,6 +270,12 @@ public class RegHelperImpl {
     }
 
     public static void registerFireworkRecipe(FireworkRocketItem.Shape shape, Item ingredient) {
+    }
+
+    public static <T> Supplier<EntityDataSerializer<T>> regEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
+        var value = serializer.get();
+        EntityDataSerializers.registerSerializer(value);
+        return ()->value;
     }
 
 

@@ -14,24 +14,26 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.FireworkRocketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -119,10 +121,10 @@ public class RegHelperImpl {
             return r;
         });
         //forge we don't care about mod id since it's always the active container one
-        return new EntryWrapper<>(registry.register(name.getPath(), ()->{
+        return new EntryWrapper<>(registry.register(name.getPath(), () -> {
             //super hack for mod fluids auto registering of fluid types
             var obj = supplier.get();
-            if(regKey.equals(Registries.FLUID) && obj instanceof ModFlowingFluid fluid && fluid.hasCustomFluidType){
+            if (regKey.equals(Registries.FLUID) && obj instanceof ModFlowingFluid fluid && fluid.hasCustomFluidType) {
                 register(name, fluid::getFluidType, ForgeRegistries.Keys.FLUID_TYPES);
             }
             return obj;
@@ -191,7 +193,7 @@ public class RegHelperImpl {
             if (!afterEntries.isEmpty()) {
                 b.withTabsBefore(afterEntries.toArray(ResourceLocation[]::new));
             }
-            if(hasSearchBar)b.withSearchBar();
+            if (hasSearchBar) b.withSearchBar();
             return b.build();
         }, Registries.CREATIVE_MODE_TAB);
     }
@@ -345,11 +347,15 @@ public class RegHelperImpl {
     }
 
     public static void registerFireworkRecipe(FireworkRocketItem.Shape shape, Item ingredient) {
-        FireworkStarRecipe.SHAPE_BY_ITEM = new HashMap<>(FireworkStarRecipe.SHAPE_BY_ITEM );
+        FireworkStarRecipe.SHAPE_BY_ITEM = new HashMap<>(FireworkStarRecipe.SHAPE_BY_ITEM);
         FireworkStarRecipe.SHAPE_BY_ITEM.put(ingredient, shape);
         FireworkStarRecipe.SHAPE_INGREDIENT = CompoundIngredient.of(
                 FireworkStarRecipe.SHAPE_INGREDIENT,
                 Ingredient.of(ingredient));
+    }
+
+    public static <T> Supplier<EntityDataSerializer<T>> regEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
+        return RegHelper.register(name, serializer, ForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS);
     }
 
 }
