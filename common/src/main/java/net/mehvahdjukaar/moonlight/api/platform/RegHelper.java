@@ -23,6 +23,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -126,6 +127,11 @@ public class RegHelper {
     public static <T> Supplier<DataComponentType<T>> registerDataComponent(ResourceLocation name,
                                                                            Supplier<DataComponentType<T>> component) {
         return register(name, component, Registries.DATA_COMPONENT_TYPE);
+    }
+
+    @ExpectPlatform
+    public static <T> Supplier<EntityDataSerializer<T>> regEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
+        throw new AssertionError();
     }
 
     public static RegSupplier<PoiType> registerPOI(ResourceLocation name, Supplier<PoiType> poi) {

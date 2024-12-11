@@ -13,8 +13,15 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -23,6 +30,10 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.FireworkRocketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -347,4 +358,8 @@ public class RegHelperImpl {
             throw new IllegalArgumentException("Invalid bus type. Must be of IEventBus type: " + bus);
         }
     }
+    public static <T> Supplier<EntityDataSerializer<T>> regEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
+        return RegHelper.register(name, serializer, NeoForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS);
+    }
+
 }
