@@ -10,14 +10,18 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.mehvahdjukaar.moonlight.api.misc.CodecMapRegistry;
 import net.mehvahdjukaar.moonlight.api.misc.MapRegistry;
-import net.mehvahdjukaar.moonlight.api.misc.RegistryAccessJsonReloadListener;
+import net.mehvahdjukaar.moonlight.api.misc.SidedInstance;
 import net.mehvahdjukaar.moonlight.api.platform.ForgeHelper;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -27,36 +31,39 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class ItemListingManager extends RegistryAccessJsonReloadListener {
+public class ItemListingManager extends SimpleJsonResourceReloadListener {
 
-    protected static final CodecMapRegistry<ModItemListing> REGISTRY = MapRegistry.ofCodec();
-    private static final Map<EntityType<?>, Int2ObjectArrayMap<List<ModItemListing>>> SPECIAL_CUSTOM_TRADES = new HashMap<>();
-    private static final Map<VillagerProfession, Int2ObjectArrayMap<List<ModItemListing>>> CUSTOM_TRADES = new HashMap<>();
-
-    private static final Map<EntityType<?>, Int2ObjectArrayMap<ModItemListing[]>> oldSpecialTrades = new HashMap<>();
-    private static final Map<VillagerProfession, Int2ObjectArrayMap<ModItemListing[]>> oldTrades = new HashMap<>();
-
-    private static int count = 0;
+    private static final SidedInstance<ItemListingManager> INSTANCE = SidedInstance.of(ItemListingManager::new);
+    protected static final CodecMapRegistry<ModItemListing> LISTING_TYPES = MapRegistry.ofCodec();
 
     static {
-        REGISTRY.register(ResourceLocation.parse("simple"), SimpleItemListing.CODEC);
-        REGISTRY.register(ResourceLocation.parse("remove_all_non_data"), RemoveNonDataListingListing.CODEC);
-        REGISTRY.register(ResourceLocation.parse("no_op"), NoOpListing.CODEC);
+        LISTING_TYPES.register(ResourceLocation.parse("simple"), SimpleItemListing.CODEC);
+        LISTING_TYPES.register(ResourceLocation.parse("remove_all_non_data"), RemoveNonDataListingListing.CODEC);
+        LISTING_TYPES.register(ResourceLocation.parse("no_op"), NoOpListing.CODEC);
     }
 
+    private final Map<EntityType<?>, Int2ObjectArrayMap<List<ModItemListing>>> specialCustomTrades = new HashMap<>();
+    private final Map<VillagerProfession, Int2ObjectArrayMap<List<ModItemListing>>> customTrades = new HashMap<>();
 
-    public ItemListingManager() {
+    private final Map<EntityType<?>, Int2ObjectArrayMap<ModItemListing[]>> oldSpecialTrades = new HashMap<>();
+    private final Map<VillagerProfession, Int2ObjectArrayMap<ModItemListing[]>> oldTrades = new HashMap<>();
+
+    private final HolderLookup.Provider registryAccess;
+    private int count = 0;
+
+    public ItemListingManager(HolderLookup.Provider provider) {
         super(new Gson(), "moonlight/villager_trade");
+        this.registryAccess = provider;
     }
 
     @Override
-    public void parse(Map<ResourceLocation, JsonElement> jsons, RegistryAccess registryAccess) {
+    protected void apply(Map<ResourceLocation, JsonElement> jsons, ResourceManager resourceManager, ProfilerFiller profiler) {
 
         mergeProfessionAndSpecial(false);
 
         count = 0;
-        CUSTOM_TRADES.clear();
-        SPECIAL_CUSTOM_TRADES.clear();
+        customTrades.clear();
+        specialCustomTrades.clear();
 
         DynamicOps<JsonElement> ops = ForgeHelper.addConditionOps(RegistryOps.create(JsonOps.INSTANCE, registryAccess));
         for (var e : jsons.entrySet()) {
@@ -83,7 +90,7 @@ public class ItemListingManager extends RegistryAccessJsonReloadListener {
             } else if (trade instanceof RemoveNonDataListingListing) {
                 //TODO: add remove trades
             } else {
-                CUSTOM_TRADES.computeIfAbsent(profession.get(), t ->
+                customTrades.computeIfAbsent(profession.get(), t ->
                                 new Int2ObjectArrayMap<>()).computeIfAbsent(trade.getLevel(), a -> new ArrayList<>())
                         .add(trade);
             }
@@ -93,7 +100,7 @@ public class ItemListingManager extends RegistryAccessJsonReloadListener {
         if (entityType.isPresent()) {
             ModItemListing trade = parseOrThrow(json, id, ops);
             if (!(trade instanceof NoOpListing)) {
-                SPECIAL_CUSTOM_TRADES.computeIfAbsent(entityType.get(), t ->
+                specialCustomTrades.computeIfAbsent(entityType.get(), t ->
                                 new Int2ObjectArrayMap<>()).computeIfAbsent(trade.getLevel(), a -> new ArrayList<>())
                         .add(trade);
             }
@@ -120,14 +127,14 @@ public class ItemListingManager extends RegistryAccessJsonReloadListener {
     }
 
     private void mergeProfessionAndSpecial(boolean add) {
-        for (var p : CUSTOM_TRADES.entrySet()) {
+        for (var p : customTrades.entrySet()) {
             VillagerProfession profession = p.getKey();
             Int2ObjectMap<VillagerTrades.ItemListing[]> map = VillagerTrades.TRADES.computeIfAbsent(profession, k ->
                     new Int2ObjectArrayMap<>());
             Int2ObjectArrayMap<List<ModItemListing>> value = p.getValue();
             mergeAll(map, value, add);
         }
-        Int2ObjectArrayMap<List<ModItemListing>> wanderingStuff = SPECIAL_CUSTOM_TRADES.get(EntityType.WANDERING_TRADER);
+        Int2ObjectArrayMap<List<ModItemListing>> wanderingStuff = specialCustomTrades.get(EntityType.WANDERING_TRADER);
         if (wanderingStuff != null) {
             mergeAll(VillagerTrades.WANDERING_TRADER_TRADES, wanderingStuff, add);
         }
@@ -145,23 +152,28 @@ public class ItemListingManager extends RegistryAccessJsonReloadListener {
         return Arrays.stream(array).toList();
     }
 
-    public static List<? extends VillagerTrades.ItemListing> getSpecialListings(EntityType<?> entityType, int level) {
+    public static List<? extends VillagerTrades.ItemListing> getSpecialListings(EntityType<?> entityType, int level, HolderLookup.Provider provider) {
         if (entityType == EntityType.WANDERING_TRADER) {
             VillagerTrades.ItemListing[] array = VillagerTrades.WANDERING_TRADER_TRADES.get(level);
             if (array == null) return List.of();
             return Arrays.stream(array).toList();
         } else {
-            var special = SPECIAL_CUSTOM_TRADES.get(entityType);
+            var special = INSTANCE.get(provider).specialCustomTrades.get(entityType);
             if (special == null) return List.of();
             return special.getOrDefault(level, List.of());
         }
+    }
+
+    @Deprecated(forRemoval = true)
+    public static List<? extends VillagerTrades.ItemListing> getSpecialListings(EntityType<?> entityType, int level) {
+        return getSpecialListings(entityType, level, Utils.hackyGetRegistryAccess());
     }
 
     /**
      * Call on mod setup. Register a new serializer for your trade
      */
     public static void registerSerializer(ResourceLocation id, MapCodec<? extends ModItemListing> trade) {
-        REGISTRY.register(id, trade);
+        LISTING_TYPES.register(id, trade);
     }
 
     /**

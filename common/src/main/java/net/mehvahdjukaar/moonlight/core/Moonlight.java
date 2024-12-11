@@ -85,7 +85,7 @@ public class Moonlight {
         PlatHelper.addCommonSetup(Moonlight::commonSetup);
         PlatHelper.addReloadableCommonSetup(Moonlight::afterDataReload);
 
-        PlatHelper.addServerReloadListener(new ItemListingManager(), Moonlight.res("villager_trade"));
+        PlatHelper.addServerReloadListener(ItemListingManager::new, Moonlight.res("villager_trade"));
 
         //hack
         BlockSetAPI.addDynamicRegistration((reg, wood) -> AdditionalItemPlacementsAPI.afterItemReg(),

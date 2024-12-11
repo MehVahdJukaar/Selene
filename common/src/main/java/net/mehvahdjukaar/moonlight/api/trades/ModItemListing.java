@@ -7,7 +7,7 @@ import net.minecraft.world.entity.npc.VillagerTrades;
 
 public interface ModItemListing extends VillagerTrades.ItemListing {
 
-    Codec<ModItemListing> CODEC = ItemListingManager.REGISTRY.dispatch(ModItemListing::getCodec);
+    Codec<ModItemListing> CODEC = ItemListingManager.LISTING_TYPES.dispatch(ModItemListing::getCodec);
 
     default int getLevel() {
         return 1;
