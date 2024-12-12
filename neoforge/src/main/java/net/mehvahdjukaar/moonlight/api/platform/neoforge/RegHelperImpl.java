@@ -358,7 +358,7 @@ public class RegHelperImpl {
             throw new IllegalArgumentException("Invalid bus type. Must be of IEventBus type: " + bus);
         }
     }
-    public static <T> Supplier<EntityDataSerializer<T>> regEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
+    public static <T> Supplier<EntityDataSerializer<T>> registerEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
         return RegHelper.register(name, serializer, NeoForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS);
     }
 

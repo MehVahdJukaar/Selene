@@ -1,1 +1,1 @@
-more ported fixes
+added a helper method to register entity data serializer in common

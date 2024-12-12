@@ -287,7 +287,7 @@ public class RegHelperImpl {
 
     }
 
-    public static <T> Supplier<EntityDataSerializer<T>> regEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
+    public static <T> Supplier<EntityDataSerializer<T>> registerEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
         var value = serializer.get();
         EntityDataSerializers.registerSerializer(value);
         return ()->value;

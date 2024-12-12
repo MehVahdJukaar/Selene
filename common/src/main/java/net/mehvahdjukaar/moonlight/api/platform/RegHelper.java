@@ -130,7 +130,7 @@ public class RegHelper {
     }
 
     @ExpectPlatform
-    public static <T> Supplier<EntityDataSerializer<T>> regEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
+    public static <T> Supplier<EntityDataSerializer<T>> registerEntityDataSerializer(ResourceLocation name, Supplier<EntityDataSerializer<T>> serializer) {
         throw new AssertionError();
     }
 
