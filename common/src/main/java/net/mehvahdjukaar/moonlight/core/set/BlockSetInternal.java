@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.moonlight.core.set;
 
 import com.google.common.base.Stopwatch;
+import com.mojang.serialization.Codec;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
@@ -132,6 +133,10 @@ public class BlockSetInternal {
         return (BlockTypeRegistry<T>) REGISTRIES_BY_CLASS.get(typeClass);
     }
 
+    public static BlockTypeRegistry<?> getRegistry(String name) {
+        return REGISTRIES_BY_NAME.getValue(name);
+    }
+
     @Nullable
     public static <T extends BlockType> T getBlockTypeOf(ItemLike itemLike, Class<T> typeClass) {
         BlockTypeRegistry<T> r = getRegistry(typeClass);
@@ -141,7 +146,7 @@ public class BlockSetInternal {
         return null;
     }
 
-    public static BlockTypeRegistry<?> getByName(String name) {
-        return REGISTRIES_BY_NAME.getValue(name);
+    public static Codec<BlockTypeRegistry<?>> getRegistriesCodec() {
+        return REGISTRIES_BY_NAME;
     }
 }

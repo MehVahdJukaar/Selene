@@ -96,7 +96,7 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
             new IIngredientSerializer<>() {
                 @Override
                 public BlockTypeSwapIngredientImpl<?> parse(FriendlyByteBuf arg) {
-                    var reg = BlockSetInternal.getByName(arg.readUtf());
+                    var reg = BlockSetInternal.getRegistry(arg.readUtf());
                     var from = reg.getFromNBT(arg.readUtf());
                     var to = reg.getFromNBT(arg.readUtf());
 
@@ -106,7 +106,7 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> extends AbstractIn
 
                 @Override
                 public BlockTypeSwapIngredientImpl<?> parse(JsonObject jsonObject) {
-                    var reg = BlockSetInternal.REGISTRIES_BY_NAME.getValue(jsonObject.get("block_type").getAsString());
+                    var reg = BlockSetInternal.getRegistry(jsonObject.get("block_type").getAsString());
                     var from = reg.getFromNBT(jsonObject.get("from").getAsString());
                     var to = reg.getFromNBT(jsonObject.get("to").getAsString());
                     var ing = Ingredient.fromJson(jsonObject.get("ingredient"));

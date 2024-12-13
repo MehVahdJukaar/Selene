@@ -104,7 +104,7 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> implements CustomI
 
                 @Override
                 public BlockTypeSwapIngredientImpl<?> read(JsonObject json) {
-                    var reg = BlockSetInternal.REGISTRIES_BY_NAME.getValue(json.get("block_type").getAsString());
+                    var reg = BlockSetInternal.getRegistry(json.get("block_type").getAsString());
                     var from = reg.getFromNBT(json.get("from").getAsString());
                     var to = reg.getFromNBT(json.get("to").getAsString());
                     var ing = Ingredient.fromJson(json.get("ingredient"));
@@ -121,7 +121,7 @@ public class BlockTypeSwapIngredientImpl<T extends BlockType> implements CustomI
 
                 @Override
                 public BlockTypeSwapIngredientImpl<?> read(FriendlyByteBuf buf) {
-                    var reg = BlockSetInternal.getByName(buf.readUtf());
+                    var reg = BlockSetInternal.getRegistry(buf.readUtf());
                     var from = reg.getFromNBT(buf.readUtf());
                     var to = reg.getFromNBT(buf.readUtf());
                     var ing = Ingredient.fromNetwork(buf);
