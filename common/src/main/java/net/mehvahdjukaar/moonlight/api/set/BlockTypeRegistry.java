@@ -21,7 +21,7 @@ import java.util.*;
 public abstract class BlockTypeRegistry<T extends BlockType> {
 
     public static Codec<BlockTypeRegistry<?>> getRegistryCodec() {
-        return BlockSetInternal.REGISTRIES_BY_NAME;
+        return BlockSetInternal.getRegistriesCodec();
     }
 
     public static StreamCodec<FriendlyByteBuf, BlockTypeRegistry<?>> getRegistryStreamCodec() {
