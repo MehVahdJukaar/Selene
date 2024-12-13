@@ -26,8 +26,9 @@ public class BlockSetInternal {
     private static final Queue<Runnable> FINDER_ADDER = new ArrayDeque<>();
     private static final Queue<Runnable> REMOVER_ADDER = new ArrayDeque<>();
 
-    private static final Map<Class<? extends BlockType>, BlockTypeRegistry<?>> REGISTRIES_BY_CLASS = new HashMap<>();
-    public static final MapRegistry<BlockTypeRegistry<?>> REGISTRIES_BY_NAME = new MapRegistry<>("block_set_registry");
+    private static final Map<Class<? extends BlockType>, BlockTypeRegistry<?>> REGISTRIES_BY_CLASS = new LinkedHashMap<>();
+    private static final MapRegistry<BlockTypeRegistry<?>> REGISTRIES_BY_NAME = new MapRegistry<>("block_set_registry");
+    private static final List<BlockTypeRegistry<?>> ORDERED_REGISTRIES = new ArrayList<>();
 
     public static void initializeBlockSets() {
         Stopwatch sw = Stopwatch.createStarted();
@@ -35,8 +36,9 @@ public class BlockSetInternal {
         FINDER_ADDER.forEach(Runnable::run);
         FINDER_ADDER.clear();
 
-        REGISTRIES_BY_CLASS.values().forEach(BlockTypeRegistry::buildAll);
-        REGISTRIES_BY_CLASS.values().forEach(BlockTypeRegistry::onBlockInit);
+        var regs = getRegistries();
+        regs.forEach(BlockTypeRegistry::buildAll);
+        regs.forEach(BlockTypeRegistry::onBlockInit);
 
         //remove not wanted ones
         REMOVER_ADDER.forEach(Runnable::run);
@@ -99,8 +101,19 @@ public class BlockSetInternal {
     }
 
 
+    //gets registries in order
     public static Collection<BlockTypeRegistry<?>> getRegistries() {
-        return REGISTRIES_BY_CLASS.values();
+        if (ORDERED_REGISTRIES.isEmpty()) {
+            synchronized (ORDERED_REGISTRIES) {
+                Comparator<BlockTypeRegistry<?>> comparator = Comparator.comparingInt(BlockTypeRegistry::priority);
+                // Sort the registries based on their priority. Higher priority comes first.
+                ORDERED_REGISTRIES.addAll(REGISTRIES_BY_NAME.getValues()
+                        .stream()
+                        .sorted(comparator.reversed())
+                        .toList());
+            }
+        }
+        return ORDERED_REGISTRIES;
     }
 
     @Nullable
