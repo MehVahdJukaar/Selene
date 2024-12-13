@@ -183,8 +183,8 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
         }
     }
 
-    // load priority. higher is loaded first
+    // load priority. higher is loaded first. 100 is default
     public int priority() {
-        return 500;
+        return 100;
     }
 }
