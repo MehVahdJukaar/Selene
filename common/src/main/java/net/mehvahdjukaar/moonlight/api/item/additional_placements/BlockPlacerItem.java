@@ -9,7 +9,6 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
@@ -22,7 +21,7 @@ import java.util.Map;
 //hacky registered item that handles placing placeable stuff
 public final class BlockPlacerItem extends BlockItem {
 
-    public static BlockPlacerItem get(){
+    public static BlockPlacerItem get() {
         return MoonlightRegistry.BLOCK_PLACER.get();
     }
 
@@ -36,9 +35,8 @@ public final class BlockPlacerItem extends BlockItem {
 
     @Override
     public void registerBlocks(Map<Block, Item> pBlockToItemMap, Item pItem) {
-      AdditionalItemPlacementsAPI.  onRegistryCallback(pBlockToItemMap);
+        AdditionalItemPlacementsAPI.onRegistryCallback(pBlockToItemMap);
     }
-
 
 
     @Nullable

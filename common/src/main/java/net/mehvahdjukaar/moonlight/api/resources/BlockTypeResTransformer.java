@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.moonlight.api.resources;
 
 import net.mehvahdjukaar.moonlight.api.misc.TriFunction;
-import net.mehvahdjukaar.moonlight.api.resources.textures.SpriteUtils;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.leaves.LeavesType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
@@ -194,7 +193,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
         String prefix = "";
         Pattern pattern = Pattern.compile("([^,]*(?=\\/))");
         Matcher matcher = pattern.matcher(blockId.getPath());
-        if (matcher.find()) prefix = matcher.group(1); //c/merge/
+        if (matcher.find()) prefix = matcher.group(1); //mcf/some_mod
 
         if (oldNamespace == null) {
             //simple mode
@@ -213,7 +212,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
                 p2 = Pattern.compile(oldNamespace + ":" + "([^,]*?)" + oldTypeName); //merge:block(/a/b/cc_)oak //.*
                 if (!prefix.isEmpty()) prefix = prefix + "/";
             } else {
-                prefix = "/" + prefix;
+                if (!prefix.isEmpty()) prefix = "/" + prefix;
                 p2 = Pattern.compile(oldNamespace + ":" + classType + "([^,]*?\\/[^,]*?)" + oldTypeName); //merge:block(/a/b/cc_)oak
             }
             Matcher m2 = p2.matcher(text);//->sup:block
