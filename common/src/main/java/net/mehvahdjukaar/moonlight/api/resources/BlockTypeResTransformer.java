@@ -242,7 +242,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
         String blockPathPrefix = blockPathSubPathMather.find() ? blockPathSubPathMather.group(1) : ""; //"mcf/create"
         String blockPathSuffix = blockType.getTypeName(); // path of block id "scoria"
 
-        String newNamespace = oldNamespace == null ? "" : blockId.getNamespace();
+        String newNamespace = oldNamespace == null ? "" : blockId.getNamespace() + ":";
         oldNamespace = oldNamespace == null ? "" : oldNamespace + ":";
 
         //pattern to find sub folders. Does not include "/"
