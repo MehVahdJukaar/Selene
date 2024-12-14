@@ -7,7 +7,6 @@ import com.mojang.math.Axis;
 import net.mehvahdjukaar.moonlight.api.client.util.RenderUtil;
 import net.mehvahdjukaar.moonlight.api.integration.MapAtlasCompat;
 import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapDecoration;
-import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.core.CompatHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -95,10 +94,11 @@ public class MapDecorationRenderer<T extends MLMapDecoration> {
         //vertexBuilder = sprite.wrap(vertexBuilder);
 
         if (alpha != 0) {
+            RenderUtil.renderSprite(matrixStack, vertexBuilder, light, index, b, g, r, alpha, sprite);
 
             if (outline) {
                 //we cant tint white fabric so might as well make it black
-                int tint = PlatHelper.getPlatform().isForge() ? 255 : 0;
+                int tint = 255;
                 RenderSystem.setShaderColor(1, 1, 1, 1);
                 VertexConsumer vb2 = buffer.getBuffer(RenderUtil.getColoredTextureRenderType(MapDecorationClientManager.LOCATION_MAP_MARKERS));
                 for (int j = -1; j <= 1; ++j) {
@@ -112,7 +112,6 @@ public class MapDecorationRenderer<T extends MLMapDecoration> {
                     }
                 }
             }
-            RenderUtil.renderSprite(matrixStack, vertexBuilder, light, index, b, g, r, alpha, sprite);
         }
     }
 
