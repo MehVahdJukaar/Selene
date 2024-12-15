@@ -177,9 +177,13 @@ public class BlockTypeResTransformer<T extends BlockType> {
     }
 
     public static String replaceFullGenericType(String text, BlockType newBlockType, ResourceLocation newBlockId, String oldTypeName,
-                                                @Nullable String oldTypeNamespace, int folderDepth){
-        return replaceFullGenericType(text, newBlockType, newBlockId, oldTypeName, oldTypeNamespace,
-                ".*?\\/".repeat(Math.max(0, folderDepth)));
+                                                @Nullable String oldTypeNamespace, int folderDepth) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < folderDepth; i++) {
+            if (i != 0) sb.append("\\/"); //no tailing slash
+            sb.append(".*?");
+        }
+        return replaceFullGenericType(text, newBlockType, newBlockId, oldTypeName, oldTypeNamespace, sb.toString());
     }
 
     /**
