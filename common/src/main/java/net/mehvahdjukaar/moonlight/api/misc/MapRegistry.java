@@ -108,6 +108,14 @@ public class MapRegistry<T> implements IdMap<T>, Codec<T> {
         return this.map.entrySet();
     }
 
+    public boolean isEmpty() {
+        return this.map.isEmpty();
+    }
+
+    public int size() {
+        return this.map.size();
+    }
+
     public boolean containsKey(ResourceLocation name) {
         return this.map.containsKey(name);
     }
