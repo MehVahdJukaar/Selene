@@ -215,13 +215,14 @@ public class BlockTypeResTransformer<T extends BlockType> {
     }
 
     public static String replaceTypeNoNamespace(String text, BlockType blockType, ResourceLocation blockId, String oldTypeName) {
-        return replaceFullGenericType(text, blockType, blockId, oldTypeName, null, "");
+        return replaceFullGenericType(text, blockType, blockId, oldTypeName, null, 1);
     }
 
     public static String replaceType(String text, BlockType blockType, ResourceLocation blockId, String oldTypeName, String oldNamespace) {
-        return replaceFullGenericType(text, blockType, blockId, oldTypeName, oldNamespace, "");
+        return replaceFullGenericType(text, blockType, blockId, oldTypeName, oldNamespace, 1);
     }
 
+    // Same as before but takes folder depth instead of a specific folder name
     public static String replaceFullGenericType(String text, BlockType newBlockType, ResourceLocation newBlockId, String oldTypeName,
                                                 @Nullable String oldTypeNamespace, int folderDepth){
         return replaceFullGenericType(text, newBlockType, newBlockId, oldTypeName, oldTypeNamespace,
@@ -251,7 +252,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
         String newNamespace = oldNamespace == null ? "" : blockId.getNamespace() + ":";
         oldNamespace = oldNamespace == null ? "" : oldNamespace + ":";
         // grabs first folder it finds as folder name if given is empty
-        String folderReg = folderName.isEmpty() ? "(" + folderName + ")\\/" : "(.*?)\\/";
+        String folderReg = "(" + folderName + ")\\/";
 
         //pattern to find sub folders. Does not include "/"
         //matches stuff between oldNamespace + folderName and oldTypeName not including leading or trailing slashes
