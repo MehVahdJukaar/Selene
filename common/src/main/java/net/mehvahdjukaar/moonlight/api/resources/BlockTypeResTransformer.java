@@ -233,7 +233,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
      * @param oldNamespace original namespace of this entry. E.G. "quark"
      */
 
-    //this is terrible
+    //quite messy
     public static String replaceFullGenericType(String text, BlockType blockType, ResourceLocation blockId, String oldTypeName,
                                                 @Nullable String oldNamespace, String folderName) {
 
@@ -244,13 +244,15 @@ public class BlockTypeResTransformer<T extends BlockType> {
 
         String newNamespace = oldNamespace == null ? "" : blockId.getNamespace() + ":";
         oldNamespace = oldNamespace == null ? "" : oldNamespace + ":";
+        // grabs first folder it finds as folder name if given is empty
+        String folderReg = folderName.isEmpty() ? "(" + folderName + ")\\/" : "(.*?)\\/";
 
         //pattern to find sub folders. Does not include "/"
         //matches stuff between oldNamespace + folderName and oldTypeName not including leading or trailing slashes
-        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderName + "\\/?(.*?)\\/?" + oldTypeName);
+        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderReg + "\\/?(.*?)\\/?" + oldTypeName);
         Matcher subFolderMatcher = subFolderPattern.matcher(text);
         return subFolderMatcher.replaceAll(m ->
-                newNamespace + joinWithSeparator(folderName, blockPathPrefix, m.group(1), blockPathSuffix)
+                newNamespace + joinWithSeparator(m.group(1), blockPathPrefix, m.group(2), blockPathSuffix)
         );
     }
 
