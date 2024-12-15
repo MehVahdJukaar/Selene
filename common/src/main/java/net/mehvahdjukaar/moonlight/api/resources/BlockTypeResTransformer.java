@@ -222,6 +222,12 @@ public class BlockTypeResTransformer<T extends BlockType> {
         return replaceFullGenericType(text, blockType, blockId, oldTypeName, oldNamespace, "");
     }
 
+    public static String replaceFullGenericType(String text, BlockType newBlockType, ResourceLocation newBlockId, String oldTypeName,
+                                                @Nullable String oldTypeNamespace, int folderDepth){
+        return replaceFullGenericType(text, newBlockType, newBlockId, oldTypeName, oldTypeNamespace,
+                ".*?\\/".repeat(Math.max(0, folderDepth)));
+    }
+
     /**
      * Specifically targets the whole block/ item string and replaces it whole with a new one
      *
