@@ -1,1 +1,4 @@
-fixed new recipe type being considered empty all the time on forge
+### UPDATE: 
+- Fixed Decoration Renderer Stuff
+- BlockTypeResTransformer.java: Rewritten RegEx code
+- BlockTypeRegistry.java: Fixed the order registries stuff
