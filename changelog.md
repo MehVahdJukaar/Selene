@@ -1,4 +1,2 @@
-### UPDATE: 
-- Fixed Decoration Renderer Stuff
-- BlockTypeResTransformer.java: Rewritten RegEx code
-- BlockTypeRegistry.java: Fixed the order registries stuff
+### UPDATE:
+- BlockTypeResTransformer.java: Improved the Regex Code that don't account for the prefix of the BlockID 
