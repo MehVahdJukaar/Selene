@@ -260,7 +260,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
 
         //pattern to find sub folders. Does not include "/"
         //matches stuff between oldNamespace + folderName and oldTypeName not including leading or trailing slashes
-        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderReg + "\\/?(.*?)\\/?" + oldTypeName);
+        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderReg + "\\/?(.*?\\/?.*?)" + oldTypeName);
         Matcher subFolderMatcher = subFolderPattern.matcher(text);
         return subFolderMatcher.replaceAll(m ->
                 newNamespace + joinWithSeparator(m.group(1), blockPathPrefix, m.group(2), blockPathSuffix)
@@ -271,7 +271,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
         StringBuilder sb = new StringBuilder();
         for (String s : strings) {
             if (!s.isEmpty()) {
-                if (!sb.isEmpty()) sb.append("/");
+                if (!sb.isEmpty() && s.endsWith("/")) sb.append("/");
                 sb.append(s);
             }
         }
