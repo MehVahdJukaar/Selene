@@ -256,14 +256,20 @@ public class BlockTypeResTransformer<T extends BlockType> {
         String newNamespace = oldNamespace == null ? "" : blockId.getNamespace() + ":";
         oldNamespace = oldNamespace == null ? "" : oldNamespace + ":";
         // grabs first folder it finds as folder name if given is empty
-        String folderReg = "(" + folderName + ")\\/";
+        String folderRegEx = "(" + folderName + ")\\/";
 
         //pattern to find sub folders. Does not include "/"
-        //matches stuff between oldNamespace + folderName and oldTypeName not including leading or trailing slashes
-        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderReg + "\\/?(.*?)\\/?(.*?)" + oldTypeName);
+        //matches stuff between (oldNamespace + folderName) and oldTypeName not including leading or trailing slashes
+        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderRegEx + "([\\w,\\/,-]*)" + oldTypeName); // \w is similar to [a-z,A-Z,_]
         Matcher subFolderMatcher = subFolderPattern.matcher(text);
-        return subFolderMatcher.replaceAll(m ->
-                newNamespace + joinWithSeparator(m.group(1), blockPathPrefix, m.group(2), m.group(3) + blockPathSuffix)
+
+        return subFolderMatcher.replaceAll(m -> {
+                // Replace the subfolder's oldTypeName with newTypeName
+                String group2 = (m.group(2).contains(oldTypeName))
+                        ? m.group(2).replaceAll(oldTypeName, blockPathSuffix)
+                        : m.group(2);
+                return newNamespace + joinWithSeparator(m.group(1), blockPathPrefix, group2 + blockPathSuffix);
+            }
         );
     }
 
