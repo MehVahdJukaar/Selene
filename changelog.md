@@ -1,2 +1,2 @@
 ### UPDATE:
-- BlockTypeResTransformer.java: Improved the Regex Code that don't account for the prefix of the BlockID 
+- BlockTypeResTransformer: Improved the Regex Code again, that doesn't account for the unformatted JSON and Others
