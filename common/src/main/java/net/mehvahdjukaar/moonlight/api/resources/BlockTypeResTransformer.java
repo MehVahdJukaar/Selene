@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
  *
  * @param <T>
  */
+@SuppressWarnings("unused")
 public class BlockTypeResTransformer<T extends BlockType> {
 
     @FunctionalInterface
@@ -260,7 +261,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
 
         //pattern to find sub folders. Does not include "/"
         //matches stuff between (oldNamespace + folderName) and oldTypeName not including leading or trailing slashes
-        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderRegEx + "([\\w,\\/,-]*)" + oldTypeName); // \w is similar to [a-z,A-Z,_]
+        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderRegEx + "([\\w,\\/,\\-]*)" + oldTypeName); // \w is similar to [a-z,A-Z,_]
         Matcher subFolderMatcher = subFolderPattern.matcher(text);
 
         return subFolderMatcher.replaceAll(m -> {
