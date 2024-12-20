@@ -1,2 +1,2 @@
 ### UPDATE:
-- BlockTypeResTransformer: Improved the Regex Code again, that doesn't account for the unformatted JSON and Others
+- Fixed the undetected children for: _boat_, _sign_, _hanging_sign_ (using wrough_iron) for **TerraFirmaCraft** & **ArborFirmaCraft**
