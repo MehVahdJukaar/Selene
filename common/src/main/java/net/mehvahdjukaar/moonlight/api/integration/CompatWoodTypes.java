@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.moonlight.api.integration;
 
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.leaves.LeavesType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
@@ -492,6 +493,65 @@ public class CompatWoodTypes {
                 "chipped", "red_spruce", "red_spruce_leaves", "spruce"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "chipped", "white_flower_spruce", "white_flower_spruce_leaves", "spruce"));
+
+        // AETHER
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether", "golden_oak", "golden_oak_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether", "holiday", "holiday_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether", "decorated_holiday", "decorated_holiday_leaves", "aether:skyroot"));
+
+
+        String crystalLeavesWoodType = "aether:skyroot";
+        // Aether Redux replaces the skyroot logs in crystal trees with their own crystal logs
+        if (PlatHelper.isModLoaded("aether_redux")){
+            crystalLeavesWoodType = "aether_redux:crystal";
+        }
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether", "crystal", "crystal_leaves", crystalLeavesWoodType));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether", "crystal_fruit", "crystal_fruit_leaves", crystalLeavesWoodType));
+
+        // AETHER REDUX
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_redux", "fieldsproot", "fieldsproot_leaves", "aether_redux:fieldsproot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_redux", "gilded_oak", "gilded_oak_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_redux", "blighted_skyroot", "blighted_skyroot_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_redux", "purple_glacia", "purple_glacia_leaves", "aether_redux:glacia"));
+
+        // DEEP AETHER
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "deep_aether", "flowering_roseroot", "flowering_roseroot_leaves", "deep_aether:roseroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "deep_aether", "blue_roseroot", "blue_roseroot_leaves", "deep_aether:roseroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "deep_aether", "flowering_blue_roseroot", "flowering_blue_roseroot_leaves", "deep_aether:roseroot"));
+
+        // ANCIENT AETHER
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "ancient_aether", "crystal_skyroot", "crystal_skyroot_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "ancient_aether", "enchanted_skyroot", "enchanted_skyroot_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "ancient_aether", "skyroot_pine", "skyroot_pine_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "ancient_aether", "blue_skyroot_pine", "crystal_skyroot_leaves", "aether:skyroot"));
+
+        // AUTUMNITY
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "autumnity", "yellow_maple", "yellow_maple_leaves", "autumnity:maple"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "autumnity", "orange_maple", "orange_maple_leaves", "autumnity:maple"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "autumnity", "red_maple", "red_maple_leaves", "autumnity:maple"));
+
+        // ALEXSCAVES
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "alexscaves", "ancient", "ancient_leaves", "jungle"));
     }
 
     /*
