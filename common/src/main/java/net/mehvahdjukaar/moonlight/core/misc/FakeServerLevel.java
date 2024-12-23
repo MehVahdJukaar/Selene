@@ -478,7 +478,6 @@ public class FakeServerLevel extends ServerLevel {
 
         @Override
         public void save(boolean flush) {
-
         }
 
         @Override
