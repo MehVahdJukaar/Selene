@@ -87,6 +87,7 @@ public class FakeServerLevel extends ServerLevel {
         }
     }
 
+    //super hack
     private void assignDummyChunkSource(ServerLevel original) throws IllegalAccessException {
         var server = original.getServer();
         int var10009 = server.getPlayerList().getViewDistance();
