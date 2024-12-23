@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ChunkResult;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
@@ -31,6 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.chunk.*;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.entity.ChunkStatusUpdateListener;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -82,8 +84,9 @@ public class FakeServerLevel extends ServerLevel {
         this.players().clear();
         this.scoreboard = new ServerScoreboard(original.getServer());
         try {
+            this.getChunkSource().chunkMap.close();
             this.assignDummyChunkSource(original);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -462,7 +465,6 @@ public class FakeServerLevel extends ServerLevel {
         public void tick(BooleanSupplier hasTimeLeft, boolean tickChunks) {
         }
 
-
         @Override
         public ChunkAccess getChunk(int x, int z, ChunkStatus leastStatus, boolean create) {
             return getEmptyChunk(x, z);
@@ -474,8 +476,8 @@ public class FakeServerLevel extends ServerLevel {
         }
 
         @Override
-        public CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> getChunkFuture(int x, int y, ChunkStatus chunkStatus, boolean load) {
-            return CompletableFuture.completedFuture(Either.left(getEmptyChunk(x, y)));
+        public CompletableFuture<ChunkResult<ChunkAccess>> getChunkFuture(int x, int z, ChunkStatus chunkStatus, boolean requireChunk) {
+            return CompletableFuture.completedFuture(ChunkResult.of(getEmptyChunk(x, z)));
         }
 
         @Override
