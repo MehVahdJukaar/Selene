@@ -19,6 +19,8 @@ accessible field net/minecraft/core/Holder$Reference owner Lnet/minecraft/core/H
 #fabric reg oreder
 accessible field net/minecraft/core/registries/BuiltInRegistries LOADERS Ljava/util/Map;
 
+accessible field net/minecraft/server/level/ServerLevel entityManager Lnet/minecraft/world/level/entity/PersistentEntitySectionManager;
+
 accessible field net/minecraft/world/entity/projectile/Projectile leftOwner Z
 accessible method net/minecraft/world/entity/projectile/Projectile checkLeftOwner ()Z
 accessible method net/minecraft/world/entity/Entity collide (Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;
