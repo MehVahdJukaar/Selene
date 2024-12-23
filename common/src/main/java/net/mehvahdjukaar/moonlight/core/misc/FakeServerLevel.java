@@ -1,5 +1,7 @@
 package net.mehvahdjukaar.moonlight.core.misc;
 
+import com.mojang.datafixers.DataFixer;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -8,6 +10,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.sounds.SoundEvent;
@@ -21,28 +25,40 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.entity.ChunkStatusUpdateListener;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.timers.TimerCallbacks;
 import net.minecraft.world.level.timers.TimerQueue;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public class FakeServerLevel extends ServerLevel {
 
@@ -64,8 +80,54 @@ public class FakeServerLevel extends ServerLevel {
         //data storage and server chunk cache will cause issues....
         this.players().clear();
         this.scoreboard = new ServerScoreboard(original.getServer());
+        try {
+            this.assignDummyChunkSource(original);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    private void assignDummyChunkSource(ServerLevel original) throws IllegalAccessException {
+        var server = original.getServer();
+        int var10009 = server.getPlayerList().getViewDistance();
+        int var10010 = server.getPlayerList().getSimulationDistance();
+        DummyServerChunkCache dummy = new DummyServerChunkCache(this, original.getServer().storageSource,
+                server.getFixerUpper(), server.getStructureManager(), Util.backgroundExecutor(),
+                this.getChunkSource().getGenerator(), var10009, var10010, server.forceSynchronousWrites(),
+                new DummyProgressListener(), this.entityManager::updateChunkStatus, () -> server.overworld().getDataStorage());
+
+        var f = Arrays.stream(ServerLevel.class.getDeclaredFields())
+                .filter(fi->fi.getType().equals(ServerChunkCache.class))
+                .findFirst().orElseThrow();
+        f.setAccessible(true);
+        f.set(this,dummy);
+    }
+
+    @Override
+    public BlockPos getSharedSpawnPos() {
+        return BlockPos.ZERO;
+    }
+
+    @Override
+    public float getSharedSpawnAngle() {
+        return 0;
+    }
+
+    @Override
+    public boolean noCollision(Entity entity) {
+        return super.noCollision(entity);
+    }
+
+    @Override
+    public Iterable<VoxelShape> getBlockCollisions(@Nullable Entity entity, AABB collisionBox) {
+        // return empty iterable
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<VoxelShape> getEntityCollisions(@Nullable Entity entity, AABB collisionBox) {
+        return Collections.emptyList();
+    }
 
     //we avoid all references to server.getPlayerList
 
@@ -405,6 +467,59 @@ public class FakeServerLevel extends ServerLevel {
         public boolean isDifficultyLocked() {
             return wrapped.isDifficultyLocked();
         }
+    }
+
+    //not ideal really
+    private class DummyServerChunkCache extends ServerChunkCache {
+
+        public DummyServerChunkCache(ServerLevel level, LevelStorageSource.LevelStorageAccess levelStorageAccess, DataFixer fixerUpper, StructureTemplateManager structureManager, Executor dispatcher, ChunkGenerator generator, int viewDistance, int simulationDistance, boolean sync, ChunkProgressListener progressListener, ChunkStatusUpdateListener chunkStatusListener, Supplier<DimensionDataStorage> overworldDataStorage) {
+            super(level, levelStorageAccess, fixerUpper, structureManager, dispatcher, generator, viewDistance, simulationDistance, sync, progressListener, chunkStatusListener, overworldDataStorage);
+        }
+
+        @Override
+        public void save(boolean flush) {
+
+        }
+
+        @Override
+        public void close() throws IOException {
+        }
+
+        @Override
+        public void tick(BooleanSupplier hasTimeLeft, boolean tickChunks) {
+        }
+
+
+        @Override
+        public ChunkAccess getChunk(int x, int z, ChunkStatus leastStatus, boolean create) {
+            return getEmptyChunk(x, z);
+        }
+
+        @Override
+        public @Nullable LevelChunk getChunkNow(int chunkX, int chunkZ) {
+            return getEmptyChunk(chunkX, chunkZ);
+        }
+
+        @Override
+        public CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> getChunkFuture(int x, int y, ChunkStatus chunkStatus, boolean load) {
+            return CompletableFuture.completedFuture(Either.left(getEmptyChunk(x, y)));
+        }
+
+        @Override
+        public boolean hasChunk(int chunkX, int chunkZ) {
+            return true;
+        }
+
+        @Override
+        public @Nullable LightChunk getChunkForLighting(int chunkX, int chunkZ) {
+            return getEmptyChunk(chunkX, chunkZ);
+        }
+
+        private @NotNull EmptyLevelChunk getEmptyChunk(int x, int z) {
+            return new EmptyLevelChunk(getLevel(), new ChunkPos(x, z), registryAccess().registryOrThrow(Registries.BIOME)
+                    .getHolderOrThrow(Biomes.FOREST));
+        }
+
     }
 
 }

@@ -250,8 +250,8 @@ public class BlockTypeResTransformer<T extends BlockType> {
 
         Pattern blockPathSubPathPattern = Pattern.compile("([^,]*(?=\\/))");
         Matcher blockPathSubPathMather = blockPathSubPathPattern.matcher(blockId.getPath());
-        String blockPathPrefix = blockPathSubPathMather.find() ? blockPathSubPathMather.group(1) : ""; //"mcf/create"
-        String blockPathSuffix = blockType.getTypeName(); // path of block id "scoria"
+        String blockFolderPrefix = blockPathSubPathMather.find() ? blockPathSubPathMather.group(1) : ""; //"mcf/create"
+        String blockTypeName = blockType.getTypeName(); // path of block id "scoria"
 
         String newNamespace = oldNamespace == null ? "" : blockId.getNamespace() + ":";
         oldNamespace = oldNamespace == null ? "" : oldNamespace + ":";
@@ -260,10 +260,10 @@ public class BlockTypeResTransformer<T extends BlockType> {
 
         //pattern to find sub folders. Does not include "/"
         //matches stuff between oldNamespace + folderName and oldTypeName not including leading or trailing slashes
-        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderReg + "\\/?(.*?)\\/?(.*?)" + oldTypeName);
+        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderReg + "(.*?)" + oldTypeName);
         Matcher subFolderMatcher = subFolderPattern.matcher(text);
         return subFolderMatcher.replaceAll(m ->
-                newNamespace + joinWithSeparator(m.group(1), blockPathPrefix, m.group(2), m.group(3) + blockPathSuffix)
+                newNamespace + joinWithSeparator(m.group(1), blockFolderPrefix, m.group(3) + blockTypeName)
         );
     }
 
