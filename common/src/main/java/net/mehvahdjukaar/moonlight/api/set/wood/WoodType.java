@@ -91,7 +91,7 @@ public class WoodType extends BlockType {
         // SUPPORT: TFC & AFC
         String path = id.getPath();
         String namespace = id.getNamespace();
-        if (this.id.getNamespace().equals("tfc") || this.id.getNamespace().equals("afc")) {
+        if (this.id.getNamespace().matches("tfc|afc")) {
             var o = BuiltInRegistries.BLOCK.getOptional(
                     new ResourceLocation(namespace,
                             "wood/" + prefix_ + postfix + "/" + path));
@@ -176,6 +176,13 @@ public class WoodType extends BlockType {
         this.addChild("wall_hanging_sign", this.findRelatedEntry("wall_hanging_sign", BuiltInRegistries.BLOCK));
         this.addChild("sign", this.findRelatedEntry("sign", BuiltInRegistries.BLOCK));
         this.addChild("wall_sign", this.findRelatedEntry("wall_sign", BuiltInRegistries.BLOCK));
+
+        if (this.id.getNamespace().matches("tfc|afc")) { // Including unidue blocks' path
+            this.addChild("sign", this.findRelatedEntry("sign", "", BuiltInRegistries.BLOCK));
+            this.addChild("hanging_sign", this.findRelatedEntry("hanging_sign/wrought_sign", "", BuiltInRegistries.BLOCK));
+
+        }
+
     }
 
     @Override
@@ -183,7 +190,10 @@ public class WoodType extends BlockType {
         this.addChild("boat", this.findRelatedEntry("boat", BuiltInRegistries.ITEM));
         this.addChild("chest_boat", this.findRelatedEntry("chest_boat", BuiltInRegistries.ITEM));
         this.addChild("sapling", this.findRelatedEntry("sapling", BuiltInRegistries.ITEM));
-        this.addChild("stick", this.findRelatedEntry("twig", BuiltInRegistries.BLOCK)); // TFC & AFC only
+        if (this.id.getNamespace().matches("tfc|afc")) { // Including unidue blocks' path
+            this.addChild("stick", this.findRelatedEntry("twig", BuiltInRegistries.BLOCK));
+            this.addChild("boat", this.findRelatedEntry("boat", "", BuiltInRegistries.BLOCK));
+        }
     }
 
     @Nullable
@@ -196,7 +206,7 @@ public class WoodType extends BlockType {
                 new ResourceLocation(id.getNamespace(), id.getPath() + "_planks_" + before + after),
                 // TFC & AFC: Include children of wood_type: stairs, slab...
                 new ResourceLocation(id.getNamespace(), "wood/planks/" + id.getPath() + "_" + before),
-                // TFC & AFC: Include twig (sticks), leaves, planks
+                // TFC & AFC: Include twig (sticks), leaves, planks, sign
                 new ResourceLocation(id.getNamespace(), "wood/" + before + after + "/" + id.getPath())
         };
         V found = null;

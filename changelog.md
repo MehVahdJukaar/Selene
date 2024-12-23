@@ -1,4 +1,2 @@
-### UPDATE: 
-- Fixed Decoration Renderer Stuff
-- BlockTypeResTransformer.java: Rewritten RegEx code
-- BlockTypeRegistry.java: Fixed the order registries stuff
+### UPDATE:
+- Fixed the undetected children for: _boat_, _sign_, _hanging_sign_ (using wrough_iron) for **TerraFirmaCraft** & **ArborFirmaCraft**
