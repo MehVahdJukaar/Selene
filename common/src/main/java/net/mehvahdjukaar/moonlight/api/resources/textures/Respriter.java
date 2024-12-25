@@ -99,6 +99,11 @@ public class Respriter {
         //is restricted to use only first original palette since it must merge a new animation following the given one
         Palette originalPalette = originalPalettes.get(0);
 
+        // in case the SOURCE texture itself has an animation we use it instead. this WILL create issues with animated planks textures but its acceptable as mcmeta of source could have more important stuff like ctm
+        if (imageToRecolor.getMetadata() != null) {
+            targetAnimationData = imageToRecolor.getMetadata();
+        }
+
         TextureImage texture = imageToRecolor.createAnimationTemplate(targetPalettes.size(), targetAnimationData);
 
         NativeImage img = texture.getImage();
