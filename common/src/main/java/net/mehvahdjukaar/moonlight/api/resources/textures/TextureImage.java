@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
+import net.mehvahdjukaar.moonlight.core.misc.McMetaUtils;
 import net.minecraft.client.resources.metadata.animation.AnimationFrame;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
@@ -135,7 +136,9 @@ public class TextureImage implements AutoCloseable {
      */
     public TextureImage createAnimationTemplate(int length, List<AnimationFrame> frameData, int frameTime, boolean interpolate) {
         NativeImage im = new NativeImage(this.frameWidth(), this.frameHeight() * length, false);
-        TextureImage t = new TextureImage(im, new AnimationMetadataSection(frameData, this.frameWidth(), this.frameHeight(), frameTime, interpolate));
+        AnimationMetadataSection newMetadata = new AnimationMetadataSection(frameData, this.frameWidth(), this.frameHeight(), frameTime, interpolate);
+        McMetaUtils.copyAllMixinAddedFields(metadata, newMetadata);
+        TextureImage t = new TextureImage(im, newMetadata);
 
         t.forEachFramePixel((i, x, y) -> {
             int xo = getFrameX(i, x);
@@ -207,6 +210,7 @@ public class TextureImage implements AutoCloseable {
             int mH = (int) (metadata.frameHeight * heightScale);
             meta = new AnimationMetadataSection(metadata.frames, mW, mH,
                     metadata.getDefaultFrameTime(), metadata.isInterpolatedFrames());
+            McMetaUtils.copyAllMixinAddedFields(metadata, meta);
         }
         var im = TextureImage.createNew(newW, newH, meta);
         var t = ImageTransformer.builder(this.frameWidth(), this.frameHeight(), im.frameWidth(), im.frameHeight())
