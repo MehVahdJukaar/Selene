@@ -179,7 +179,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
     /**
      * Specifically targets the whole block/ item string and replaces it whole with a new one
      *
-     * @param classType    Registry entry type. E.G: "item" or "block"
+     * @param folderName   Folder name. Matches registry entry type. E.G: "item" or "block"
      * @param text         Text to apply this replacement to
      * @param blockType    wood or leaf type that this new block has
      * @param blockId      new block id to replace this entry with
@@ -187,37 +187,44 @@ public class BlockTypeResTransformer<T extends BlockType> {
      * @param oldNamespace original namespace of this entry. E.G. "quark"
      */
 
-    //this is terrible
-    public static String replaceFullGenericType(String text, BlockType blockType, ResourceLocation blockId, String oldTypeName, String oldNamespace, String classType) {
 
-        String prefix = "";
-        Pattern pattern = Pattern.compile("([^,]*(?=\\/))");
-        Matcher matcher = pattern.matcher(blockId.getPath());
-        if (matcher.find()) prefix = matcher.group(1); //mcf/some_mod
+//quite messy
+    public static String replaceFullGenericType(String text, BlockType blockType, ResourceLocation blockId, String oldTypeName,
+                                                @Nullable String oldNamespace, String folderName) {
 
-        if (oldNamespace == null) {
-            //simple mode
-            Pattern p2;
-            if (text.contains("block/")) { ///block(/b/cc_)oak
-                //needed so stuff matches the same as replaceFullBlockType
-                p2 = Pattern.compile("((?<=block)[\\w\\/]*?)" + oldTypeName);
-            } else p2 = Pattern.compile("(\\/\\w*?)" + oldTypeName); ///a/b(/cc_)oak
-            Matcher m2 = p2.matcher(text);//->sup:block
-            String finalPrefix = prefix;
-            return m2.replaceAll(m -> "/" + finalPrefix + m.group(1) + blockType.getTypeName());
+        Pattern blockPathSubPathPattern = Pattern.compile("([^,]*(?=\\/))");
+        Matcher blockPathSubPathMather = blockPathSubPathPattern.matcher(blockId.getPath());
+        String blockFolderPrefix = blockPathSubPathMather.find() ? blockPathSubPathMather.group(1) : ""; //"mcf/create"
+        String blockTypeName = blockType.getTypeName(); // path of block id "scoria"
 
-        } else {
-            Pattern p2;
-            if (classType.isEmpty()) {
-                p2 = Pattern.compile(oldNamespace + ":" + "([^,]*?)" + oldTypeName); //merge:block(/a/b/cc_)oak //.*
-                if (!prefix.isEmpty()) prefix = prefix + "/";
-            } else {
-                if (!prefix.isEmpty()) prefix = "/" + prefix;
-                p2 = Pattern.compile(oldNamespace + ":" + classType + "([^,]*?\\/[^,]*?)" + oldTypeName); //merge:block(/a/b/cc_)oak
+        String newNamespace = oldNamespace == null ? "" : blockId.getNamespace() + ":";
+        oldNamespace = oldNamespace == null ? "" : oldNamespace + ":";
+        // grabs first folder it finds as folder name if given is empty
+        String folderRegEx = "(" + folderName + ")\\/";
+
+        //pattern to find sub folders. Does not include "/"
+        //matches stuff between (oldNamespace + folderName) and oldTypeName not including leading or trailing slashes
+        Pattern subFolderPattern = Pattern.compile(oldNamespace + folderRegEx + "([\\w,\\/,\\-]*)" + oldTypeName); // \w is similar to [a-z,A-Z,_]
+        Matcher subFolderMatcher = subFolderPattern.matcher(text);
+
+        return subFolderMatcher.replaceAll(m -> {
+                    // Replace the subfolder's oldTypeName with newTypeName
+                    String group2 = (m.group(2).contains(oldTypeName))
+                            ? m.group(2).replaceAll(oldTypeName, blockTypeName)
+                            : m.group(2);
+                    return newNamespace + joinWithSeparator(m.group(1), blockTypeName, group2 + blockTypeName);
+                }
+        );
+    }
+
+    private static String joinWithSeparator(String... strings) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : strings) {
+            if (!s.isEmpty()) {
+                if (!sb.isEmpty()) sb.append("/");
+                sb.append(s);
             }
-            Matcher m2 = p2.matcher(text);//->sup:block
-            String finalPrefix = prefix;
-            return m2.replaceAll(m -> blockId.getNamespace() + ":" + classType + finalPrefix + m.group(1) + blockType.getTypeName());
         }
+        return sb.toString();
     }
 }
