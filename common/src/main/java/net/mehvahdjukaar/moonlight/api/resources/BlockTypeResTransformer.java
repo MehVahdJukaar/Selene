@@ -267,9 +267,9 @@ public class BlockTypeResTransformer<T extends BlockType> {
         return subFolderMatcher.replaceAll(m -> {
                     // Replace the subfolder's oldTypeName with newTypeName
                     String group2 = (m.group(2).contains(oldTypeName))
-                            ? m.group(2).replaceAll(oldTypeName, blockPathSuffix)
+                            ? m.group(2).replaceAll(oldTypeName, blockTypeName)
                             : m.group(2);
-                    return newNamespace + joinWithSeparator(m.group(1), blockPathPrefix, group2 + blockPathSuffix);
+                    return newNamespace + joinWithSeparator(m.group(1), blockTypeName, group2 + blockTypeName);
                 }
         );
     }
