@@ -269,7 +269,7 @@ public class BlockTypeResTransformer<T extends BlockType> {
                     String group2 = (m.group(2).contains(oldTypeName))
                             ? m.group(2).replaceAll(oldTypeName, blockTypeName)
                             : m.group(2);
-                    return newNamespace + joinWithSeparator(m.group(1), blockTypeName, group2 + blockTypeName);
+                    return newNamespace + joinWithSeparator(m.group(1), blockFolderPrefix, group2 + blockTypeName);
                 }
         );
     }
