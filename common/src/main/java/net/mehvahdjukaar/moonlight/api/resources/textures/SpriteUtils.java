@@ -46,7 +46,7 @@ public final class SpriteUtils {
     public static RGBColor averageColor(NativeImage image) {
         //could be faster. whatever
         // read data
-        Palette p = Palette.fromImage(TextureImage.of(image, null), null, 0);
+        Palette p = Palette.fromImage(TextureImage.of(image), null, 0);
 
         if (p.size() == 0) return new RGBColor(-1);
         DataSet<DataSet.ColorPoint> data = DataSet.fromPalette(p);
@@ -143,7 +143,7 @@ public final class SpriteUtils {
     public static void reduceColors(NativeImage image, IntUnaryOperator sizeFn) {
 
         // read data
-        Palette p = Palette.fromImage(TextureImage.of(image, null), null, 0);
+        Palette p = Palette.fromImage(TextureImage.of(image), null, 0);
 
         if (p.size() == 0) return;
         DataSet<DataSet.ColorPoint> data = DataSet.fromPalette(p);
@@ -180,7 +180,7 @@ public final class SpriteUtils {
      * @param tolerance tolerance for two colors to be merged
      */
     public static void mergeSimilarColors(NativeImage image, float tolerance) {
-        TextureImage texture = TextureImage.of(image, null);
+        TextureImage texture = TextureImage.of(image);
         Palette originalPalette = Palette.fromImage(texture, null, 0);
         Palette targetPalette = originalPalette.copy();
         targetPalette.updateTolerance(tolerance);
@@ -229,7 +229,7 @@ public final class SpriteUtils {
 
     public static TextureImage savePaletteStrip(ResourceManager manager, List<Integer> colors) {
 
-        try (var image = TextureImage.createNew(16, 16, null)) {
+        try (var image = TextureImage.createNew(16, 16)) {
             var it = colors.iterator();
             image.forEachFramePixel((x, y, f) -> {
                 if (it.hasNext()) {
