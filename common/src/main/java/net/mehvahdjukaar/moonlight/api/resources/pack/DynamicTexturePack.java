@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.moonlight.api.resources.pack;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.assets.LangBuilder;
@@ -47,8 +46,9 @@ public class DynamicTexturePack extends DynamicResourcePack {
         try (image) {
             this.addBytes(path, image.getImage().asByteArray(), ResType.TEXTURES);
             if (!isOnAtlas) this.markNotClearable(ResType.TEXTURES.getPath(path));
-            JsonObject mcmeta = image.serializeMcMeta();
-            if (mcmeta != null) this.addJson(path, mcmeta, ResType.MCMETA);
+            if (image.getMcMeta() != null){
+                this.addJson(path, image.getMcMeta().toJson(), ResType.MCMETA);
+            }
         } catch (Exception e) {
             LOGGER.warn("Failed to add image {} to resource pack {}.", path, this, e);
         }

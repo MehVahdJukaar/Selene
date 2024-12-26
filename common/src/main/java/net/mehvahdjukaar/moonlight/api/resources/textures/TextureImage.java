@@ -7,12 +7,11 @@ import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
-import net.mehvahdjukaar.moonlight.core.misc.McMetaUtils;
+import net.mehvahdjukaar.moonlight.core.misc.McMetaFile;
 import net.minecraft.client.resources.metadata.animation.AnimationFrame;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.level.block.Rotation;
@@ -20,15 +19,13 @@ import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 //like a native image that also has its metadata
 public class TextureImage implements AutoCloseable {
 
     @Nullable
-    private final AnimationMetadataSection metadata;
+    private final McMetaFile metadata;
     private final NativeImage image;
     //width of a frame
     private final FrameSize frameSize;
@@ -37,12 +34,13 @@ public class TextureImage implements AutoCloseable {
     private final int frameScale;
 
 
-    private TextureImage(NativeImage image, @Nullable AnimationMetadataSection metadata) {
+    private TextureImage(NativeImage image, @Nullable McMetaFile metadata) {
         this.image = image;
         this.metadata = metadata;
         int imgWidth = this.imageWidth(); // 16
         int imgHeight = this.imageHeight(); // 48
-        this.frameSize = metadata == null ? new FrameSize(imgWidth, imgHeight) : metadata.calculateFrameSize(imgWidth, imgHeight);
+        this.frameSize = metadata == null ? new FrameSize(imgWidth, imgHeight) : metadata.animation()
+                .calculateFrameSize(imgWidth, imgHeight);
         this.frameScale = imgWidth / frameSize.width(); // 1
         int frameScaleHeight = imgHeight / frameSize.height(); // 2
         this.frameCount = frameScale * frameScaleHeight; // 2
@@ -118,8 +116,13 @@ public class TextureImage implements AutoCloseable {
         return frameCount;
     }
 
+    @Deprecated(forRemoval = true)
     @Nullable
     public AnimationMetadataSection getMetadata() {
+        return metadata == null ? null : metadata.animation();
+    }
+
+    public McMetaFile getMcMeta() {
         return metadata;
     }
 
@@ -129,20 +132,12 @@ public class TextureImage implements AutoCloseable {
         return new TextureImage(im, metadata);
     }
 
-    public TextureImage createAnimationTemplate(int length, AnimationMetadataSection useDataFrom) {
-        List<AnimationFrame> frameData = new ArrayList<>();
-        useDataFrom.forEachFrame((i, t) -> frameData.add(new AnimationFrame(i, t)));
-
-        return createAnimationTemplate(length, frameData, useDataFrom.getDefaultFrameTime(), useDataFrom.isInterpolatedFrames());
-    }
-
     /**
-     * Creates a new image using the first frame of this one. Its frame data and frame lenght will be the one provided
+     * Creates a new image using the first frame of this one. Its frame data and frame length will be the one provided
      */
-    public TextureImage createAnimationTemplate(int length, List<AnimationFrame> frameData, int frameTime, boolean interpolate) {
+    public TextureImage createAnimationTemplate(int length, McMetaFile useDataFrom) {
+        McMetaFile newMetadata = useDataFrom.cloneWithSize(this.frameWidth(), this.frameHeight());
         NativeImage im = new NativeImage(this.frameWidth(), this.frameHeight() * length, false);
-        AnimationMetadataSection newMetadata = new AnimationMetadataSection(frameData, this.frameWidth(), this.frameHeight(), frameTime, interpolate);
-        McMetaUtils.copyAllMixinAddedFields(metadata, newMetadata);
         TextureImage t = new TextureImage(im, newMetadata);
 
         t.forEachFramePixel((i, x, y) -> {
@@ -151,6 +146,16 @@ public class TextureImage implements AutoCloseable {
             t.image.setPixelRGBA(x, y, this.image.getPixelRGBA(xo, yo));
         });
         return t;
+    }
+
+    @Deprecated(forRemoval = true)
+    public TextureImage createAnimationTemplate(int length, AnimationMetadataSection useDataFrom) {
+        return createAnimationTemplate(length, McMetaFile.of(useDataFrom));
+    }
+
+    @Deprecated(forRemoval = true)
+    public TextureImage createAnimationTemplate(int length, List<AnimationFrame> frameData, int frameTime, boolean interpolate) {
+        return createAnimationTemplate(length, new AnimationMetadataSection(frameData, this.frameWidth(), this.frameHeight(), frameTime, interpolate));
     }
 
     /**
@@ -165,15 +170,14 @@ public class TextureImage implements AutoCloseable {
             NativeImage i = SpriteUtils.readImage(manager, textureLoc);
             //try getting metadata for animated textures
             ResourceLocation metadataLoc = ResType.MCMETA.getPath(relativePath);
-            AnimationMetadataSection metadata = null;
+            McMetaFile metadata = null;
 
             var res = manager.getResource(metadataLoc);
             if (res.isPresent()) {
-                try (InputStream metadataStream = res.get().open()) {
-                    metadata = AbstractPackResources.getMetadataFromStream(AnimationMetadataSection.SERIALIZER, metadataStream);
-
-                } catch (Exception ignored) {
-                    throw new IOException("Failed to open mcmeta file at location " + metadataLoc);
+                try {
+                    metadata = McMetaFile.read(res.get());
+                } catch (Exception e) {
+                    throw new IOException("Failed to open texture at location " + relativePath + ": failed to read mcmeta file", e);
                 }
             }
 
@@ -183,10 +187,19 @@ public class TextureImage implements AutoCloseable {
         }
     }
 
-    public static TextureImage createNew(int width, int height, @Nullable AnimationMetadataSection animation) {
-        var v = new TextureImage(new NativeImage(width, height, false), animation);
+    public static TextureImage createNew(int width, int height) {
+        return createNew(width, height, (McMetaFile) null);
+    }
+
+    public static TextureImage createNew(int width, int height, @Nullable McMetaFile metadata) {
+        var v = new TextureImage(new NativeImage(width, height, false), metadata);
         v.clear();
         return v;
+    }
+
+    @Deprecated(forRemoval = true)
+    public static TextureImage createNew(int width, int height, @Nullable AnimationMetadataSection animation) {
+        return createNew(width, height, McMetaFile.of(animation));
     }
 
     /**
@@ -209,13 +222,11 @@ public class TextureImage implements AutoCloseable {
     public TextureImage createResized(float widthScale, float heightScale) {
         int newW = (int) (this.imageWidth() * widthScale);
         int newH = (int) (this.imageHeight() * heightScale);
-        AnimationMetadataSection meta = null;
+        McMetaFile meta = null;
         if (metadata != null) {
-            int mW = (int) (metadata.frameWidth * widthScale);
-            int mH = (int) (metadata.frameHeight * heightScale);
-            meta = new AnimationMetadataSection(metadata.frames, mW, mH,
-                    metadata.getDefaultFrameTime(), metadata.isInterpolatedFrames());
-            McMetaUtils.copyAllMixinAddedFields(metadata, meta);
+            int mW = (int) (metadata.animation().frameWidth * widthScale);
+            int mH = (int) (metadata.animation().frameHeight * heightScale);
+            meta = metadata.cloneWithSize(mW, mH);
         }
         var im = TextureImage.createNew(newW, newH, meta);
         var t = ImageTransformer.builder(this.frameWidth(), this.frameHeight(), im.frameWidth(), im.frameHeight())
@@ -228,8 +239,17 @@ public class TextureImage implements AutoCloseable {
         image.fillRect(0, 0, image.getWidth(), image.getHeight(), 0);
     }
 
+    @Deprecated(forRemoval = true)
     public static TextureImage of(NativeImage image, @Nullable AnimationMetadataSection animation) {
-        return new TextureImage(image, animation);
+        return new TextureImage(image, McMetaFile.of(animation));
+    }
+
+    public static TextureImage of(NativeImage image) {
+        return new TextureImage(image, null);
+    }
+
+    public static TextureImage of(NativeImage image, @Nullable McMetaFile metadata) {
+        return new TextureImage(image, metadata);
     }
 
     @Override
@@ -254,7 +274,7 @@ public class TextureImage implements AutoCloseable {
         }
         int imgWidth = this.imageWidth(); // 16
         int imgHeight = this.imageHeight(); // 48
-        var fs = metadata.calculateFrameSize(imgWidth, imgHeight);
+        var fs = metadata.animation().calculateFrameSize(imgWidth, imgHeight);
 
 
         int frameScaleWidth = imgWidth / fs.width(); // 1
@@ -263,7 +283,7 @@ public class TextureImage implements AutoCloseable {
 
         List<Integer> indexList = Lists.newArrayList();
 
-        metadata.forEachFrame((index, time) -> indexList.add(index));
+        metadata.animation().forEachFrame((index, time) -> indexList.add(index));
         if (indexList.isEmpty()) {
             for (int l = 0; l < maxFrames; ++l) {
                 indexList.add(l);
@@ -290,37 +310,6 @@ public class TextureImage implements AutoCloseable {
             }
         }
         return builder.build();
-    }
-
-
-    @Nullable
-    public JsonObject serializeMcMeta() {
-        if (metadata == null) return null;
-        JsonObject obj = new JsonObject();
-
-        JsonObject animation = new JsonObject();
-
-        animation.addProperty("frametime", metadata.getDefaultFrameTime());
-        animation.addProperty("interpolate", metadata.isInterpolatedFrames());
-        animation.addProperty("height", frameSize.height());
-        animation.addProperty("width", frameSize.width());
-
-        JsonArray frames = new JsonArray();
-
-        metadata.forEachFrame((i, t) -> {
-            if (t != -1) {
-                JsonObject o = new JsonObject();
-                o.addProperty("time", t);
-                o.addProperty("index", i);
-                frames.add(o);
-            } else frames.add(i);
-        });
-
-        animation.add("frames", frames);
-
-        obj.add("animation", animation);
-
-        return obj;
     }
 
 

@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.moonlight.api.resources.textures;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import net.mehvahdjukaar.moonlight.core.misc.McMetaFile;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,11 +83,15 @@ public class Respriter {
      * Does not modify any of the given palettes
      */
     public TextureImage recolorWithAnimationOf(TextureImage textureImage) {
-        return recolorWithAnimation(List.of(Palette.fromImage(textureImage)), textureImage.getMetadata());
+        return recolorWithAnimation(List.of(Palette.fromImage(textureImage)), textureImage.getMcMeta());
     }
 
     //TODO: generalize and merge these two
 
+    @Deprecated(forRemoval = true)
+    public TextureImage recolorWithAnimation(List<Palette> targetPalettes, @Nullable AnimationMetadataSection targetAnimationData) {
+        return recolorWithAnimation(targetPalettes, McMetaFile.of(targetAnimationData));
+    }
     /**
      * Move powerful method that recolors an image using the palette provided and the animation data provided.
      * It will merge a new animation strip made of the first frame of the original image colored with the given colors
@@ -94,14 +99,14 @@ public class Respriter {
      * In short turns a non-animated texture into an animated one
      */
     // this should only be used when you go from non-animated to animated
-    public TextureImage recolorWithAnimation(List<Palette> targetPalettes, @Nullable AnimationMetadataSection targetAnimationData) {
+    public TextureImage recolorWithAnimation(List<Palette> targetPalettes, @Nullable McMetaFile targetAnimationData) {
         if (targetAnimationData == null) return recolor(targetPalettes);
         //is restricted to use only first original palette since it must merge a new animation following the given one
         Palette originalPalette = originalPalettes.get(0);
 
         // in case the SOURCE texture itself has an animation we use it instead. this WILL create issues with animated planks textures but its acceptable as mcmeta of source could have more important stuff like ctm
-        if (imageToRecolor.getMetadata() != null) {
-            targetAnimationData = imageToRecolor.getMetadata();
+        if (imageToRecolor.getMcMeta() != null) {
+            targetAnimationData = imageToRecolor.getMcMeta();
         }
 
         TextureImage texture = imageToRecolor.createAnimationTemplate(targetPalettes.size(), targetAnimationData);
