@@ -63,7 +63,7 @@ public class Respriter {
      *                       only the first provided palette will be used on the whole image keeping colors consistent among different frames
      */
     private Respriter(TextureImage imageToRecolor, List<Palette> colorsToSwap) {
-        if (colorsToSwap.size() == 0)
+        if (colorsToSwap.isEmpty())
             throw new UnsupportedOperationException("Respriter must have a non empty target palette");
         // assures that frame size and palette size match
         if (imageToRecolor.frameCount() > colorsToSwap.size()) {
@@ -90,7 +90,7 @@ public class Respriter {
 
     @Deprecated(forRemoval = true)
     public TextureImage recolorWithAnimation(List<Palette> targetPalettes, @Nullable AnimationMetadataSection targetAnimationData) {
-        return recolorWithAnimation(targetPalettes, McMetaFile.of(targetAnimationData));
+        return recolorWithAnimation(targetPalettes, targetAnimationData == null ? null : McMetaFile.of(targetAnimationData));
     }
     /**
      * Move powerful method that recolors an image using the palette provided and the animation data provided.

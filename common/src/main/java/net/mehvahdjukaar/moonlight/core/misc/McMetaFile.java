@@ -7,6 +7,8 @@ import net.minecraft.client.resources.metadata.animation.AnimationMetadataSectio
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,20 +17,22 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public record McMetaFile(AnimationMetadataSection animation, JsonObject moddedStuff) {
+public record McMetaFile(@NotNull AnimationMetadataSection animation, JsonObject moddedStuff) {
 
-    public static McMetaFile of(AnimationMetadataSection vanillaMcmeta) {
+    public static McMetaFile of(@NotNull AnimationMetadataSection vanillaMcmeta) {
         return new McMetaFile(vanillaMcmeta, new JsonObject());
     }
 
-    public static McMetaFile of(AnimationMetadataSection vanillaMcmeta, JsonObject moddedStuff) {
+    public static McMetaFile of(@NotNull AnimationMetadataSection vanillaMcmeta, JsonObject moddedStuff) {
         return new McMetaFile(vanillaMcmeta, moddedStuff);
     }
 
+    @Nullable
     public static McMetaFile read(Resource resource) throws IOException {
         try (InputStream metadataStream = resource.open()) {
             var bytes = metadataStream.readAllBytes();
             var metadata = AbstractPackResources.getMetadataFromStream(AnimationMetadataSection.SERIALIZER, new ByteArrayInputStream(bytes));
+            if (metadata == null) return null;
             var moddedObj = readModdedObj(bytes);
             return of(metadata, moddedObj);
         }
