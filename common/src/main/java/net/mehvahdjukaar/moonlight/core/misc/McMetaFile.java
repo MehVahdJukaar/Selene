@@ -30,7 +30,7 @@ public record McMetaFile(AnimationMetadataSection animation, JsonObject moddedSt
             var bytes = metadataStream.readAllBytes();
             var metadata = AbstractPackResources.getMetadataFromStream(AnimationMetadataSection.SERIALIZER, new ByteArrayInputStream(bytes));
             var moddedObj = readModdedObj(bytes);
-            return new McMetaFile(metadata, moddedObj);
+            return of(metadata, moddedObj);
         }
     }
 

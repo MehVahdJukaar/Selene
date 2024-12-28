@@ -6,6 +6,7 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -48,6 +49,7 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -67,6 +69,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -261,6 +264,15 @@ public class PlatHelperImpl {
 
     public static String getModVersion(String modId) {
         return ModList.get().getModContainerById(modId).map(v->v.getModInfo().getVersion().toString()).orElse(null);
+    }
+
+
+    public static void addReloadableCommonSetup(BiConsumer<RegistryAccess, Boolean> listener) {
+        Moonlight.assertInitPhase();
+        Consumer<TagsUpdatedEvent> eventConsumer = (event) -> {
+            listener.accept(event.getRegistryAccess(), event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED);
+        };
+        MinecraftForge.EVENT_BUS.addListener(eventConsumer);
     }
 
 

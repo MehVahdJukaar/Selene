@@ -5,6 +5,7 @@ import com.mojang.authlib.GameProfile;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -45,6 +46,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -61,6 +63,11 @@ public class PlatHelper {
 
     @ExpectPlatform
     public static void addCommonSetupAsync(Runnable commonSetup) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static void addReloadableCommonSetup(BiConsumer<RegistryAccess, Boolean> setup) {
         throw new AssertionError();
     }
 
