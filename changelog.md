@@ -1,2 +1,2 @@
-- improvements to fake level stuff, should make some calls of it faster as they delegate to dummy objects
-- (QUICK FIX): Corrected the concatenation of a string, it was using the wrong variable
+- improved texture generation code to better take into account mcmeta files that could contain more entries than the parsed vanilla ones
+- more helper method for reload listener stuff
