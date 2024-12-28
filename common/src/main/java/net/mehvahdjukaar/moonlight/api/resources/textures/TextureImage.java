@@ -2,8 +2,6 @@ package net.mehvahdjukaar.moonlight.api.resources.textures;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.util.math.colors.RGBColor;
@@ -16,6 +14,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.level.block.Rotation;
 import org.apache.logging.log4j.util.TriConsumer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -144,7 +143,7 @@ public class TextureImage implements AutoCloseable {
     }
 
     @Deprecated(forRemoval = true)
-    public TextureImage createAnimationTemplate(int length, AnimationMetadataSection useDataFrom) {
+    public TextureImage createAnimationTemplate(int length, @NotNull AnimationMetadataSection useDataFrom) {
         return createAnimationTemplate(length, McMetaFile.of(useDataFrom));
     }
 
@@ -194,7 +193,7 @@ public class TextureImage implements AutoCloseable {
 
     @Deprecated(forRemoval = true)
     public static TextureImage createNew(int width, int height, @Nullable AnimationMetadataSection animation) {
-        return createNew(width, height, McMetaFile.of(animation));
+        return createNew(width, height, animation == null ? null : McMetaFile.of(animation));
     }
 
     /**
@@ -236,7 +235,7 @@ public class TextureImage implements AutoCloseable {
 
     @Deprecated(forRemoval = true)
     public static TextureImage of(NativeImage image, @Nullable AnimationMetadataSection animation) {
-        return new TextureImage(image, McMetaFile.of(animation));
+        return new TextureImage(image, animation == null ? null : McMetaFile.of(animation));
     }
 
     public static TextureImage of(NativeImage image) {
