@@ -1,1 +1,1 @@
-added a helper method to register entity data serializer in common
+- fixed an issue with fake level using more resources than it needs, generating empty chunks when it could have had just 1 
