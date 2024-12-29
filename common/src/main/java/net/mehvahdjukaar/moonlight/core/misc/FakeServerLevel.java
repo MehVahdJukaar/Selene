@@ -98,10 +98,10 @@ public class FakeServerLevel extends ServerLevel {
                 new DummyProgressListener(), this.entityManager::updateChunkStatus, () -> server.overworld().getDataStorage());
 
         var f = Arrays.stream(ServerLevel.class.getDeclaredFields())
-                .filter(fi->fi.getType().equals(ServerChunkCache.class))
+                .filter(fi -> fi.getType().equals(ServerChunkCache.class))
                 .findFirst().orElseThrow();
         f.setAccessible(true);
-        f.set(this,dummy);
+        f.set(this, dummy);
     }
 
     @Override
@@ -515,9 +515,14 @@ public class FakeServerLevel extends ServerLevel {
             return getEmptyChunk(chunkX, chunkZ);
         }
 
+        private EmptyLevelChunk emptyChunkInstance;
+
         private @NotNull EmptyLevelChunk getEmptyChunk(int x, int z) {
-            return new EmptyLevelChunk(getLevel(), new ChunkPos(x, z), registryAccess().registryOrThrow(Registries.BIOME)
-                    .getHolderOrThrow(Biomes.FOREST));
+            if (emptyChunkInstance == null) {
+                emptyChunkInstance = new EmptyLevelChunk(getLevel(), new ChunkPos(0, 0),
+                        registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.FOREST));
+            }
+            return emptyChunkInstance;
         }
 
     }

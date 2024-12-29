@@ -1,2 +1,1 @@
-- improved texture generation code to better take into account mcmeta files that could contain more entries than the parsed vanilla ones
-- more helper method for reload listener stuff
+- fixed an issue with fake level using more resources than it needs, generating empty chunks when it could have had just 1 
