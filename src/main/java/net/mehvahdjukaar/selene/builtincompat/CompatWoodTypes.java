@@ -8,6 +8,13 @@ public class CompatWoodTypes {
 
     public static void init() {
 
+            // Integrated Dynamics
+        var menril =  WoodType.Finder.simple(
+                "integrateddynamics", "menril", "menril_planks", "menril_log");
+        menril.addChild("stripped_log", "menril_log_stripped");
+        menril.addChild("stripped_wood", "menril_wood_stripped");
+        BlockSetManager.addBlockTypeFinder(WoodType.class, menril);
+
             // Pokecube Legends
         BlockSetManager.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(
                 "pokecube_legends", "concrete", "concrete_planks", "concrete_log"));
