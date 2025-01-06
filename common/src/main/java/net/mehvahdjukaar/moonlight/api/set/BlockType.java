@@ -37,7 +37,11 @@ public abstract class BlockType {
     }
 
     public String getTypeName() {
-        return id.getPath();
+        String path = id.getPath();
+        if (path.contains("/")) {
+            return path.substring(path.lastIndexOf("/") + 1);
+        }
+        return path;
     }
 
     public String getNamespace() {
