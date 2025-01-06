@@ -1,1 +1,1 @@
-- fixed an issue with fake level using more resources than it needs, generating empty chunks when it could have had just 1 
+- Improved the method, getTypeName() in BlockType Class (Related to StoneZone & EveryCompat)
