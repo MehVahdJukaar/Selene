@@ -1,1 +1,1 @@
-- Improved the method, getTypeName() in BlockType Class (Related to StoneZone & EveryCompat)
+- Removed a duplicated LeavesType Finder that caused the crash with **Ancient Aether**'s crystal_skyroot_leaves
