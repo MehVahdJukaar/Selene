@@ -552,6 +552,8 @@ public class CompatWoodTypes {
                 "ancient_aether", "enchanted_skyroot", "enchanted_skyroot_leaves", "aether:skyroot"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "ancient_aether", "skyroot_pine", "skyroot_pine_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "ancient_aether", "blue_skyroot_pine", "blue_skyroot_pine_leaves", "aether:skyroot"));
 
         // AETHER GENESIS
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
