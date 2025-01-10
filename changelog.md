@@ -1,1 +1,1 @@
-- Removed a duplicated LeavesType Finder that caused the crash with **Ancient Aether**'s crystal_skyroot_leaves
+- Added Environmental's leaves to CompatWoodType & Fixed [EveryCompat's #769](https://github.com/MehVahdJukaar/WoodGood/issues/769)
