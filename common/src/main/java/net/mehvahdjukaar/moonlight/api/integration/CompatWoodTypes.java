@@ -541,6 +541,16 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "ancient_aether", "blue_skyroot_pine", "blue_skyroot_pine_leaves", "aether:skyroot"));
 
+        // AETHER GENESIS
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "blue_skyroot", "blue_skyroot_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "dark_blue_skyroot", "dark_blue_skyroot_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "purple_crystal", "purple_crystal_leaves", crystalLeavesWoodType));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "purple_crystal_fruit", "purple_crystal_fruit_leaves", crystalLeavesWoodType));
+
         // AUTUMNITY
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "autumnity", "yellow_maple", "yellow_maple_leaves", "autumnity:maple"));
@@ -565,7 +575,7 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "environmental", "purple_wisteria", "purple_wisteria_leaves", "environmental:wisteria"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "environmental", "white_wisteria", "white_wisteria_leaves", "environmental:wisteria")); 
+                "environmental", "white_wisteria", "white_wisteria_leaves", "environmental:wisteria"));
     }
 
     /*
