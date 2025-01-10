@@ -552,6 +552,20 @@ public class CompatWoodTypes {
         // ALEXSCAVES
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "alexscaves", "ancient", "ancient_leaves", "jungle"));
+
+        // ENVIRONMENTAL
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "cheerful_plum", "cheerful_plum_leaves", "environmental:plum"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "moody_plum", "moody_plum_leaves", "environmental:plum"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "pink_wisteria", "pink_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "blue_wisteria", "blue_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "purple_wisteria", "purple_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "white_wisteria", "white_wisteria_leaves", "environmental:wisteria")); 
     }
 
     /*
