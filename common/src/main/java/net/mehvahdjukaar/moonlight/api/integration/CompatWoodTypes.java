@@ -225,7 +225,17 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(WoodType.class, quarkAzalea);
 
 
-// LEAVES
+//!! LEAVES
+        // Environmental
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "pink_wisteria", "pink_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "blue_wisteria", "blue_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "purple_wisteria", "purple_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "white_wisteria", "white_wisteria_leaves", "environmental:wisteria"));
+
         // Ecologics
         var coconut = LeavesType.Finder.simple("ecologics", "coconut", "coconut_leaves", "ecologics:coconut");
         coconut.addChild("sapling", new ResourceLocation("ecologics:coconut_seedling"));
