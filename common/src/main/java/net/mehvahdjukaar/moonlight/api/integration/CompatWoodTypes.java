@@ -235,6 +235,10 @@ public class CompatWoodTypes {
                 "environmental", "purple_wisteria", "purple_wisteria_leaves", "environmental:wisteria"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "environmental", "white_wisteria", "white_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "cheerful_plum", "cheerful_plum_leaves", "environmental:plum"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "moody_plum", "moody_plum_leaves", "environmental:plum"));
 
         // Ecologics
         var coconut = LeavesType.Finder.simple("ecologics", "coconut", "coconut_leaves", "ecologics:coconut");
@@ -548,6 +552,16 @@ public class CompatWoodTypes {
                 "ancient_aether", "enchanted_skyroot", "enchanted_skyroot_leaves", "aether:skyroot"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "ancient_aether", "skyroot_pine", "skyroot_pine_leaves", "aether:skyroot"));
+
+        // AETHER GENESIS
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "blue_skyroot", "blue_skyroot_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "dark_blue_skyroot", "dark_blue_skyroot_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "purple_crystal", "purple_crystal_leaves", crystalLeavesWoodType));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "purple_crystal_fruit", "purple_crystal_fruit_leaves", crystalLeavesWoodType));
 
         // AUTUMNITY
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
