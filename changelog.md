@@ -1,1 +1,4 @@
-- Added Environmental's leaves to CompatWoodType & Fixed [EveryCompat's #769](https://github.com/MehVahdJukaar/WoodGood/issues/769)
+- **CompatWoodType**
+  - Added Environmental's leaves & Fixed [EveryCompat's #769](https://github.com/MehVahdJukaar/WoodGood/issues/769)
+  - Added Aether Genesis's leaves  - @VoidLeech
+  - Added one more leaves from Ancient Aether - @VoidLeech
