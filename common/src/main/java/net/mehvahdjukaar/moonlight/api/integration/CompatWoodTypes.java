@@ -104,9 +104,15 @@ public class CompatWoodTypes {
                         "stalk_block", "" ));
 
         // Unusual End
-        BlockSetAPI.addBlockTypeFinder(WoodType.class,
-                uniqueWoodFinder("unusualend", "chorus_cane", "chorus_nest_planks",
-                "block", ""));
+        var chorus_cane = uniqueWoodFinder("unusualend", "chorus_cane", "chorus_nest_planks",
+                "block", "");
+        chorus_cane.addChild("trapdoor", new ResourceLocation("unusualend:chorus_nest_trapdoor"));
+        chorus_cane.addChild("door", new ResourceLocation("unusualend:chorus_nest_door"));
+        chorus_cane.addChild("stairs", new ResourceLocation("unusualend:chorus_nest_stairs"));
+        chorus_cane.addChild("slab", new ResourceLocation("unusualend:chorus_nest_slab"));
+        chorus_cane.addChild("fence", new ResourceLocation("unusualend:chorus_nest_mosaic_fence"));
+        chorus_cane.addChild("fence_gate", new ResourceLocation("unusualend:chorus_nest_fence_gate"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, chorus_cane);
 
         // Spectrum (FABRIC)
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
