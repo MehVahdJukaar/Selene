@@ -142,35 +142,4 @@ public class WoodTypeRegistry extends BlockTypeRegistry<WoodType> {
         return fromVanilla.get(woodType);
     }
 
-    @Override
-    protected void finalizeAndFreeze() {
-        // order according vanilla
-        List<String> vanillaOrder = List.of(
-                "minecraft:oak",
-                "minecraft:spruce",
-                "minecraft:birch",
-                "minecraft:jungle",
-                "minecraft:acacia",
-                "minecraft:dark_oak",
-                "minecraft:mangrove",
-                "minecraft:cherry",
-                "minecraft:bamboo",
-                "minecraft:crimson",
-                "minecraft:warped"
-        );
-        List<WoodType> temp = new ArrayList<>(builder);
-        builder.clear();
-        outer:
-        for (var v : vanillaOrder) {
-            for (var t : temp) {
-                if (t.getId().toString().equals(v)) {
-                    builder.add(t);
-                    temp.remove(t);
-                    continue outer;
-                }
-            }
-        }
-        builder.addAll(temp);
-        super.finalizeAndFreeze();
-    }
 }
