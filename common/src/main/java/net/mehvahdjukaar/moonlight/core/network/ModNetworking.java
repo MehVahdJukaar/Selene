@@ -7,7 +7,7 @@ import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 public class ModNetworking {
 
     public static void init() {
-        NetworkHelper.addNetworkRegistration(ModNetworking::registerMessages, 5);
+        NetworkHelper.addNetworkRegistration(ModNetworking::registerMessages, 6);
     }
 
     private static void registerMessages(NetworkHelper.RegisterMessagesEvent event) {
@@ -16,6 +16,7 @@ public class ModNetworking {
         event.registerClientBound(ClientBoundOpenScreenPacket.TYPE);
         event.registerClientBound(ClientBoundSendLoginPacket.TYPE);
         event.registerClientBound(ClientBoundOnPistonMovedBlockPacket.TYPE);
+        event.registerClientBound(ClientBoundParticleAroundBlockPacket.TYPE);
         event.registerServerBound(ServerBoundItemLeftClickPacket.TYPE);
 
         ModNetworking.loaderDependent(event);

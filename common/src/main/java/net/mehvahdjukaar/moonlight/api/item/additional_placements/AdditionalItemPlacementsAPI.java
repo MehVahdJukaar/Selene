@@ -1,10 +1,8 @@
 package net.mehvahdjukaar.moonlight.api.item.additional_placements;
 
-import com.mojang.datafixers.util.Pair;
-import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.misc.IExtendedItem;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -12,32 +10,22 @@ import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class AdditionalItemPlacementsAPI {
 
-    private static boolean isAfterRegistration = false;
-    private static WeakReference<Map<Block, Item>> blockToItemsMap = new WeakReference<>(null);
-
-    private static final List<Consumer<Event>> REGISTRATION_LISTENERS = Collections.synchronizedList(new ArrayList<>());;
-
-    private static final List<Pair<Supplier<? extends AdditionalItemPlacement>, Supplier<? extends Item>>> PLACEMENTS = new ArrayList<>();
-    private static final List<Pair<Function<Item, ? extends AdditionalItemPlacement>, Predicate<Item>>> PLACEMENTS_GENERIC = new ArrayList<>();
+    //no need for sided instance yet
+    private static final List<Consumer<Event>> LISTENERS = Collections.synchronizedList(new ArrayList<>());
+    private static final Map<Item, AdditionalItemPlacement> PLACEMENTS = new HashMap<>();
+    private static final Set<Block> ADDED_BLOCKS = new HashSet<>();
 
     /**
      * Adds a behavior to an existing block. can be called at any time but ideally before registration. Less ideally during mod setup
      */
-    public static void addRegistration(Consumer<Event> eventConsumer){
+    public static void addRegistration(Consumer<Event> eventConsumer) {
         Moonlight.assertInitPhase();
-        REGISTRATION_LISTENERS.add(eventConsumer);
+        LISTENERS.add(eventConsumer);
     }
 
     @Nullable
@@ -49,63 +37,38 @@ public class AdditionalItemPlacementsAPI {
         return getBehavior(item) != null;
     }
 
-
-    //needed as all items have to be registered before we can add them to maps. ALso better to do this asap
     @ApiStatus.Internal
-    public static void afterItemReg() {
-        if (blockToItemsMap.get() == null) {
-            if (PlatHelper.isDev()) {
-                throw new AssertionError("Block to items map was null");
-            }
+    public static void onReload(RegistryAccess registryAccess, Boolean aBoolean) {
+        Map<Block, Item> map = Item.BY_BLOCK;
+
+        for (var b : ADDED_BLOCKS) {
+            map.remove(b);
+            //reset inverse
+            b.item = null;
         }
-        //after all registry objects are created we register our stuff
-        attemptRegistering();
-    }
+        ADDED_BLOCKS.clear();
 
+        for (var l : LISTENERS) {
+            l.accept(PLACEMENTS::put);
+        }
+        for (var p : PLACEMENTS.entrySet()) {
+            AdditionalItemPlacement placement = p.getValue();
+            Item i = p.getKey();
+            Block b = placement.getPlacedBlock();
 
-    private static void attemptRegistering() {
-        Map<Block, Item> map = blockToItemsMap.get();
-        if (map != null) {
-
-            for (Item item : BuiltInRegistries.ITEM) {
-                for (var v : PLACEMENTS_GENERIC) {
-                    var predicate = v.getSecond();
-                    if (predicate.test(item)) {
-                        PLACEMENTS.add(Pair.of(() -> v.getFirst().apply(item), () -> item));
+            if (i != null && b != null) {
+                if (i != Items.AIR && b != Blocks.AIR) {
+                    ((IExtendedItem) i).moonlight$addAdditionalBehavior(placement);
+                    if (!map.containsKey(b)) {
+                        map.put(b, i);
+                        b.item = null;
+                        ADDED_BLOCKS.add(b);
                     }
-                }
-            }
-            Event ev = (target, instance) -> PLACEMENTS.add(Pair.of(() -> instance, () -> target));
-            for (var l : REGISTRATION_LISTENERS) {
-                l.accept(ev);
-            }
-            PLACEMENTS_GENERIC.clear();
-            for (var p : PLACEMENTS) {
-                AdditionalItemPlacement placement = p.getFirst().get();
-                Item i = p.getSecond().get();
-                Block b = placement.getPlacedBlock();
-
-                if (i != null && b != null) {
-                    if (i != Items.AIR && b != Blocks.AIR) {
-                        ((IExtendedItem) i).moonlight$addAdditionalBehavior(placement);
-                        if (!map.containsKey(b)) map.put(b, i);
-                    } else {
-                        throw new AssertionError("Attempted to register an Additional behavior for block "+  b + " using with item " + i);
-                    }
+                } else {
+                    throw new AssertionError("Attempted to register an Additional behavior for block " + b + " using with item " + i);
                 }
             }
         }
-    }
-
-    //called just once when registry callbacks fire for items. once since we just have 1 item that we use to call this.
-    static void onRegistryCallback(Map<Block, Item> pBlockToItemMap) {
-        blockToItemsMap = new WeakReference<>(pBlockToItemMap);
-        if (isAfterRegistration) {
-            //if we are here it means we are in sync phase where maps are re constructured
-            attemptRegistering();
-            blockToItemsMap.clear();
-        }
-        isAfterRegistration = true;
     }
 
     public interface Event {

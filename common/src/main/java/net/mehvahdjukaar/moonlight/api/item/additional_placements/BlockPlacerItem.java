@@ -35,7 +35,6 @@ public final class BlockPlacerItem extends BlockItem {
 
     @Override
     public void registerBlocks(Map<Block, Item> pBlockToItemMap, Item pItem) {
-        AdditionalItemPlacementsAPI.onRegistryCallback(pBlockToItemMap);
     }
 
 

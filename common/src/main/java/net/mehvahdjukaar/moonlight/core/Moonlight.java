@@ -8,15 +8,12 @@ import net.mehvahdjukaar.moonlight.api.fluids.SoftFluid;
 import net.mehvahdjukaar.moonlight.api.fluids.SoftFluidRegistry;
 import net.mehvahdjukaar.moonlight.api.integration.CompatWoodTypes;
 import net.mehvahdjukaar.moonlight.api.item.additional_placements.AdditionalItemPlacementsAPI;
-import net.mehvahdjukaar.moonlight.api.map.MapDataRegistry;
-import net.mehvahdjukaar.moonlight.api.map.decoration.MLJsonMapDecorationType;
 import net.mehvahdjukaar.moonlight.api.misc.DynamicHolder;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
 import net.mehvahdjukaar.moonlight.api.misc.RegistryAccessJsonReloadListener;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
-import net.mehvahdjukaar.moonlight.api.resources.RecipeTemplate;
 import net.mehvahdjukaar.moonlight.api.resources.pack.DynamicResourcePack;
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.leaves.LeavesTypeRegistry;
@@ -30,7 +27,6 @@ import net.mehvahdjukaar.moonlight.core.misc.VillagerAIInternal;
 import net.mehvahdjukaar.moonlight.core.network.ModNetworking;
 import net.mehvahdjukaar.moonlight.core.set.BlockSetInternal;
 import net.mehvahdjukaar.moonlight.core.set.BlocksColorInternal;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -87,10 +83,6 @@ public class Moonlight {
 
         PlatHelper.addServerReloadListener(ItemListingManager::new, Moonlight.res("villager_trade"));
 
-        //hack
-        BlockSetAPI.addDynamicRegistration((reg, wood) -> AdditionalItemPlacementsAPI.afterItemReg(),
-                WoodType.class, BuiltInRegistries.BLOCK_ENTITY_TYPE);
-
         //client init
         if (PlatHelper.getPhysicalSide().isClient()) {
             MoonlightClient.initClient();
@@ -129,6 +121,7 @@ public class Moonlight {
 
         HolderReference.clearCache();
         DispenserHelper.reload(registryAccess, client);
+        AdditionalItemPlacementsAPI.onReload(registryAccess, client);
     }
 
     @EventCalled
