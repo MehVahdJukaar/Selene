@@ -9,8 +9,9 @@ public class CodecMapRegistry<T> extends MapRegistry<Codec<? extends T>> {
         super(name);
     }
 
+    @Deprecated(forRemoval = true)
     public CodecMapRegistry() {
-        super();
+        super("unnamed");
     }
 
     public <B extends T> Codec<B> register(ResourceLocation name, Codec<B> value) {
