@@ -2,28 +2,42 @@ package net.mehvahdjukaar.moonlight.api.misc;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+import net.minecraft.core.IdMap;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.VarInt;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
-public class MapRegistry<T> implements Codec<T> {
-    private final BiMap<ResourceLocation, T> map = HashBiMap.create();
+public class MapRegistry<T> implements IdMap<T>, Codec<T> {
+    private final StreamCodec<FriendlyByteBuf, T> streamCodec;
+
     private final String name;
+
+    private final BiMap<ResourceLocation, T> map = HashBiMap.create();
+    private int nextId;
+    private final Reference2IntMap<T> tToId;
+    private final List<T> idToT;
 
     public MapRegistry(String name) {
         this.name = name;
-    }
+        this.idToT = Lists.newArrayListWithExpectedSize(32);
+        this.tToId = new Reference2IntOpenHashMap<>(32);
+        this.tToId.defaultReturnValue(-1);
+        this.streamCodec = new StreamC();
 
-    @Deprecated(forRemoval = true)
-    public MapRegistry() {
-        this.name = "unnamed";
     }
 
     public static <B> CodecMapRegistry<B> ofCodec(String name) {
@@ -31,22 +45,36 @@ public class MapRegistry<T> implements Codec<T> {
     }
 
     public static <B> CodecMapRegistry<B> ofCodec() {
-        return new CodecMapRegistry<>("unnamed");
-    }
-
-
-    public <E> Codec<E> dispatch(Function<? super E, ? extends T> type) {
-        return Codec.super.dispatch(type, c -> (Codec<E>) c);
+        return new CodecMapRegistry<>("unnamed codec registry");
     }
 
     public <B extends T> T register(ResourceLocation name, B value) {
+        if (map.containsKey(name)) {
+            throw new IllegalStateException("Cannot register duplicate value " + name);
+        }
         this.map.put(name, value);
+        this.addMapping(value);
         return value;
     }
 
     public <B extends T> T register(String name, B value) {
-        this.register(new ResourceLocation(name), value);
+        this.register(ResourceLocation.parse(name), value);
         return value;
+    }
+
+    protected void addMapping(T key) {
+        int value = nextId;
+        this.tToId.put(key, value);
+
+        while (this.idToT.size() <= value) {
+            this.idToT.add(null);
+        }
+
+        this.idToT.set(value, key);
+        if (this.nextId <= value) {
+            this.nextId = value + 1;
+        }
+
     }
 
     @Nullable
@@ -56,7 +84,7 @@ public class MapRegistry<T> implements Codec<T> {
 
     @Nullable
     public T getValue(String name) {
-        return this.getValue(new ResourceLocation(name));
+        return this.getValue(ResourceLocation.parse(name));
     }
 
     @Nullable
@@ -72,16 +100,12 @@ public class MapRegistry<T> implements Codec<T> {
         return this.map.values();
     }
 
+    public T getValueOrDefault(ResourceLocation parse, T defaultType) {
+        return this.map.getOrDefault(parse, defaultType);
+    }
+
     public Set<Map.Entry<ResourceLocation, T>> getEntries() {
         return this.map.entrySet();
-    }
-
-    public boolean isEmpty() {
-        return this.map.isEmpty();
-    }
-
-    public int size() {
-        return this.map.size();
     }
 
     public boolean containsKey(ResourceLocation name) {
@@ -105,5 +129,49 @@ public class MapRegistry<T> implements Codec<T> {
 
     public void clear() {
         this.map.clear();
+    }
+
+    public <E> Codec<E> dispatch(Function<? super E, ? extends T> type) {
+        return Codec.super.dispatch(type, c -> (MapCodec<? extends E>) c);
+    }
+
+    public int getId(T value) {
+        return this.tToId.getInt(value);
+    }
+
+    @Nullable
+    public final T byId(int id) {
+        return id >= 0 && id < this.idToT.size() ? this.idToT.get(id) : null;
+    }
+
+    public Iterator<T> iterator() {
+        return Iterators.filter(this.idToT.iterator(), Objects::nonNull);
+    }
+
+    public boolean contains(int id) {
+        return this.byId(id) != null;
+    }
+
+    public int size() {
+        return this.tToId.size();
+    }
+
+    public StreamCodec<FriendlyByteBuf, T> getStreamCodec() {
+        return this.streamCodec;
+    }
+
+
+    private class StreamC implements StreamCodec<FriendlyByteBuf, T> {
+        @Override
+        public T decode(FriendlyByteBuf buffer) {
+            int i = VarInt.read(buffer);
+            return byId(i);
+        }
+
+        @Override
+        public void encode(FriendlyByteBuf buffer, T value) {
+            int i = getId(value);
+            VarInt.write(buffer, i);
+        }
     }
 }
