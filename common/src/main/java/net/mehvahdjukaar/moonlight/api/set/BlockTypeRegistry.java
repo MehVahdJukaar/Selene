@@ -31,8 +31,7 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
     protected boolean frozen = false;
     private final String name;
     private final List<BlockType.SetFinder<T>> finders = new ArrayList<>();
-    private final List<ResourceLocation> notInclude = new ArrayList<>();
-    protected final List<T> builder = new ArrayList<>();
+    private final Set<ResourceLocation> notInclude = new HashSet<>();
     private final MapRegistry<T> valuesReg; //TODO: extend this instead
     private final Class<T> typeClass;
     private final Object2ObjectOpenHashMap<Object, T> childrenToType = new Object2ObjectOpenHashMap<>();
@@ -94,7 +93,10 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
         if (frozen) {
             throw new UnsupportedOperationException("Tried to register a wood types after registry events");
         }
-        builder.add(newType);
+        //ignore duplicates
+        if (!valuesReg.containsKey(newType.id)) {
+            valuesReg.register(newType.id, newType);
+        }
     }
 
     public Collection<BlockType.SetFinder<T>> getFinders() {
@@ -119,27 +121,6 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
         if (frozen) {
             throw new UnsupportedOperationException("Block types are already finalized");
         }
-        LinkedHashMap<ResourceLocation, T> linkedHashMap = new LinkedHashMap<>();
-        List<String> modOrder = new ArrayList<>();
-        modOrder.add("minecraft");
-        builder.forEach(e -> {
-            String modId = e.getNamespace();
-            if (!modOrder.contains(modId)) modOrder.add(modId);
-        });
-        //orders them by mod id
-        for (String modId : modOrder) {
-            builder.forEach(e -> {
-                if (Objects.equals(e.getNamespace(), modId)) {
-                    if (!linkedHashMap.containsKey(e.getId())) {
-                        linkedHashMap.put(e.getId(), e);
-                    }
-                }
-            });
-        }
-        for (var e : linkedHashMap.entrySet()) {
-            valuesReg.register(e.getKey(), e.getValue());
-        }
-        builder.clear();
         this.frozen = true;
     }
 
