@@ -104,9 +104,15 @@ public class CompatWoodTypes {
                         "stalk_block", "" ));
 
         // Unusual End
-        BlockSetAPI.addBlockTypeFinder(WoodType.class,
-                uniqueWoodFinder("unusualend", "chorus_cane", "chorus_nest_planks",
-                "block", ""));
+        var chorus_cane = uniqueWoodFinder("unusualend", "chorus_cane", "chorus_nest_planks",
+                "block", "");
+        chorus_cane.addChild("trapdoor", new ResourceLocation("unusualend:chorus_nest_trapdoor"));
+        chorus_cane.addChild("door", new ResourceLocation("unusualend:chorus_nest_door"));
+        chorus_cane.addChild("stairs", new ResourceLocation("unusualend:chorus_nest_stairs"));
+        chorus_cane.addChild("slab", new ResourceLocation("unusualend:chorus_nest_slab"));
+        chorus_cane.addChild("fence", new ResourceLocation("unusualend:chorus_nest_mosaic_fence"));
+        chorus_cane.addChild("fence_gate", new ResourceLocation("unusualend:chorus_nest_fence_gate"));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, chorus_cane);
 
         // Spectrum (FABRIC)
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
@@ -225,7 +231,21 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(WoodType.class, quarkAzalea);
 
 
-// LEAVES
+//!! LEAVES
+        // Environmental
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "pink_wisteria", "pink_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "blue_wisteria", "blue_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "purple_wisteria", "purple_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "white_wisteria", "white_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "cheerful_plum", "cheerful_plum_leaves", "environmental:plum"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "moody_plum", "moody_plum_leaves", "environmental:plum"));
+
         // Ecologics
         var coconut = LeavesType.Finder.simple("ecologics", "coconut", "coconut_leaves", "ecologics:coconut");
         coconut.addChild("sapling", new ResourceLocation("ecologics:coconut_seedling"));
@@ -539,7 +559,17 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "ancient_aether", "skyroot_pine", "skyroot_pine_leaves", "aether:skyroot"));
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
-                "ancient_aether", "blue_skyroot_pine", "crystal_skyroot_leaves", "aether:skyroot"));
+                "ancient_aether", "blue_skyroot_pine", "blue_skyroot_pine_leaves", "aether:skyroot"));
+
+        // AETHER GENESIS
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "blue_skyroot", "blue_skyroot_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "dark_blue_skyroot", "dark_blue_skyroot_leaves", "aether:skyroot"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "purple_crystal", "purple_crystal_leaves", crystalLeavesWoodType));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "aether_genesis", "purple_crystal_fruit", "purple_crystal_fruit_leaves", crystalLeavesWoodType));
 
         // AUTUMNITY
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
