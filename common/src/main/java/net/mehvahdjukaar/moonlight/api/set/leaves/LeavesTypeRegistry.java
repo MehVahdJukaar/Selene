@@ -27,6 +27,7 @@ public class LeavesTypeRegistry extends BlockTypeRegistry<LeavesType> {
     }
 
     public static LeavesType fromNBT(String name) {
+
         return INSTANCE.getFromNBT(name);
     }
 

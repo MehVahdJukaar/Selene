@@ -128,7 +128,8 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
     public void buildAll() {
         if (!frozen) {
             //adds default
-            this.registerBlockType(this.getDefaultType());
+            T defaultType = this.getDefaultType();
+            if(defaultType != null) this.registerBlockType(defaultType);
             //adds finders
             finders.stream().map(BlockType.SetFinder::get).forEach(f -> f.ifPresent(this::registerBlockType));
             for (Block b : BuiltInRegistries.BLOCK) {
