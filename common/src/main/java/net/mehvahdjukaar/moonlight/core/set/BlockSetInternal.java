@@ -54,6 +54,7 @@ public class BlockSetInternal {
         throw new AssertionError();
     }
 
+
     public synchronized static <T extends BlockType> void registerBlockSetDefinition(BlockTypeRegistry<T> typeRegistry) {
         if (hasFilledBlockSets()) {
             throw new UnsupportedOperationException(

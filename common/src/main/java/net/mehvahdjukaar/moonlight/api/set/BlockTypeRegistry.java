@@ -7,8 +7,6 @@ import net.mehvahdjukaar.moonlight.api.misc.MapRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.core.set.BlockSetInternal;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.ItemLike;
@@ -21,11 +19,7 @@ import java.util.*;
 public abstract class BlockTypeRegistry<T extends BlockType> {
 
     public static Codec<BlockTypeRegistry<?>> getRegistryCodec() {
-        return BlockSetInternal.REGISTRIES_BY_NAME;
-    }
-
-    public static StreamCodec<FriendlyByteBuf, BlockTypeRegistry<?>> getRegistryStreamCodec() {
-        return BlockSetInternal.REGISTRIES_BY_NAME.getStreamCodec();
+        return BlockSetInternal.getRegistriesCodec();
     }
 
     protected boolean frozen = false;
@@ -54,7 +48,7 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
      */
     @Deprecated(forRemoval = true)
     public T getFromNBT(String name) {
-        return valuesReg.getValueOrDefault(ResourceLocation.parse(name), this.getDefaultType());
+        return valuesReg.getValueOrDefault(new ResourceLocation(name), this.getDefaultType());
     }
 
     @Nullable
@@ -68,10 +62,6 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
 
     public Codec<T> getCodec() {
         return valuesReg;
-    }
-
-    public StreamCodec<FriendlyByteBuf, T> getStreamCodec() {
-        return valuesReg.getStreamCodec();
     }
 
     public abstract T getDefaultType();

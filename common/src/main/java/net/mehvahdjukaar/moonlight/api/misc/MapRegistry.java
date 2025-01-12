@@ -14,7 +14,6 @@ import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import net.minecraft.core.IdMap;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.VarInt;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +21,6 @@ import java.util.*;
 import java.util.function.Function;
 
 public class MapRegistry<T> implements IdMap<T>, Codec<T> {
-    private final StreamCodec<FriendlyByteBuf, T> streamCodec;
 
     private final String name;
 
@@ -36,8 +34,6 @@ public class MapRegistry<T> implements IdMap<T>, Codec<T> {
         this.idToT = Lists.newArrayListWithExpectedSize(32);
         this.tToId = new Reference2IntOpenHashMap<>(32);
         this.tToId.defaultReturnValue(-1);
-        this.streamCodec = new StreamC();
-
     }
 
     public static <B> CodecMapRegistry<B> ofCodec(String name) {
@@ -58,7 +54,7 @@ public class MapRegistry<T> implements IdMap<T>, Codec<T> {
     }
 
     public <B extends T> T register(String name, B value) {
-        this.register(ResourceLocation.parse(name), value);
+        this.register(new ResourceLocation(name), value);
         return value;
     }
 
@@ -84,7 +80,7 @@ public class MapRegistry<T> implements IdMap<T>, Codec<T> {
 
     @Nullable
     public T getValue(String name) {
-        return this.getValue(ResourceLocation.parse(name));
+        return this.getValue(new ResourceLocation(name));
     }
 
     @Nullable
@@ -132,7 +128,7 @@ public class MapRegistry<T> implements IdMap<T>, Codec<T> {
     }
 
     public <E> Codec<E> dispatch(Function<? super E, ? extends T> type) {
-        return Codec.super.dispatch(type, c -> (MapCodec<? extends E>) c);
+        return Codec.super.dispatch(type, c -> (Codec<E>) c);
     }
 
     public int getId(T value) {
@@ -156,22 +152,4 @@ public class MapRegistry<T> implements IdMap<T>, Codec<T> {
         return this.tToId.size();
     }
 
-    public StreamCodec<FriendlyByteBuf, T> getStreamCodec() {
-        return this.streamCodec;
-    }
-
-
-    private class StreamC implements StreamCodec<FriendlyByteBuf, T> {
-        @Override
-        public T decode(FriendlyByteBuf buffer) {
-            int i = VarInt.read(buffer);
-            return byId(i);
-        }
-
-        @Override
-        public void encode(FriendlyByteBuf buffer, T value) {
-            int i = getId(value);
-            VarInt.write(buffer, i);
-        }
-    }
 }
