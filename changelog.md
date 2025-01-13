@@ -1,5 +1,3 @@
-- **CompatWoodType**
-  - Added **Environmental**'s leaves & Fixed [EveryCompat's #769](https://github.com/MehVahdJukaar/WoodGood/issues/769)
-  - Added **Aether Genesis**'s leaves  - @VoidLeech
-  - Added one more leaves from **Ancient Aether** - @VoidLeech
-  - Updated **Unusual End**'s chorus_cane
+- Refactored BlockTypeRegistry
+  - Updated WoodTypeRegistry
+  - Updated LeavesTypeRegistry
