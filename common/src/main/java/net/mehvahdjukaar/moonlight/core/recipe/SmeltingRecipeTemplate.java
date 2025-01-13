@@ -26,7 +26,6 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
 
     private final List<Object> conditions = new ArrayList<>();
 
-//    private final ResourceLocation id;
     private final CookingBookCategory category;
     private final Ingredient ingredient;
     private final Item result;
@@ -64,7 +63,7 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
         }
 
         SimpleCookingRecipeBuilder builder = new SimpleCookingRecipeBuilder(
-                RecipeCategory.MISC, //AAA what am i supposed to put here
+                RecipeCategory.BUILDING_BLOCKS,
                 category, newResult,
                 newIngredient, this.experience, this.cookingTime,
                 serializer);
