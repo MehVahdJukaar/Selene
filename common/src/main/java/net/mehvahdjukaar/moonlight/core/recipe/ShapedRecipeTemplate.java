@@ -81,7 +81,7 @@ public class ShapedRecipeTemplate implements IRecipeTemplate<ShapedRecipeBuilder
 
         this.pattern.forEach(builder::pattern);
         builder.group(group);
-        builder.unlockedBy("has_planks", InventoryChangeTrigger.TriggerInstance.hasItems(unlockItem));
+        builder.unlockedBy("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(unlockItem));
 
         AtomicReference<ShapedRecipeBuilder.Result> newRecipe = new AtomicReference<>();
 

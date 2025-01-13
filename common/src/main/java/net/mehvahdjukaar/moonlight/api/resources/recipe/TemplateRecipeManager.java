@@ -5,6 +5,7 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.moonlight.core.recipe.ShapedRecipeTemplate;
 import net.mehvahdjukaar.moonlight.core.recipe.ShapelessRecipeTemplate;
+import net.mehvahdjukaar.moonlight.core.recipe.SmeltingRecipeTemplate;
 import net.mehvahdjukaar.moonlight.core.recipe.StoneCutterRecipeTemplate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -62,6 +63,10 @@ public class TemplateRecipeManager {
         registerTemplate(RecipeSerializer.SHAPED_RECIPE, ShapedRecipeTemplate::new);
         registerTemplate(RecipeSerializer.SHAPELESS_RECIPE, ShapelessRecipeTemplate::new);
         registerTemplate(RecipeSerializer.STONECUTTER, StoneCutterRecipeTemplate::new);
+        registerTemplate(RecipeSerializer.SMELTING_RECIPE, j -> new SmeltingRecipeTemplate(j, RecipeSerializer.SMELTING_RECIPE));
+        registerTemplate(RecipeSerializer.BLASTING_RECIPE, j -> new SmeltingRecipeTemplate(j, RecipeSerializer.BLASTING_RECIPE));
+        registerTemplate(RecipeSerializer.SMOKING_RECIPE, j -> new SmeltingRecipeTemplate(j, RecipeSerializer.SMOKING_RECIPE));
+        registerTemplate(RecipeSerializer.CAMPFIRE_COOKING_RECIPE, j -> new SmeltingRecipeTemplate(j, RecipeSerializer.CAMPFIRE_COOKING_RECIPE));
         registerTemplate(new ResourceLocation("forge:conditional"), TemplateRecipeManager::forgeConditional);
     }
 

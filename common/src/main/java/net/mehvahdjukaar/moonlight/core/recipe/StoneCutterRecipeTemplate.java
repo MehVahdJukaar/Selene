@@ -64,7 +64,7 @@ public class StoneCutterRecipeTemplate implements IRecipeTemplate<SingleItemReci
                 ing, determineBookCategory(this.category), newRes);
         builder.group(group);
 
-        builder.unlockedBy("has_planks", InventoryChangeTrigger.TriggerInstance.hasItems(unlockItem));
+        builder.unlockedBy("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(unlockItem));
 
         AtomicReference<SingleItemRecipeBuilder.Result> newRecipe = new AtomicReference<>();
 

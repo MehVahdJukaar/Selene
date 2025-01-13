@@ -83,7 +83,7 @@ public class ShapelessRecipeTemplate implements IRecipeTemplate<ShapelessRecipeB
         if (!atLeastOneChanged) return null;
 
         builder.group(group);
-        builder.unlockedBy("has_planks", InventoryChangeTrigger.TriggerInstance.hasItems(unlockItem));
+        builder.unlockedBy("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(unlockItem));
 
         AtomicReference<ShapelessRecipeBuilder.Result> newRecipe = new AtomicReference<>();
 

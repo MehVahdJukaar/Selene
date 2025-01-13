@@ -4,22 +4,23 @@ import com.google.gson.JsonObject;
 import net.mehvahdjukaar.moonlight.api.resources.recipe.IRecipeTemplate;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CookingBookCategory;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingRecipeBuilder.Result>  {
 
@@ -31,8 +32,10 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
     private final Item result;
     private final float experience;
     private final int cookingTime;
+    private final RecipeSerializer<? extends AbstractCookingRecipe> serializer;
 
-    public SmeltingRecipeTemplate(JsonObject json) {
+    public SmeltingRecipeTemplate(JsonObject json, RecipeSerializer<? extends AbstractCookingRecipe> serializer) {
+        this.serializer = serializer;
         JsonObject result = json.getAsJsonObject("result");
         ResourceLocation item = new ResourceLocation(result.get("item").getAsString());
         this.cookingTime = json.get("cookingTime").getAsInt();
@@ -60,10 +63,23 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
                     this.ingredient, originalMat, destinationMat));
         }
 
-        SimpleCookingRecipeBuilder builder = SimpleCookingRecipeBuilder.smelting(newIngredient,
-                RecipeCategory.BUILDING_BLOCKS, newResult, this.experience, this.cookingTime);
+        SimpleCookingRecipeBuilder builder = new SimpleCookingRecipeBuilder(
+                RecipeCategory.MISC, //AAA what am i supposed to put here
+                category, newResult,
+                newIngredient, this.experience, this.cookingTime,
+                serializer);
 
-        return null;
+        builder.unlockedBy("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(unlockItem));
+
+        AtomicReference<SimpleCookingRecipeBuilder.Result> newRecipe = new AtomicReference<>();
+
+        if (id == null) {
+            builder.save(r -> newRecipe.set((SimpleCookingRecipeBuilder.Result) r));
+        } else {
+            builder.save(r -> newRecipe.set((SimpleCookingRecipeBuilder.Result) r), id);
+        }
+
+        return newRecipe.get();
     }
 
     @Override
