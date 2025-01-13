@@ -1,5 +1,7 @@
 accessWidener   v2  named
 
+transitive-accessible class net/minecraft/data/recipes/SimpleCookingRecipeBuilder$Result
+
 transitive-accessible class net/minecraft/data/recipes/ShapedRecipeBuilder$Result
 
 transitive-accessible class net/minecraft/client/gui/screens/MenuScreens$ScreenConstructor
