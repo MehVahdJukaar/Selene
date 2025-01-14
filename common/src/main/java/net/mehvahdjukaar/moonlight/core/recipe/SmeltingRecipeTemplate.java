@@ -7,13 +7,12 @@ import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
-import net.minecraft.world.item.crafting.CookingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,30 +26,43 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
 
     private final CookingBookCategory category;
     private final Ingredient ingredient;
-    private final Item result;
+    private final ItemStack result;
     private final float experience;
     private final int cookingTime;
-    private final RecipeSerializer<? extends AbstractCookingRecipe> serializer;
+    private final SimpleCookingSerializer<?> serializer;
 
-    public SmeltingRecipeTemplate(JsonObject json, RecipeSerializer<? extends AbstractCookingRecipe> serializer) {
+    public SmeltingRecipeTemplate(JsonObject json, SimpleCookingSerializer<?> serializer) {
         this.serializer = serializer;
-        JsonObject result = json.getAsJsonObject("result");
-        ResourceLocation item = new ResourceLocation(result.get("item").getAsString());
-        this.cookingTime = json.get("cookingtime").getAsInt();
-        this.experience = json.get("experience").getAsInt();
+        AtomicReference<CookingBookCategory> cat = new AtomicReference<>();
+        AtomicReference<Ingredient> ing = new AtomicReference<>();
+        AtomicReference<ItemStack> res = new AtomicReference<>();
+        AtomicReference<Float> exp = new AtomicReference<>();
+        AtomicReference<Integer> time = new AtomicReference<>();
+        var dummy = new SimpleCookingSerializer<>((resourceLocation, string, cookingBookCategory, ingredient1, itemStack, f, i) -> {
+            cat.set(cookingBookCategory);
+            ing.set(ingredient1);
+            res.set(itemStack);
+            exp.set(f);
+            time.set(i);
 
-        var getIngredient = json.getAsJsonObject("ingredient").get("item");
-        this.ingredient = Ingredient.fromJson(getIngredient);
+            return null;
+        }, serializer.defaultCookingTime);
 
-        this.result = BuiltInRegistries.ITEM.get(item);
-        this.category = CookingBookCategory.CODEC.byName(GsonHelper.getAsString(json, "category", null), CookingBookCategory.BLOCKS);
+        dummy.fromJson(new ResourceLocation("dummy"), json);
+        category = cat.get();
+        ingredient = ing.get();
+        result = res.get();
+        experience = exp.get();
+        cookingTime = time.get();
 
     }
 
     @Override
     public <T extends BlockType> SimpleCookingRecipeBuilder.Result createSimilar(T originalMat, T destinationMat, Item unlockItem, @Nullable String id) {
         var newIngredient = IRecipeTemplate.convertIngredients(originalMat, destinationMat, this.ingredient);
-        ItemLike newResult = BlockType.changeItemType(this.result, originalMat, destinationMat);
+        ItemStack newResult =
+                BlockType.changeItemType(this.result.getItem(), originalMat, destinationMat)
+                        .getDefaultInstance(); //
 
         if (newResult == null) {
             throw new UnsupportedOperationException(String.format("Could not convert output item %s from type %s to %s",
@@ -63,7 +75,7 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
 
         SimpleCookingRecipeBuilder builder = new SimpleCookingRecipeBuilder(
                 RecipeCategory.BUILDING_BLOCKS,
-                category, newResult,
+                category, newResult.getItem(),
                 newIngredient, this.experience, this.cookingTime,
                 serializer);
 

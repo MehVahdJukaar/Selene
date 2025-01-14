@@ -10,6 +10,7 @@ import net.mehvahdjukaar.moonlight.core.recipe.StoneCutterRecipeTemplate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCookingSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,10 +64,10 @@ public class TemplateRecipeManager {
         registerTemplate(RecipeSerializer.SHAPED_RECIPE, ShapedRecipeTemplate::new);
         registerTemplate(RecipeSerializer.SHAPELESS_RECIPE, ShapelessRecipeTemplate::new);
         registerTemplate(RecipeSerializer.STONECUTTER, StoneCutterRecipeTemplate::new);
-        registerTemplate(RecipeSerializer.SMELTING_RECIPE, j -> new SmeltingRecipeTemplate(j, RecipeSerializer.SMELTING_RECIPE));
-        registerTemplate(RecipeSerializer.BLASTING_RECIPE, j -> new SmeltingRecipeTemplate(j, RecipeSerializer.BLASTING_RECIPE));
-        registerTemplate(RecipeSerializer.SMOKING_RECIPE, j -> new SmeltingRecipeTemplate(j, RecipeSerializer.SMOKING_RECIPE));
-        registerTemplate(RecipeSerializer.CAMPFIRE_COOKING_RECIPE, j -> new SmeltingRecipeTemplate(j, RecipeSerializer.CAMPFIRE_COOKING_RECIPE));
+        registerTemplate(RecipeSerializer.SMELTING_RECIPE, j -> new SmeltingRecipeTemplate(j, (SimpleCookingSerializer<?>) RecipeSerializer.SMELTING_RECIPE));
+        registerTemplate(RecipeSerializer.BLASTING_RECIPE, j -> new SmeltingRecipeTemplate(j, (SimpleCookingSerializer<?>) RecipeSerializer.BLASTING_RECIPE));
+        registerTemplate(RecipeSerializer.SMOKING_RECIPE, j -> new SmeltingRecipeTemplate(j, (SimpleCookingSerializer<?>) RecipeSerializer.SMOKING_RECIPE));
+        registerTemplate(RecipeSerializer.CAMPFIRE_COOKING_RECIPE, j -> new SmeltingRecipeTemplate(j, (SimpleCookingSerializer<?>) RecipeSerializer.CAMPFIRE_COOKING_RECIPE));
         registerTemplate(new ResourceLocation("forge:conditional"), TemplateRecipeManager::forgeConditional);
     }
 

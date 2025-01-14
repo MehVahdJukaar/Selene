@@ -14,6 +14,8 @@ mutable field net/minecraft/client/renderer/RenderStateShard setupState Ljava/la
 
 accessible method net/minecraft/world/entity/ai/village/poi/PoiTypes registerBlockStates (Lnet/minecraft/core/Holder;Ljava/util/Set;)V
 
+accessible field net/minecraft/world/item/crafting/SimpleCookingSerializer defaultCookingTime I
+accessible class net/minecraft/world/item/crafting/SimpleCookingSerializer$CookieBaker
 accessible class net/minecraft/data/recipes/SimpleCookingRecipeBuilder$Result
 accessible method net/minecraft/data/recipes/SimpleCookingRecipeBuilder <init> (Lnet/minecraft/data/recipes/RecipeCategory;Lnet/minecraft/world/item/crafting/CookingBookCategory;Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/item/crafting/Ingredient;FILnet/minecraft/world/item/crafting/RecipeSerializer;)V
 accessible field net/minecraft/world/level/block/DispenserBlock DISPENSER_REGISTRY Ljava/util/Map;
