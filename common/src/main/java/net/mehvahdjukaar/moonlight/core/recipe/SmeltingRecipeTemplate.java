@@ -3,18 +3,17 @@ package net.mehvahdjukaar.moonlight.core.recipe;
 import com.google.gson.JsonObject;
 import net.mehvahdjukaar.moonlight.api.resources.recipe.IRecipeTemplate;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
-import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
-import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.CookingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +25,6 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
 
     private final List<Object> conditions = new ArrayList<>();
 
-//    private final ResourceLocation id;
     private final CookingBookCategory category;
     private final Ingredient ingredient;
     private final Item result;
@@ -38,7 +36,7 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
         this.serializer = serializer;
         JsonObject result = json.getAsJsonObject("result");
         ResourceLocation item = new ResourceLocation(result.get("item").getAsString());
-        this.cookingTime = json.get("cookingTime").getAsInt();
+        this.cookingTime = json.get("cookingtime").getAsInt();
         this.experience = json.get("experience").getAsInt();
 
         var getIngredient = json.getAsJsonObject("ingredient").get("item");
@@ -64,7 +62,7 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
         }
 
         SimpleCookingRecipeBuilder builder = new SimpleCookingRecipeBuilder(
-                RecipeCategory.MISC, //AAA what am i supposed to put here
+                RecipeCategory.BUILDING_BLOCKS,
                 category, newResult,
                 newIngredient, this.experience, this.cookingTime,
                 serializer);
