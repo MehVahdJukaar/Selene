@@ -11,8 +11,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -165,11 +168,16 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
         //we must check items and blocks correctly here since map might just contain blocks or items
         var t = childrenToType.get(itemLike);
         if (t != null) return t;
+        if (itemLike == Items.AIR || itemLike == Blocks.AIR) return null;
         if (itemLike instanceof BlockItem bi) {
             return childrenToType.get(bi.getBlock());
         }
         if (itemLike instanceof Block b) {
-            return childrenToType.get(b.asItem());
+            Item item = b.asItem();
+            if (item == Items.AIR) {
+                throw new IllegalStateException("Block " + b + " has no item. This likely means getBlockTypeOf was called too early. This is a bug");
+            }
+            return childrenToType.get(item);
         }
         return null;
     }
