@@ -1,5 +1,1 @@
-- Refactored BlockTypeRegistry
-  - Updated WoodTypeRegistry
-  - Updated LeavesTypeRegistry
-  - Corrected some code that caused the crash
-- Added SmeltingRecipeTemplate (Currently WIP)
+- Updated & Finished SmeltingRecipeTemplate
