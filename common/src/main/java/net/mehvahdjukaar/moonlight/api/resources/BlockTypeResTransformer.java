@@ -226,6 +226,10 @@ public class BlockTypeResTransformer<T extends BlockType> {
     // Same as before but takes folder depth instead of a specific folder name
     public static String replaceFullGenericType(String text, BlockType newBlockType, ResourceLocation newBlockId, String oldTypeName,
                                                 @Nullable String oldTypeNamespace, int folderDepth) {
+        //TODO: improve the code using a new regex - This will remove the for loop
+        // OPTION A: .*?(?:\/.*?){folderDepth} - folderDepth is needed
+        // folderDepth's value should be set to 1 for 2 folderDepth, 0 for 1 folderDepth
+        // OPTION B: .*?(?:\/.*?){0, 2} - no need for folderDepth
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < folderDepth; i++) {
             if (i != 0) sb.append("\\/"); //no tailing slash
