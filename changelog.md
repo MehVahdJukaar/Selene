@@ -1,1 +1,2 @@
 - Updated & Finished SmeltingRecipeTemplate
+- Added an exception in BlockTypeRegistry
