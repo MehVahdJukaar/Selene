@@ -12,6 +12,8 @@ import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.mehvahdjukaar.moonlight.api.set.BlockTypeRegistry;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.ApiStatus;
@@ -137,6 +139,10 @@ public class BlockSetInternal {
 
     public static Codec<BlockTypeRegistry<?>> getRegistriesCodec() {
         return REGISTRIES_BY_NAME;
+    }
+
+    public static StreamCodec<FriendlyByteBuf, BlockTypeRegistry<?>> getRegistriesStreamCodec() {
+        return REGISTRIES_BY_NAME.getStreamCodec();
     }
 
 

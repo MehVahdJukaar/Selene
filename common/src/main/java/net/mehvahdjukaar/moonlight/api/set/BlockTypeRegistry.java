@@ -28,7 +28,7 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
     }
 
     public static StreamCodec<FriendlyByteBuf, BlockTypeRegistry<?>> getRegistryStreamCodec() {
-        return BlockSetInternal.REGISTRIES_BY_NAME.getStreamCodec();
+        return BlockSetInternal.getRegistriesStreamCodec();
     }
 
     protected boolean frozen = false;

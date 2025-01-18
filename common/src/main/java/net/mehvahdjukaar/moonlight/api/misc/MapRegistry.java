@@ -160,10 +160,6 @@ public class MapRegistry<T> implements IdMap<T>, Codec<T> {
         return this.byId(id) != null;
     }
 
-    public int size() {
-        return this.tToId.size();
-    }
-
     public StreamCodec<FriendlyByteBuf, T> getStreamCodec() {
         return this.streamCodec;
     }
