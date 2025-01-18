@@ -121,12 +121,14 @@ public class BlockSetInternalImpl {
             hasRegisteredDynamic = true;
             //when the first registration function is called we find all block types
 
-            BlockSetInternal.getRegistries().forEach(BlockTypeRegistry::onItemInit);
             // prob not needed
             if (!hasFilledBlockSets) {
                 BlockSetInternal.initializeBlockSets();
                 hasFilledBlockSets = true;
             }
+
+            BlockSetInternal.getRegistries().forEach(BlockTypeRegistry::onItemInit);
+
 
             //get the queue corresponding to this certain mod
             var registrationQueues = LATE_REGISTRATION_QUEUE;

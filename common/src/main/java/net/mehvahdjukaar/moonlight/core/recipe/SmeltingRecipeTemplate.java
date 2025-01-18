@@ -4,23 +4,21 @@ import com.google.gson.JsonObject;
 import net.mehvahdjukaar.moonlight.api.resources.recipe.IRecipeTemplate;
 import net.mehvahdjukaar.moonlight.api.set.BlockType;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.crafting.CookingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.SimpleCookingSerializer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingRecipeBuilder.Result>  {
+public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingRecipeBuilder.Result> {
 
     private final List<Object> conditions = new ArrayList<>();
 
@@ -60,9 +58,7 @@ public class SmeltingRecipeTemplate implements IRecipeTemplate<SimpleCookingReci
     @Override
     public <T extends BlockType> SimpleCookingRecipeBuilder.Result createSimilar(T originalMat, T destinationMat, Item unlockItem, @Nullable String id) {
         var newIngredient = IRecipeTemplate.convertIngredients(originalMat, destinationMat, this.ingredient);
-        ItemStack newResult =
-                BlockType.changeItemType(this.result.getItem(), originalMat, destinationMat)
-                        .getDefaultInstance(); //
+        ItemStack newResult = BlockType.changeItemType(this.result.getItem(), originalMat, destinationMat).getDefaultInstance();
 
         if (newResult == null) {
             throw new UnsupportedOperationException(String.format("Could not convert output item %s from type %s to %s",

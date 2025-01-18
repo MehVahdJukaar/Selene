@@ -48,6 +48,7 @@ public class MoonlightForge {
 
     public MoonlightForge() {
         Moonlight.commonInit();
+
         MinecraftForge.EVENT_BUS.register(MoonlightForge.class);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(MoonlightForge::configsLoaded);
         ModLootModifiers.register();

@@ -1,10 +1,14 @@
 package net.mehvahdjukaar.moonlight.api.misc;
 
+import net.mehvahdjukaar.moonlight.core.Moonlight;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PathTrie<T> {
+
+    //AtomicInteger modNum = new AtomicInteger(0);
     private final TrieNode<T> root;
 
     public PathTrie() {
@@ -12,6 +16,9 @@ public class PathTrie<T> {
     }
 
     public void insert(String path, T object) {
+        //Moonlight.LOGGER.warn("Path trie: modify{}. obj: {}, modNum: {}", Thread.currentThread().getName(),
+        //this, modNum.incrementAndGet());
+        //crashIfWrongThread();
         String[] folders = path.split("/");
         TrieNode<T> current = root;
 
@@ -26,6 +33,7 @@ public class PathTrie<T> {
     }
 
     public Collection<T> search(String path) {
+        //Moonlight.LOGGER.warn("Path trie: access{}. obj: {}, modNum: {}", Thread.currentThread().getName(),this, modNum.incrementAndGet());
         TrieNode<T> current = getNode(path);
         if (current == null) return Collections.emptyList();
         // Once at the target node, collect all objects from this node and its children
@@ -33,6 +41,8 @@ public class PathTrie<T> {
     }
 
     public boolean remove(String path) {
+        //Moonlight.LOGGER.warn("Path trie: modify{}. obj: {}, modNum: {}", Thread.currentThread().getName(),this, modNum.incrementAndGet());
+        //crashIfWrongThread();
         TrieNode<T> current = getNode(path);
         if (current == null) return false;
         // Once at the target node, clear all its contents
@@ -56,12 +66,15 @@ public class PathTrie<T> {
     }
 
     public void clear() {
+        //Moonlight.LOGGER.warn("Path trie: modify{}. obj: {}, modNum: {}", Thread.currentThread().getName(),this, modNum.incrementAndGet());
+        //crashIfWrongThread();
         root.children.clear();
         root.objects.clear();
     }
 
 
     public Collection<String> listFolders(String path) {
+        //Moonlight.LOGGER.warn("Path trie: access{}. obj: {}, modNum: {}", Thread.currentThread().getName(), this, modNum.incrementAndGet());
         TrieNode<T> startNode = getNode(path);
         if (startNode != null) {
             return startNode.children.keySet();
@@ -84,6 +97,15 @@ public class PathTrie<T> {
             }
 
             return result;
+        }
+    }
+
+    public static void crashIfWrongThread(){
+        if(!Thread.currentThread().getName().equals("main") && false){
+
+            var e = new IllegalStateException("PathTrie accessed from wrong thread" + Thread.currentThread().getName());
+            e.printStackTrace();
+            throw e;
         }
     }
 }
