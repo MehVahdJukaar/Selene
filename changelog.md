@@ -1,1 +1,1 @@
-- fixed an issue with fake level
+failsafe will throw an error if client dynamic asset generator is registered on dedicated server

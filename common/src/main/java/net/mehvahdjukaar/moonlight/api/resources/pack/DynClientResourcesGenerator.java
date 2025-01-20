@@ -22,6 +22,9 @@ public abstract class DynClientResourcesGenerator extends DynResourceGenerator<D
     protected DynClientResourcesGenerator(DynamicTexturePack pack) {
         super(MoonlightClient.maybeMergePack(pack), pack.mainNamespace);
 
+        if (PlatHelper.getPhysicalSide().isServer()) {
+            throw new IllegalStateException("Client only class registered on server side! Issue from mod" + pack.mainNamespace);
+        }
         //run data could give a null minecraft here...
         if (!PlatHelper.isData()) {
             //unused now...
