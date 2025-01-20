@@ -23,12 +23,11 @@ public class FakePlayerManager {
 
     public static Player get(GameProfile id, Level level) {
         Player fakePlayer;
-        if (!level.isClientSide) {
-            if (level instanceof ServerLevel sl) {
-                fakePlayer = PlatHelper.getFakeServerPlayer(id, sl);
-            } else {
-                fakePlayer = FakeGenericPlayer.get(level, id);
-            }
+        if (level instanceof ServerLevel sl) {
+            fakePlayer = PlatHelper.getFakeServerPlayer(id, sl);
+        }
+        else if (PlatHelper.getPhysicalSide().isServer()) { //on server side but level not serve sided or not instance of server level
+            fakePlayer = FakeGenericPlayer.get(level, id);
         } else {
             //class loading hacks
             fakePlayer = FPClientAccess.get(level, id);

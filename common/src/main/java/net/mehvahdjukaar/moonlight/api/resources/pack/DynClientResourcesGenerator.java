@@ -3,6 +3,7 @@ package net.mehvahdjukaar.moonlight.api.resources.pack;
 import net.mehvahdjukaar.moonlight.api.events.AfterLanguageLoadEvent;
 import net.mehvahdjukaar.moonlight.api.events.MoonlightEventsHelper;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.textures.TextureImage;
 import net.mehvahdjukaar.moonlight.core.MoonlightClient;
@@ -21,6 +22,9 @@ public abstract class DynClientResourcesGenerator extends DynResourceGenerator<D
     protected DynClientResourcesGenerator(DynamicTexturePack pack) {
         super(MoonlightClient.maybeMergePack(pack), pack.mainNamespace);
 
+        if (PlatHelper.getPhysicalSide().isServer()) {
+            throw new IllegalStateException("Client only class registered on server side! Issue from mod" + pack.mainNamespace);
+        }
         //unused now...
         ClientHelper.addClientReloadListener(() -> this,
                 ResourceLocation.fromNamespaceAndPath(this.modId, "dyn_resources_generator_" + index++));
