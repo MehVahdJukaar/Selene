@@ -169,19 +169,15 @@ public class BlockTypeResTransformer<T extends BlockType> {
     }
 
     public static String replaceTypeNoNamespace(String text, BlockType blockType, ResourceLocation blockId, String oldTypeName) {
-        return replaceFullGenericType(text, blockType, blockId, oldTypeName, null, "");
+        return replaceFullGenericType(text, blockType, blockId, oldTypeName, null, 1);
     }
 
     public static String replaceType(String text, BlockType blockType, ResourceLocation blockId, String oldTypeName, String oldNamespace) {
-        return replaceFullGenericType(text, blockType, blockId, oldTypeName, oldNamespace, "");
+        return replaceFullGenericType(text, blockType, blockId, oldTypeName, oldNamespace, 1);
     }
 
     public static String replaceFullGenericType(String text, BlockType newBlockType, ResourceLocation newBlockId, String oldTypeName,
                                                 @Nullable String oldTypeNamespace, int folderDepth) {
-        //TODO: improve the code using a new regex - This will remove the for loop
-        // OPTION A: .*?(?:\/.*?){folderDepth} - folderDepth is needed
-        // folderDepth's value should be set to 1 for 2 folderDepth, 0 for 1 folderDepth
-        // OPTION B: .*?(?:\/.*?){0, 2} - no need for folderDepth
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < folderDepth; i++) {
             if (i != 0) sb.append("\\/"); //no tailing slash
