@@ -12,6 +12,12 @@ public class CompatWoodTypes {
 
     public static void init() {
 
+        // Integrated Dynamics
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "integrateddynamics", "menril", "menril_planks",
+                        "log", "wood",
+                        "log_stripped", "wood_stripped"));
+
         // Domum Oranmentum
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(new ResourceLocation("domum_ornamentum:cactus"),
                 new ResourceLocation("domum_ornamentum:green_cactus_extra"), new ResourceLocation("cactus")));
