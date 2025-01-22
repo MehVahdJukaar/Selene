@@ -1,1 +1,4 @@
-failsafe will throw an error if client dynamic asset generator is registered on dedicated server
+- CompatWoodType: 
+  - Added **Integrated Dynamic**'s menril and its children
+  - Updated mynethersdelight 
+  - Added Blockus' 2 WoodTypes: _white_oak_ & _raw_bamboo_
