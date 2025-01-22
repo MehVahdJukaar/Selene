@@ -124,7 +124,7 @@ public class MoonlightForge {
     public static void onDimensionUnload(LevelEvent.Unload event) {
         var level = event.getLevel();
         try {
-            if (level.isClientSide()) {
+            if (PlatHelper.getPhysicalSide().isClient()) {
                 //got to be careful with classloading
                 FPClientAccess.unloadLevel(level);
             }
