@@ -166,7 +166,7 @@ public abstract class BlockTypeRegistry<T extends BlockType> {
         if (itemLike instanceof Block b) {
             Item item = b.asItem();
             if (item == Items.AIR) {
-                throw new IllegalStateException("Block " + b + " has no item. This likely means getBlockTypeOf was called too early. This is a bug");
+                return null;
             }
             return childrenToType.get(item);
         }
