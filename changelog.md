@@ -1,1 +1,1 @@
-improved some errors and things related to fake player
+fixed a crash that happeed with speciic mod confiuration
