@@ -160,6 +160,9 @@ public class TextureImage implements AutoCloseable {
      */
     public static TextureImage open(ResourceManager manager, ResourceLocation relativePath) throws IOException {
         try {
+            if (relativePath.getPath().endsWith(".png")) {
+                relativePath = relativePath.withPath(relativePath.getPath().substring(0, relativePath.getPath().length() - 4));
+            }
             ResourceLocation textureLoc = ResType.TEXTURES.getPath(relativePath);
             NativeImage i = SpriteUtils.readImage(manager, textureLoc);
             //try getting metadata for animated textures
