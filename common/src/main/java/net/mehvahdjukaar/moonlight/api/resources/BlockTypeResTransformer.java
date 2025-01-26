@@ -59,6 +59,12 @@ public class BlockTypeResTransformer<T extends BlockType> {
     }
 
 
+    public BlockTypeResTransformer<T> andThen(BlockTypeResTransformer<T> other) {
+        this.textModifiers.addAll(other.textModifiers);
+        this.idModifiers = other.idModifiers;
+        return this;
+    }
+
     public BlockTypeResTransformer<T> setIDModifier(TextModification<T> modifier) {
         this.idModifiers = modifier;
         return this;
