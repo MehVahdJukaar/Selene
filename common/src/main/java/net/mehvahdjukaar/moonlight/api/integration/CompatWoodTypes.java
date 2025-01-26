@@ -11,6 +11,18 @@ public class CompatWoodTypes {
 
     public static void init() {
 
+        // Blockus
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                WoodType.Finder.simple(ResourceLocation.parse("blockus:raw_bamboo"), ResourceLocation.parse("blockus:raw_bamboo_planks"), ResourceLocation.parse("minecraft:bamboo_block")));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                WoodType.Finder.simple("blockus", "white_oak", "white_oak_planks", "white_oak_log"));
+
+        // Integrated Dynamics
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "integrateddynamics", "menril", "menril_planks",
+                        "log", "wood",
+                        "log_stripped", "wood_stripped"));
+
         // Domum Oranmentum
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(ResourceLocation.parse("domum_ornamentum:cactus"),
                 ResourceLocation.parse("domum_ornamentum:green_cactus_extra"), ResourceLocation.parse("cactus")));
@@ -171,7 +183,7 @@ public class CompatWoodTypes {
 
         // My Nether's Delight
         BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(
-                "mynethersdelight", "powdery", "powdery_planks", "block_of_powdery_cannon"
+                "mynethersdelight", "powdery", "powdery_planks", "powdery_block"
         ));
 
         // Nourished End
