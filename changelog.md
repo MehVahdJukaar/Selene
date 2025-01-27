@@ -1,1 +1,1 @@
-fixed a crash that happeed with speciic mod confiuration
+- improved dynamic pack resource clearing and added config to disable it

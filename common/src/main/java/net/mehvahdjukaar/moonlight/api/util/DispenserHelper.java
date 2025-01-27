@@ -54,6 +54,7 @@ public class DispenserHelper {
             Item item = e.getKey();
             // don't alter these as we cant override them since they are static otherwise we would lose them
             if (STATIC_MODDED_BEHAVIORS.containsKey(item)) continue;
+
             var expected = new ReferenceOpenHashSet<>(e.getValue());
             var current = DispenserBlock.DISPENSER_REGISTRY.get(item);
             if (current instanceof AdditionalDispenserBehavior behavior) {

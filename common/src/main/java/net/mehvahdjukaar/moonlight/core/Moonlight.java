@@ -80,6 +80,7 @@ public class Moonlight {
         MoonlightRegistry.init();
 
         ModMessages.init();
+        CommonConfigs.init();
 
         BlockTypeSwapIngredient.init();
         VillagerAIInternal.init();
