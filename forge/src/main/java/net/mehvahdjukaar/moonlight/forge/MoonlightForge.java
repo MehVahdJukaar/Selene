@@ -5,6 +5,7 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import net.mehvahdjukaar.moonlight.api.platform.configs.forge.ConfigSpecWrapper;
+import net.mehvahdjukaar.moonlight.core.CommonConfigs;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.fake_player.FPClientAccess;
 import net.mehvahdjukaar.moonlight.core.fake_player.FakeGenericPlayer;
@@ -43,8 +44,6 @@ import java.lang.ref.WeakReference;
 @Mod(Moonlight.MOD_ID)
 public class MoonlightForge {
     public static final String MOD_ID = Moonlight.MOD_ID;
-    public static final ForgeConfigSpec SPEC = ((ConfigSpecWrapper) ConfigBuilder.create(MOD_ID, ConfigType.COMMON)
-            .buildAndRegister()).getSpec();
 
     public MoonlightForge() {
         Moonlight.commonInit();
@@ -61,7 +60,7 @@ public class MoonlightForge {
 
 
     public static void configsLoaded(ModConfigEvent.Loading event) {
-        if (event.getConfig().getSpec() == SPEC) {
+        if (event.getConfig().getSpec() == ((ConfigSpecWrapper) CommonConfigs.CONFIG).getSpec()) {
             if (!ModLoader.get().hasCompletedState("LOAD_REGISTRIES")) {
                 throw new IllegalStateException("Some OTHER mod has forcefully loaded ALL other mods configs before the registry phase. This should not be done. Dont report this to Moonlight. Refusing to proceed further");
             }

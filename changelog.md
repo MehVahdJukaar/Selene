@@ -1,1 +1,2 @@
+- hotifx for forge 1.20 for previous update
 - improved dynamic pack resource clearing and added config to disable it

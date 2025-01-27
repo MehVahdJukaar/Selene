@@ -17,6 +17,7 @@ public class CommonConfigs {
         builder.push("general");
         CLEAR_RESOURCES = builder.comment("Clears dynamic models and textures from the mod dynamic pack once resource reload is done. This can save up some ram.")
                 .define("clear_dynamic_resources", true);
+
         builder.pop();
 
         CONFIG = builder.buildAndRegister();
