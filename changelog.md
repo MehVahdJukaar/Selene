@@ -1,1 +1,2 @@
 - improved dynamic pack resource clearing and added config to disable it
+- hotfix for neoforge crash on latest version

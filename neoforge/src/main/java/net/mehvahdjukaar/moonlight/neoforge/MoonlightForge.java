@@ -51,15 +51,12 @@ import java.lang.ref.WeakReference;
 @Mod(Moonlight.MOD_ID)
 public class MoonlightForge {
     public static final String MOD_ID = Moonlight.MOD_ID;
-    public static final ModConfigSpec SPEC = ((ForgeConfigHolder) ConfigBuilder.create(MOD_ID, ConfigType.COMMON)
-            .build()).getSpec();
 
     public MoonlightForge(IEventBus bus) {
         RegHelper.startRegisteringFor(bus);
 
         Moonlight.commonInit();
         NeoForge.EVENT_BUS.register(MoonlightForge.class);
-        bus.addListener(MoonlightForge::configsLoaded);
         bus.addListener(MoonlightForge::registerCapabilities);
         ModLootModifiers.register();
         ModLootConditions.register();
@@ -69,15 +66,6 @@ public class MoonlightForge {
         if (PlatHelper.getPhysicalSide().isClient()) {
             MoonlightForgeClient.init(bus);
             MoonlightClient.initClient();
-        }
-    }
-
-
-    public static void configsLoaded(ModConfigEvent.Loading event) {
-        if (event.getConfig().getSpec() == SPEC) {
-            //if (!ModLoader.hasCompletedState("LOAD_REGISTRIES")) {
-            //    throw new IllegalStateException("Some OTHER mod has forcefully loaded ALL other mods configs before the registry phase. This should not be done. Dont report this to Moonlight. Refusing to proceed further");
-            //}
         }
     }
 
