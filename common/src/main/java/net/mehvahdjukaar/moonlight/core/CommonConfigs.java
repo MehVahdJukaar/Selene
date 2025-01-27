@@ -1,8 +1,8 @@
 package net.mehvahdjukaar.moonlight.core;
 
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
+import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
-import net.mehvahdjukaar.moonlight.api.platform.configs.ModConfigHolder;
 
 import java.util.function.Supplier;
 
@@ -10,7 +10,7 @@ public class CommonConfigs {
 
     public static final Supplier<Boolean> CLEAR_RESOURCES;
 
-    public static final ModConfigHolder CONFIG;
+    public static final ConfigSpec CONFIG;
 
     static {
         ConfigBuilder builder = ConfigBuilder.create(Moonlight.MOD_ID, ConfigType.COMMON);
@@ -19,7 +19,7 @@ public class CommonConfigs {
                 .define("clear_dynamic_resources", true);
         builder.pop();
 
-        CONFIG = builder.build();
+        CONFIG = builder.buildAndRegister();
     }
 
     public static void init() {
