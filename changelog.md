@@ -1,4 +1,1 @@
-- CompatWoodType: 
-  - Added **Integrated Dynamic**'s menril and its children
-  - Updated mynethersdelight 
-  - Added Blockus' 2 WoodTypes: _white_oak_ & _raw_bamboo_
+- improved dynamic pack resource clearing and added config to disable it

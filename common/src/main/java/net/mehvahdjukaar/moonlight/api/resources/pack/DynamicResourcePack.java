@@ -1,19 +1,17 @@
 package net.mehvahdjukaar.moonlight.api.resources.pack;
 
-import com.google.common.base.Stopwatch;
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.moonlight.api.integration.ModernFixCompat;
-import net.mehvahdjukaar.moonlight.api.misc.PathSearchTrie;
 import net.mehvahdjukaar.moonlight.api.misc.ResourceLocationSearchTrie;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
 import net.mehvahdjukaar.moonlight.api.resources.ResType;
 import net.mehvahdjukaar.moonlight.api.resources.StaticResource;
 import net.mehvahdjukaar.moonlight.api.resources.assets.LangBuilder;
+import net.mehvahdjukaar.moonlight.core.CommonConfigs;
 import net.mehvahdjukaar.moonlight.core.CompatHandler;
-import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -239,7 +237,14 @@ public abstract class DynamicResourcePack implements PackResources {
             //idk why but somebody had an issue with concurrency here during world load
 
             this.searchTrie.search(namespace + "/" + id)
-                    .forEach(r -> output.accept(r, () -> new ByteArrayInputStream(resources.get(r))));
+                    .forEach(r -> output.accept(r, () -> {
+
+                        byte[] buf = resources.get(r);
+                        if (buf == null) {
+                            throw new IllegalStateException("Somehow search tree returned a resource not in resources " + r);
+                        }
+                        return new ByteArrayInputStream(buf);
+                    }));
         }
     }
 
@@ -284,9 +289,9 @@ public abstract class DynamicResourcePack implements PackResources {
     }
 
     public void removeResource(ResourceLocation res) {
+        this.searchTrie.remove(res);
         this.resources.remove(res);
         this.staticResources.remove(res);
-        this.searchTrie.remove(res);
     }
 
     public void addResource(StaticResource resource) {
@@ -317,9 +322,13 @@ public abstract class DynamicResourcePack implements PackResources {
     // Called after texture have been stitched. Only keeps needed stuff
     @ApiStatus.Internal
     protected void clearNonStatic() {
+        if (!CommonConfigs.CLEAR_RESOURCES.get()) return;
         if (!this.needsClearingNonStatic) return;
         this.needsClearingNonStatic = false;
         boolean mf = MODERN_FIX && getPackType() == PackType.CLIENT_RESOURCES;
+        // clear trie entirely and re populate as we always expect to have way less staitc resources than others
+        if (!mf) this.searchTrie.clear();
+
         for (var r : this.resources.keySet()) {
             if (mf && modernFixHack(r.getPath())) {
                 continue;
@@ -328,9 +337,8 @@ public abstract class DynamicResourcePack implements PackResources {
                 this.resources.remove(r);
             }
         }
-        // clear trie entirely and re populate as we always expect to have way less staitc resources than others
-        if (!mf) this.searchTrie.clear();
-        else {
+
+        if (mf) {
             List<String> toRemove = new ArrayList<>();
             for (String namespace : this.searchTrie.listFolders("")) {
                 for (String f : this.searchTrie.listFolders(namespace)) {

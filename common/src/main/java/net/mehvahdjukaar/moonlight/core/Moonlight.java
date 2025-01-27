@@ -72,6 +72,8 @@ public class Moonlight {
         MoonlightRegistry.init();
 
         ModNetworking.init();
+        CommonConfigs.init();
+
 
         VillagerAIInternal.init();
         MapDataInternal.init();
