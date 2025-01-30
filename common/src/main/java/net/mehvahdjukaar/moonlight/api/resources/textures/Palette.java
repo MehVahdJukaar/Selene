@@ -249,6 +249,8 @@ public class Palette implements Set<PaletteColor> {
     public void matchSize(int targetSize, @Nullable Float targetLumStep) {
         if (targetLumStep != null && targetSize * targetLumStep > 1)
             throw new UnsupportedOperationException("Palette size * luminance step must be less than 1");
+        if (targetLumStep != null && targetLumStep < 0)
+            throw new UnsupportedOperationException("Luminance step must be positive");
         if (this.size() == 0 || targetSize <= 0) {
             throw new UnsupportedOperationException("Palette size can't be 0");
         }
@@ -281,7 +283,7 @@ public class Palette implements Set<PaletteColor> {
             //safety check if palette is full
             //increase inner if it shouldn't increase outer or if it can't increase outer
             if ((!canIncreaseDown && !canIncreaseUp) ||
-                    (!this.shouldChangeRange(targetSize, targetLumStep))) { //&& this.hasLuminanceGap()
+                    (!this.shouldExpandRange(targetSize, targetLumStep))) { //&& this.hasLuminanceGap()
                 increaseInner();
             } else {
                 //increase up and down every cycle
@@ -304,12 +306,11 @@ public class Palette implements Set<PaletteColor> {
     /**
      * If this should cover more of the luminance spectrum by increasing max or min rather than increasing/decreasing inner
      */
-    private boolean shouldChangeRange(int targetSize, @Nullable Float targetStep) {
+    private boolean shouldExpandRange(int targetSize, @Nullable Float targetStep) {
         if (targetStep == null) return false;
         float targetRange = targetSize * targetStep;
         float currentRange = this.getLuminanceSpan();
-        float delta = 0.1f; //if these are at most 0.1 apart
-        return Mth.abs(currentRange - targetRange) > delta;
+        return currentRange < targetRange;
     }
 
     /**
@@ -385,6 +386,7 @@ public class Palette implements Set<PaletteColor> {
      * @param targetLuminanceSpan target luminance span (max luminance - min luminance)
      */
     public void changeSizeMatchingLuminanceSpan(float targetLuminanceSpan) {
+        if (targetLuminanceSpan > 1 || targetLuminanceSpan < 0) throw new UnsupportedOperationException("Luminance span must be between 0 and 1");
         float currentSpan = this.getLuminanceSpan();
         while (Mth.abs(currentSpan - targetLuminanceSpan) > 0.5 * this.getAverageLuminanceStep()) {
             if (currentSpan < targetLuminanceSpan) {
