@@ -247,6 +247,8 @@ public class Palette implements Set<PaletteColor> {
 
     //TODO: make this depend on interger palette luminance step too
     public void matchSize(int targetSize, @Nullable Float targetLumStep) {
+        if (targetLumStep != null && targetSize * targetLumStep > 1)
+            throw new UnsupportedOperationException("Palette size * luminance step must be less than 1");
         if (this.size() == 0 || targetSize <= 0) {
             throw new UnsupportedOperationException("Palette size can't be 0");
         }
@@ -434,8 +436,10 @@ public class Palette implements Set<PaletteColor> {
     }
 
     /**
-     * Alters luminance step by NOT changing its size but instead creating a new palette where each color is a certain luminance step apart from eachother
+     * Alters luminance step by NOT changing its size but instead creating a new palette of sae size as before where each color is a certain luminance step apart from eachother
      * All colors will be evenly spaced by this, centered on the old luminance
+     * In other words transforms the old palette such that all its colos are spaced by this luminance step
+     *
      * @param newLuminanceStep you can see this as contrast between 2 colors.
      */
     public void matchLuminanceStep(float newLuminanceStep) {
