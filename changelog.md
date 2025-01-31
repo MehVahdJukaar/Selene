@@ -1,1 +1,2 @@
-improved recoloring process
+- fixed an off by one and a rounding error in palette generation code that cour result in deadlocks
+- turned off dynamic resource clearing optimization as i suspect it could be causing some very rare and random resource reload fail errors

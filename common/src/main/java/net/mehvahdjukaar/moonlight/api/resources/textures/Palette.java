@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class Palette implements Set<PaletteColor> {
 
-    public static final float BASE_TOLERANCE = 1 / 180f;
+    public static final float BASE_TOLERANCE = 1 / 170f;
     private float tolerance = 0;
     //ordered from darkest to lightest (luminance)
     private final ArrayList<PaletteColor> internal = new ArrayList<>();
@@ -66,11 +66,11 @@ public class Palette implements Set<PaletteColor> {
                     Palette tempPal = new Palette(List.of(c0, c1));
                     int after = i + 1;
                     while (after < this.size() && tempPal.calculateAverage().distanceTo(this.get(after)) <= tolerance) {
-                        tempPal.add(this.get(after));
+                        tempPal.addUnchecked(this.get(after));
                         after++;
                     }
                     tempPal.getValues().forEach(this::remove);
-                    this.add(tempPal.calculateAverage());
+                    this.addUnchecked(tempPal.calculateAverage());
                     recalculate = true;
                 }
             }
@@ -247,13 +247,14 @@ public class Palette implements Set<PaletteColor> {
 
     //TODO: make this depend on interger palette luminance step too
     public void matchSize(int targetSize, @Nullable Float targetLumStep) {
-        if (targetLumStep != null && targetSize * targetLumStep > 1)
-            throw new UnsupportedOperationException("Palette size * luminance step must be less than 1");
+        if (targetLumStep != null && (targetSize - 1) * targetLumStep > 1)
+            throw new UnsupportedOperationException("Palette (size-1) * luminance step must be less than 1");
         if (targetLumStep != null && targetLumStep < 0)
             throw new UnsupportedOperationException("Luminance step must be positive");
         if (this.size() == 0 || targetSize <= 0) {
             throw new UnsupportedOperationException("Palette size can't be 0");
         }
+        if (targetLumStep != null) targetLumStep = targetLumStep - 0.00001f; //to avoid rounding errors
         if (this.size() == 1) {
             PaletteColor first = this.get(0);
             this.add(first.getDarkened());
@@ -386,7 +387,8 @@ public class Palette implements Set<PaletteColor> {
      * @param targetLuminanceSpan target luminance span (max luminance - min luminance)
      */
     public void changeSizeMatchingLuminanceSpan(float targetLuminanceSpan) {
-        if (targetLuminanceSpan > 1 || targetLuminanceSpan < 0) throw new UnsupportedOperationException("Luminance span must be between 0 and 1");
+        if (targetLuminanceSpan > 1 || targetLuminanceSpan < 0)
+            throw new UnsupportedOperationException("Luminance span must be between 0 and 1");
         float currentSpan = this.getLuminanceSpan();
         while (Mth.abs(currentSpan - targetLuminanceSpan) > 0.5 * this.getAverageLuminanceStep()) {
             if (currentSpan < targetLuminanceSpan) {
@@ -453,7 +455,7 @@ public class Palette implements Set<PaletteColor> {
             PaletteColor color = copy.get(i);
             float newLum = lowerLuminance + i * newLuminanceStep;
             this.remove(color);
-            this.add(new PaletteColor(color.hcl().withLuminance(newLum)));
+            this.addUnchecked(new PaletteColor(color.hcl().withLuminance(newLum)));
         }
     }
 
@@ -508,10 +510,7 @@ public class Palette implements Set<PaletteColor> {
      * Calculates the average luminance different between each color. Ideally it should be somewhat constant
      */
     public float getAverageLuminanceStep() {
-        List<Float> list = getLuminanceSteps();
-        float total = 0;
-        for (var v : list) total += v;
-        return total / list.size();
+        return this.getLuminanceSpan() / (this.size() - 1);
     }
 
     public float getLuminanceSpan() {
@@ -582,7 +581,7 @@ public class Palette implements Set<PaletteColor> {
         HCLColor secondLightest = this.get(this.size() - 2).hcl();
         var cc = getNextColor(averageDeltaLum, lightest, secondLightest);
         PaletteColor pl = new PaletteColor(cc);
-        this.add(pl);
+        this.addUnchecked(pl);
         return pl;
     }
 
@@ -597,7 +596,7 @@ public class Palette implements Set<PaletteColor> {
         HCLColor secondDarkest = this.get(1).hcl();
         var cc = getNextColor(-averageDeltaLum, darkest, secondDarkest);
         PaletteColor pl = new PaletteColor(cc);
-        this.add(pl);
+        this.addUnchecked(pl);
         return pl;
     }
 
