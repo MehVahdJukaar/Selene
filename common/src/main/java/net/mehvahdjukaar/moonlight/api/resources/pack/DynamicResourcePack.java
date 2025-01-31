@@ -347,8 +347,8 @@ public abstract class DynamicResourcePack implements PackResources {
     // Called after each reload
     @ApiStatus.Internal
     protected void clearAllContent() {
-        this.resources.clear();
         this.searchTrie.clear();
+        this.resources.clear();
         this.needsClearingNonStatic = true;
     }
 
