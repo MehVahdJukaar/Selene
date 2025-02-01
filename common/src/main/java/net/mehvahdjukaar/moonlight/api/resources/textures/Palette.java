@@ -428,6 +428,7 @@ public class Palette implements Set<PaletteColor> {
             } else {
                 this.increaseDown();
             }
+            currentMin = this.getDarkest().luminance();
         }
 
         while (Mth.abs(currentMax - maxLuminance) > 0.5 * this.getAverageLuminanceStep()) {
@@ -436,6 +437,7 @@ public class Palette implements Set<PaletteColor> {
             } else {
                 this.increaseUp();
             }
+            currentMax = this.getLightest().luminance();
         }
     }
 
