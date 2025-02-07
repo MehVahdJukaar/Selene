@@ -17,6 +17,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
@@ -258,8 +259,18 @@ public class RegHelper {
         return register(name, PlatHelper::newParticle, Registries.PARTICLE_TYPE);
     }
 
+    public static RegSupplier<BannerPattern> registerBannerPattern(ResourceLocation name) {
+        return registerBannerPattern(name, name.toString());
+    }
+
+    @Deprecated(forRemoval = true)
     public static RegSupplier<BannerPattern> registerBannerPattern(ResourceLocation name, String patternId) {
-        return register(name, () -> new BannerPattern(patternId), Registries.BANNER_PATTERN);
+        if (PlatHelper.getPlatform().isFabric()) {
+            BannerPattern p = new BannerPattern(patternId);
+            Registry.register(BuiltInRegistries.BANNER_PATTERN, name, p);
+            return new RegSupplier.Direct<>(p, BuiltInRegistries.BANNER_PATTERN);
+        }
+        else return register(name, () -> new BannerPattern(patternId), Registries.BANNER_PATTERN);
     }
 
     public static <T extends Entity> RegSupplier<EntityType<T>> registerEntityType(ResourceLocation name, EntityType.EntityFactory<T> factory,
