@@ -17,6 +17,7 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 import static net.mehvahdjukaar.moonlight.core.CompatHandler.MAP_ATLASES;
 
@@ -109,7 +110,8 @@ public class MapHelper {
 
     @Nullable
     private static MapDecoration.Type getVanillaType(ResourceLocation id) {
-        return Arrays.stream(MapDecoration.Type.values()).filter(t -> t.toString().toLowerCase().equals(id.getPath())).findFirst()
+        return Arrays.stream(MapDecoration.Type.values()).filter(t -> t.toString()
+                        .toLowerCase(Locale.ROOT).equals(id.getPath())).findFirst()
                 .orElse(null);
     }
 
