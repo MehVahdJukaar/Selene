@@ -1,2 +1,2 @@
-- fixed an off by one and a rounding error in palette generation code that cour result in deadlocks
-- turned off dynamic resource clearing optimization as i suspect it could be causing some very rare and random resource reload fail errors
+- registering banners a bit earlier.
+- This is just a workaround since some mods like to break the sheets class by classloading in mod init or clent init. Class will initialize all its texture maps thee ad if banners arent registered yet by then it will have issues. On fabric one can register whenever during mod initialization so this is still something that those mods should fix!

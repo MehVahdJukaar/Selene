@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Locale;
 
 import static net.mehvahdjukaar.moonlight.core.CompatHandler.MAP_ATLASES;
 
