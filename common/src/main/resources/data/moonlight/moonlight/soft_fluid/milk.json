@@ -43,7 +43,9 @@
     }
   ],
   "equivalent_fluids": [
-    "#forge:milk",
+    "neoforge:milk",
+    "milk:milk",
+    "milk_lib:milk",
     "minecraft:milk",
     "create:milk",
     "inspirations:milk"

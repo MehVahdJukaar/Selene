@@ -41,10 +41,7 @@
       "capacity": 4
     }
   ],
-  "equivalent_fluids": [
-    "minecraft:water",
-    "#c:water"
-  ],
+  "equivalent_fluids": "#c:water",
   "preserved_components_from_item": [
     "thirst:purity"
   ],

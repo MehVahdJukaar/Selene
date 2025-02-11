@@ -1,2 +1,1 @@
-- registering banners a bit earlier.
-- This is just a workaround since some mods like to break the sheets class by classloading in mod init or clent init. Class will initialize all its texture maps thee ad if banners arent registered yet by then it will have issues. On fabric one can register whenever during mod initialization so this is still something that those mods should fix!
+- more improvements for fake level api internals
