@@ -1,1 +1,1 @@
-- more improvements for fake level api internals
+- fixed an issue that caused servers to take slightly more time to start due to a concurrency issue

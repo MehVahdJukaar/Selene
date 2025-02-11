@@ -50,11 +50,11 @@ import net.minecraft.world.level.timers.TimerQueue;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -83,28 +83,17 @@ public class FakeServerLevel extends ServerLevel {
         //data storage and server chunk cache will cause issues....
         this.players().clear();
         this.scoreboard = new ServerScoreboard(original.getServer());
-        try {
-            this.getChunkSource().chunkMap.close();
-            this.assignDummyChunkSource(original);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    private void assignDummyChunkSource(ServerLevel original) throws IllegalAccessException {
-        var server = original.getServer();
-        int var10009 = server.getPlayerList().getViewDistance();
-        int var10010 = server.getPlayerList().getSimulationDistance();
-        DummyServerChunkCache dummy = new DummyServerChunkCache(this, original.getServer().storageSource,
-                server.getFixerUpper(), server.getStructureManager(), Util.backgroundExecutor(),
-                this.getChunkSource().getGenerator(), var10009, var10010, server.forceSynchronousWrites(),
-                new DummyProgressListener(), this.entityManager::updateChunkStatus, () -> server.overworld().getDataStorage());
-
-        var f = Arrays.stream(ServerLevel.class.getDeclaredFields())
-                .filter(fi -> fi.getType().equals(ServerChunkCache.class))
-                .findFirst().orElseThrow();
-        f.setAccessible(true);
-        f.set(this, dummy);
+    //assigned via mixin since thi can be called in constructor too
+    @ApiStatus.Internal
+    public static ServerChunkCache createDummyChunkCache(ServerLevel level, LevelStorageSource.LevelStorageAccess levelStorageAccess, DataFixer fixerUpper,
+                                                         StructureTemplateManager structureManager, Executor dispatcher, ChunkGenerator generator,
+                                                         int viewDistance, int simulationDistance, boolean sync, ChunkProgressListener progressListener,
+                                                         ChunkStatusUpdateListener chunkStatusListener, Supplier<DimensionDataStorage> dataStorage) {
+        return new DummyServerChunkCache(level, levelStorageAccess, fixerUpper, structureManager,
+                Util.backgroundExecutor(), generator, viewDistance, simulationDistance, sync,
+                new DummyProgressListener(), chunkStatusListener, dataStorage);
     }
 
     @Override
@@ -446,7 +435,7 @@ public class FakeServerLevel extends ServerLevel {
     }
 
     //not ideal really
-    private class DummyServerChunkCache extends ServerChunkCache {
+    private static class DummyServerChunkCache extends ServerChunkCache {
 
         public DummyServerChunkCache(ServerLevel level, LevelStorageSource.LevelStorageAccess levelStorageAccess, DataFixer fixerUpper, StructureTemplateManager structureManager, Executor dispatcher, ChunkGenerator generator, int viewDistance, int simulationDistance, boolean sync, ChunkProgressListener progressListener, ChunkStatusUpdateListener chunkStatusListener, Supplier<DimensionDataStorage> overworldDataStorage) {
             super(level, levelStorageAccess, fixerUpper, structureManager, dispatcher, generator, viewDistance, simulationDistance, sync, progressListener, chunkStatusListener, overworldDataStorage);
@@ -495,7 +484,7 @@ public class FakeServerLevel extends ServerLevel {
         private @NotNull EmptyLevelChunk getEmptyChunk(int x, int z) {
             if (emptyChunkInstance == null) {
                 emptyChunkInstance = new EmptyLevelChunk(getLevel(), new ChunkPos(0, 0),
-                        registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.FOREST));
+                        getLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.FOREST));
             }
             return emptyChunkInstance;
         }
