@@ -265,12 +265,7 @@ public class RegHelper {
 
     @Deprecated(forRemoval = true)
     public static RegSupplier<BannerPattern> registerBannerPattern(ResourceLocation name, String patternId) {
-        if (PlatHelper.getPlatform().isFabric()) {
-            BannerPattern p = new BannerPattern(patternId);
-            Registry.register(BuiltInRegistries.BANNER_PATTERN, name, p);
-            return new RegSupplier.Direct<>(p, BuiltInRegistries.BANNER_PATTERN);
-        }
-        else return register(name, () -> new BannerPattern(patternId), Registries.BANNER_PATTERN);
+        return register(name, () -> new BannerPattern(patternId), Registries.BANNER_PATTERN);
     }
 
     public static <T extends Entity> RegSupplier<EntityType<T>> registerEntityType(ResourceLocation name, EntityType.EntityFactory<T> factory,

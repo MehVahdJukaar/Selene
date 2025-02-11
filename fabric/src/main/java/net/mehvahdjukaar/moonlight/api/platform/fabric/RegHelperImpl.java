@@ -41,6 +41,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -120,6 +121,11 @@ public class RegHelperImpl {
 
     @SuppressWarnings("unchecked")
     public static <T, E extends T> RegSupplier<E> register(ResourceLocation name, Supplier<E> supplier, ResourceKey<? extends Registry<T>> reg) {
+        if (reg.equals(Registries.BANNER_PATTERN)) {
+            BannerPattern p = (BannerPattern) supplier.get();
+            Registry.register(BuiltInRegistries.BANNER_PATTERN, name, p);
+            return new RegSupplier.Direct(p, BuiltInRegistries.BANNER_PATTERN);
+        }
         if (supplier == null) {
             throw new IllegalArgumentException("Registry entry Supplier for " + name + " can't be null");
         }
