@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.VisibleForTesting;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -22,9 +23,16 @@ public class FakeLevelManager {
     @ApiStatus.Internal
     @VisibleForTesting
     public static Collection<Level> invalidateAll() {
-        var toReturn = new ArrayList<>(INSTANCES.values());
+        var unloaded = new ArrayList<>(INSTANCES.values());
         INSTANCES.clear();
-        return toReturn;
+        for (Level level : unloaded) {
+            try {
+                level.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return unloaded;
     }
 
     @ApiStatus.Internal
