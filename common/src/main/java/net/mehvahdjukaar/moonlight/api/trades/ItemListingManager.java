@@ -54,6 +54,8 @@ public class ItemListingManager extends SimpleJsonResourceReloadListener {
     public ItemListingManager(HolderLookup.Provider provider) {
         super(new Gson(), "moonlight/villager_trade");
         this.registryAccess = provider;
+
+        INSTANCE.set(registryAccess, this);
     }
 
     @Override

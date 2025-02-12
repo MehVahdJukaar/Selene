@@ -3,7 +3,7 @@ package net.mehvahdjukaar.moonlight.core.mixins;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.datafixers.DataFixer;
-import net.mehvahdjukaar.moonlight.core.misc.FakeServerLevel;
+import net.mehvahdjukaar.moonlight.api.misc.fake_level.FakeServerLevel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
