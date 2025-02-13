@@ -94,6 +94,13 @@ public class FakeServerLevel extends ServerLevel {
     }
 
     @Override
+    public void close() throws IOException {
+        this.getChunkSource().close();
+        //ont call super so we don't close the entity manager so it doesn't try to save to disk or something
+        //ideally we should replace entity manager with a dummy one
+    }
+
+    @Override
     public BlockPos getSharedSpawnPos() {
         return BlockPos.ZERO;
     }
@@ -119,7 +126,7 @@ public class FakeServerLevel extends ServerLevel {
         return Collections.emptyList();
     }
 
-    //we avoid all references to server.getPlayerList
+//we avoid all references to server.getPlayerList
 
     @Override
     public void playSound(Player player, double x, double y, double z, SoundEvent soundIn, SoundSource category,
@@ -164,7 +171,7 @@ public class FakeServerLevel extends ServerLevel {
     }
 
 
-    //server stuff
+//server stuff
 
     @Override
     protected void tickTime() {
@@ -184,7 +191,7 @@ public class FakeServerLevel extends ServerLevel {
         return null;
     }
 
-    // map data
+// map data
 
     @Override
     public void setMapData(String mapName, MapItemSavedData data) {
@@ -209,7 +216,7 @@ public class FakeServerLevel extends ServerLevel {
     public boolean setBlock(BlockPos pos, BlockState state, int flags, int recursionLeft) {
         return false;
     }
-    // getters
+// getters
 
     @Override
     public @Nullable BlockEntity getBlockEntity(BlockPos pos) {
