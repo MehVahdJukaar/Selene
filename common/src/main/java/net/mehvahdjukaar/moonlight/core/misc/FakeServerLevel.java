@@ -96,7 +96,7 @@ public class FakeServerLevel extends ServerLevel {
     @Override
     public void close() throws IOException {
         this.getChunkSource().close();
-        //ont call super so we don't close the entity manager so it doesn't try to save to disk or something
+        //dont call super so we don't close the entity manager so it doesn't try to save to disk or something
         //ideally we should replace entity manager with a dummy one
     }
 
