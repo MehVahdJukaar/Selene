@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.moonlight.api.misc.fake_level;
 
 import com.mojang.datafixers.DataFixer;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -10,7 +9,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
-import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkResult;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
@@ -34,7 +32,7 @@ import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.entity.ChunkStatusUpdateListener;
+import net.minecraft.world.level.entity.*;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
@@ -48,7 +46,6 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.timers.TimerCallbacks;
 import net.minecraft.world.level.timers.TimerQueue;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -96,11 +93,8 @@ public class FakeServerLevel extends ServerLevel {
                 new DummyProgressListener(), chunkStatusListener, dataStorage);
     }
 
-    @Override
-    public void close() throws IOException {
-        this.getChunkSource().close();
-        //dont call super so we don't close the entity manager so it doesn't try to save to disk or something
-        //ideally we should replace entity manager with a dummy one
+    public static <A extends EntityAccess> PersistentEntitySectionManager<A> createDummyEntityManager(Class<A> entityClass, LevelCallback callbacks, EntityPersistentStorage permanentStorage) {
+        return new DummyEntityManager<>(entityClass, callbacks, permanentStorage);
     }
 
     @Override
@@ -498,4 +492,15 @@ public class FakeServerLevel extends ServerLevel {
 
     }
 
+
+    private static class DummyEntityManager<A extends EntityAccess> extends PersistentEntitySectionManager<A> {
+
+        public DummyEntityManager(Class entityClass, LevelCallback callbacks, EntityPersistentStorage permanentStorage) {
+            super(entityClass, callbacks, permanentStorage);
+        }
+
+        @Override
+        public void close() {
+        }
+    }
 }

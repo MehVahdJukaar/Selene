@@ -1,1 +1,1 @@
-- fixed custom villager trades not working
+fixed an issue when  closing servers
