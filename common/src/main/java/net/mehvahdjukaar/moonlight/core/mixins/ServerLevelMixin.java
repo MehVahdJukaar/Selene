@@ -15,6 +15,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.entity.ChunkStatusUpdateListener;
+import net.minecraft.world.level.entity.EntityPersistentStorage;
+import net.minecraft.world.level.entity.LevelCallback;
+import net.minecraft.world.level.entity.PersistentEntitySectionManager;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -44,5 +47,15 @@ public abstract class ServerLevelMixin extends Level {
             return FakeServerLevel.createDummyChunkCache(level, levelStorageAccess, fixerUpper, structureManager, dispatcher, generator, viewDistance, simulationDistance, sync, progressListener, chunkStatusListener, dataStorage);
         }
         return operation.call(level, levelStorageAccess, fixerUpper, structureManager, dispatcher, generator, viewDistance, simulationDistance, sync, progressListener, chunkStatusListener, dataStorage);
+    }
+
+    @WrapOperation(method = "<init>", at = @At(value = "NEW", target = "(Ljava/lang/Class;Lnet/minecraft/world/level/entity/LevelCallback;Lnet/minecraft/world/level/entity/EntityPersistentStorage;)Lnet/minecraft/world/level/entity/PersistentEntitySectionManager;"))
+    private PersistentEntitySectionManager<?> ml$assignFakePersistentEntitySectionManager(
+            Class entityClass, LevelCallback callbacks, EntityPersistentStorage permanentStorage,
+            Operation<PersistentEntitySectionManager> original) {
+        if ((Object) this instanceof FakeServerLevel) {
+            return FakeServerLevel.createDummyEntityManager(entityClass, callbacks, permanentStorage);
+        }
+        return original.call(entityClass, callbacks, permanentStorage);
     }
 }
