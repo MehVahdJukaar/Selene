@@ -12,6 +12,14 @@ public class CompatWoodTypes {
 
     public static void init() {
 
+        // Blocks +
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "blocksplus", "chorus", "chorus_planks", false));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "blocksplus", "bamboo", "bamboo_planks", true));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "blocksplus", "mushroom", "mushroom_planks", false));
+
         // Integrated Dynamics
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
                 woodTypeFinder(false, "integrateddynamics", "menril", "menril_planks",
