@@ -1,1 +1,1 @@
-fixed an issue when  closing servers
+- fixed map deco component not having equals and hash code impls causing issues
