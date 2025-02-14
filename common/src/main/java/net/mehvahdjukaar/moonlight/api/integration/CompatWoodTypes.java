@@ -11,6 +11,14 @@ public class CompatWoodTypes {
 
     public static void init() {
 
+        // Blocks +
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "blocksplus", "chorus", "chorus_planks", false));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "blocksplus", "bamboo", "bamboo_planks", true));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                generalWoodFinder(false, "blocksplus", "mushroom", "mushroom_planks", false));
+
         // Blockus
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
                 WoodType.Finder.simple(ResourceLocation.parse("blockus:raw_bamboo"), ResourceLocation.parse("blockus:raw_bamboo_planks"), ResourceLocation.parse("minecraft:bamboo_block")));
