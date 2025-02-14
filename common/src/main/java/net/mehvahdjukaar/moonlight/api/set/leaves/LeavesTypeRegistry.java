@@ -66,6 +66,11 @@ public class LeavesTypeRegistry extends BlockTypeRegistry<LeavesType> {
         return Optional.empty();
     }
 
+    private static boolean isBlacklisted(String namespace, String path) {
+        return namespace.equals("securitycraft") || namespace.equals("dynamic_trees") ||
+                namespace.matches("dynamictrees|dt") || path.contains("hanging");
+    }
+
     @Override
     public void addTypeTranslations(AfterLanguageLoadEvent language) {
         this.getValues().forEach((w) -> {
