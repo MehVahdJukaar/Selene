@@ -190,9 +190,8 @@ public class CompatWoodTypes {
                 "nethers_exoticism", "jabuticaba", "jaboticaba_planks", "jabuticaba_log"));
 
         // My Nether's Delight
-        BlockSetAPI.addBlockTypeFinder(WoodType.class, WoodType.Finder.simple(
-                "mynethersdelight", "powdery", "powdery_planks", "powdery_block"
-        ));
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                uniqueWoodFinder("mynethersdelight", "powdery", "powdery_planks", "block", ""));
 
         // Nourished End
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
