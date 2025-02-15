@@ -1,1 +1,4 @@
-- fixed map deco component not having equals and hash code impls causing issues
+- CompatWoodType:
+  - Added Undetected WoodTypes from [Blocks+](https://github.com/MehVahdJukaar/Moonlight/issues/298)
+  - Added Undetected LeavesType from [Mystic's Biomes](https://github.com/MehVahdJukaar/WoodGood/issues/811)
+  - Updated **My Nether's Delight**'s log ID for powdery
