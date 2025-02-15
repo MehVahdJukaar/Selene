@@ -243,7 +243,47 @@ public class CompatWoodTypes {
         BlockSetAPI.addBlockTypeFinder(WoodType.class, quarkAzalea);
 
 
-// LEAVES
+//!! LEAVES
+        // Mystic's Biomes
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "yellow_maple", "yellow_maple_leaves", "mysticsbiomes:white_maple"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "orange_maple", "orange_maple_leaves", "mysticsbiomes:maple"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "pink_cherry", "pink_cherry_blossoms", "mysticsbiomes:cherry"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "white_cherry", "white_cherry_blossoms", "mysticsbiomes:cherry"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "strawberry", "strawberry_blossoms", "mysticsbiomes:strawberry"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "peach", "peach_leaves", "mysticsbiomes:peach"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "jacaranda", "jacaranda_blossoms", "mysticsbiomes:jacaranda"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "sea_shrub", "sea_shrub_leaves", "mysticsbiomes:sea_foam"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "tropical", "tropical_leaves", "mysticsbiomes:tropical"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "peony", "peony_leaves", "oak"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "hydrangea", "hydrangea_leaves", "oak"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "budding_peony", "budding_peony_leaves", "oak"));
+
+        // Environmental
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "pink_wisteria", "pink_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "blue_wisteria", "blue_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "purple_wisteria", "purple_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "white_wisteria", "white_wisteria_leaves", "environmental:wisteria"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "cheerful_plum", "cheerful_plum_leaves", "environmental:plum"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "environmental", "moody_plum", "moody_plum_leaves", "environmental:plum"));
+
         // Ecologics
         var coconut = LeavesType.Finder.simple("ecologics", "coconut", "coconut_leaves", "ecologics:coconut");
         coconut.addChild("sapling", ResourceLocation.parse("ecologics:coconut_seedling"));
