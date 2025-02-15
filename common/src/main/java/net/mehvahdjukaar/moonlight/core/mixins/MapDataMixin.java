@@ -20,7 +20,6 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -235,7 +234,7 @@ public abstract class MapDataMixin extends SavedData implements ExpandedMapData 
         //for exploration maps. Decoration assigned to an item instead of a map directly
         MLMapDecorationsComponent customDecoComponent = stack.get(MoonlightRegistry.CUSTOM_MAP_DECORATIONS.get());
         if (customDecoComponent != null) {
-            customDecoComponent.addIfAbsent(this.moonlight$customMapMarkers.keySet(), this);
+            customDecoComponent.addToMapIfAbsent(this.moonlight$customMapMarkers.keySet(), this);
         }
     }
 

@@ -11,6 +11,8 @@ import net.mehvahdjukaar.moonlight.core.client.MLRenderTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -22,6 +24,7 @@ import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+import net.neoforged.neoforge.client.extensions.IModelBakerExtension;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
@@ -32,7 +35,7 @@ public class MoonlightForgeClient {
     public static void init(IEventBus modEventBus) {
         modEventBus.addListener(MoonlightForgeClient::afterLoad);
         modEventBus.addListener(EventPriority.LOWEST, MoonlightForgeClient::onTextureStitch);
-
+        IModelBakerExtension
         NeoForge.EVENT_BUS.addListener(MoonlightForgeClient::onInputUpdate);
     }
 

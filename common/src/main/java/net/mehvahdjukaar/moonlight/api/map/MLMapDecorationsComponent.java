@@ -18,7 +18,7 @@ public record MLMapDecorationsComponent(Map<String, MLMapMarker<?>> decorations)
         return new MLMapDecorationsComponent(Util.copyAndPut(this.decorations, marker.getMarkerUniqueId(), marker));
     }
 
-    public void addIfAbsent(Set<String> strings, ExpandedMapData mapDataMixin) {
+    public void addToMapIfAbsent(Set<String> strings, ExpandedMapData mapDataMixin) {
         for (var d : this.decorations.entrySet()) {
             if (!strings.contains(d.getKey())) {
                 mapDataMixin.ml$addCustomMarker(d.getValue());
