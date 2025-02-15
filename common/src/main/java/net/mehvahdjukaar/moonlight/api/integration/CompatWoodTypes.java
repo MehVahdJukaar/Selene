@@ -245,6 +245,32 @@ public class CompatWoodTypes {
 
 
 //!! LEAVES
+        // Mystic's Biomes
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "yellow_maple", "yellow_maple_leaves", "mysticsbiomes:white_maple"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "orange_maple", "orange_maple_leaves", "mysticsbiomes:maple"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "pink_cherry", "pink_cherry_blossoms", "mysticsbiomes:cherry"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "white_cherry", "white_cherry_blossoms", "mysticsbiomes:cherry"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "strawberry", "strawberry_blossoms", "mysticsbiomes:strawberry"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "peach", "peach_leaves", "mysticsbiomes:peach"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "jacaranda", "jacaranda_blossoms", "mysticsbiomes:jacaranda"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "sea_shrub", "sea_shrub_leaves", "mysticsbiomes:sea_foam"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "tropical", "tropical_leaves", "mysticsbiomes:tropical"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "peony", "peony_leaves", "oak"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "hydrangea", "hydrangea_leaves", "oak"));
+        BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
+                "mysticsbiomes", "budding_peony", "budding_peony_leaves", "oak"));
+
         // Environmental
         BlockSetAPI.addBlockTypeFinder(LeavesType.class, LeavesType.Finder.simple(
                 "environmental", "pink_wisteria", "pink_wisteria_leaves", "environmental:wisteria"));
