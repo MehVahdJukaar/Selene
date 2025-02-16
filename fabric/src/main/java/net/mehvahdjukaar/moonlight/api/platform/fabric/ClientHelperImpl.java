@@ -6,14 +6,12 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.*;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.mehvahdjukaar.moonlight.api.client.ItemStackRenderer;
 import net.mehvahdjukaar.moonlight.api.client.model.fabric.MLFabricModelLoaderRegistry;
 import net.mehvahdjukaar.moonlight.api.item.IItemDecoratorRenderer;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
@@ -32,7 +30,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -49,7 +46,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -171,16 +167,16 @@ public class ClientHelperImpl {
         Moonlight.assertInitPhase();
         ModelLoadingPlugin.register(pluginContext -> {
             eventListener.accept(new ClientHelper.SpecialModelEvent() {
-                    @Override
-                    public void register(ModelResourceLocation modelLocation) {
-                        pluginContext.addModels(modelLocation.id());
-                    }
+                @Override
+                public void register(ModelResourceLocation modelLocation) {
+                    pluginContext.addModels(modelLocation.id());
+                }
 
-                    @Override
-                    public void register(ResourceLocation id) {
-                        pluginContext.addModels(id);
-                    }
-                });
+                @Override
+                public void register(ResourceLocation id) {
+                    pluginContext.addModels(id);
+                }
+            });
         });
     }
 
@@ -258,11 +254,19 @@ public class ClientHelperImpl {
         }
     }
 
-    public static final List<Consumer<ClientHelper.ShaderEvent>> SHADER_REGISTRATIONS = Collections.synchronizedList(new ArrayList<>());;
+    public static final List<Consumer<ClientHelper.ShaderEvent>> SHADER_REGISTRATIONS = Collections.synchronizedList(new ArrayList<>());
+    ;
 
     public static void addShaderRegistration(Consumer<ClientHelper.ShaderEvent> eventListener) {
         Moonlight.assertInitPhase();
         SHADER_REGISTRATIONS.add(eventListener);
+    }
+
+    public static void addItemRenderersRegistration(Consumer<ClientHelper.ItemRendererEvent> eventListener) {
+        MoonlightFabricClient.PRE_CLIENT_SETUP_WORK.add(() -> {
+            eventListener.accept((item, renderer) -> BuiltinItemRendererRegistry.INSTANCE.register(item,
+                    (BuiltinItemRendererRegistry.DynamicItemRenderer) renderer));
+        });
     }
 
 }

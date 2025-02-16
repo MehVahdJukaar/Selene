@@ -224,6 +224,13 @@ public class FakeLevel extends Level {
 
     private class DummyChunkSource extends ChunkSource {
 
+        private final LevelLightEngine lightEngine;
+
+        public DummyChunkSource() {
+            super();
+            this.lightEngine = new LevelLightEngine(this, true, FakeLevel.this.dimensionType().hasSkyLight());
+
+        }
         @Override
         public @Nullable ChunkAccess getChunk(int x, int z, net.minecraft.world.level.chunk.status.ChunkStatus chunkStatus, boolean requireChunk) {
             return new EmptyLevelChunk(FakeLevel.this, new ChunkPos(x, z), registryAccess().registryOrThrow(Registries.BIOME)
@@ -246,7 +253,7 @@ public class FakeLevel extends Level {
 
         @Override
         public LevelLightEngine getLightEngine() {
-            throw new IllegalStateException("not implemented"); // TODO
+            return lightEngine;
         }
 
         @Override

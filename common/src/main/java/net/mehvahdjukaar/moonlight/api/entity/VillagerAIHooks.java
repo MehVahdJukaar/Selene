@@ -34,7 +34,7 @@ public class VillagerAIHooks {
             Villager.MEMORY_TYPES = (builder.build());
 
         } catch (Exception e) {
-            Moonlight.LOGGER.warn("failed to register memory module type for villagers: " + e);
+            Moonlight.LOGGER.warn("failed to register memory module type for villagers: {}", String.valueOf(e));
         }
     }
 

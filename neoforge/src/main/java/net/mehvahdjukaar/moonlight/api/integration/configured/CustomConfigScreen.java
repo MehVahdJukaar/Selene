@@ -1,8 +1,6 @@
 package net.mehvahdjukaar.moonlight.api.integration.configured;
 
 
-//TODO: add back
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;

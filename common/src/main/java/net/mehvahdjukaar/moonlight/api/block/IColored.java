@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-//TODO: add color change api
 public interface IColored {
 
     /**

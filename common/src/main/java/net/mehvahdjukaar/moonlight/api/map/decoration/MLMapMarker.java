@@ -75,7 +75,6 @@ public abstract class MLMapMarker<D extends MLMapDecoration> {
         return shouldSave;
     }
 
-    //TODO: add flag system instead?
     public boolean preventsExtending() {
         return false;
     }

@@ -33,8 +33,6 @@ public class SoftFluidTankImpl extends SoftFluidTank {
         return addFluid(s, false) == s.getCount();
     }
 
-    //TODO: re check all the ones below here. I blindly ported
-
     /**
      * pours n bottle of my content into said forge fluid tank
      *

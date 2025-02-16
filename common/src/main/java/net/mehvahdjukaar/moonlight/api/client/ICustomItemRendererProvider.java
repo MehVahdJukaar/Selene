@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 //ISTER provider
 //TODO: deprecate and use events
+@Deprecated(forRemoval = true)
 public interface ICustomItemRendererProvider extends ItemLike {
 
     @Environment(EnvType.CLIENT)

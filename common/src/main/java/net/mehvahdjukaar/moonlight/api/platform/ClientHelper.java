@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.mehvahdjukaar.moonlight.api.client.ItemStackRenderer;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomBakedModel;
 import net.mehvahdjukaar.moonlight.api.client.model.CustomModelLoader;
 import net.mehvahdjukaar.moonlight.api.item.IItemDecoratorRenderer;
@@ -70,7 +71,6 @@ public class ClientHelper {
         throw new AssertionError();
     }
 
-
     @ExpectPlatform
     public static void registerRenderType(Block block, RenderType... types) {
         throw new AssertionError();
@@ -120,6 +120,15 @@ public class ClientHelper {
         throw new AssertionError();
     }
 
+    @FunctionalInterface
+    public interface ItemRendererEvent {
+        void register(ItemLike item, ItemStackRenderer renderer);
+    }
+
+    @ExpectPlatform
+    public static void addItemRenderersRegistration(Consumer<ItemRendererEvent> eventListener) {
+        throw new AssertionError();
+    }
 
     @ExpectPlatform
     public static void addItemDecoratorsRegistration(Consumer<ItemDecoratorEvent> eventListener) {

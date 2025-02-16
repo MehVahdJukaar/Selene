@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
@@ -15,6 +16,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
@@ -30,10 +32,10 @@ public record SimpleItemListing(ItemCost price, Optional<ItemCost> price2, ItemS
 
     public static SimpleItemListing createDefault(ItemCost price, Optional<ItemCost> price2, ItemStack offer,
                                                   int maxTrades, Optional<Integer> xp, float priceMult,
-                                                  int level) {
+                                                  int level, Optional<LootItemFunction> func) {
         boolean buying = offer.is(Items.EMERALD);
         return new SimpleItemListing(price, price2, offer, maxTrades, xp.orElse(ModItemListing.defaultXp(buying, level)),
-                priceMult, level, null);
+                priceMult, level, func.orElse(null));
     }
 
     public SimpleItemListing(ItemCost price, ItemStack forSale, int maxTrades, int xp, float priceMult) {
@@ -48,11 +50,7 @@ public record SimpleItemListing(ItemCost price, Optional<ItemCost> price2, ItemS
         this(new ItemCost(Items.EMERALD, emeralds), forSale, maxTrades, xp, 0.05f);
     }
 
-    /*
-   Codec<LootItemFunction> TYPED_CODEC = BuiltInRegistries.LOOT_FUNCTION_TYPE.byNameCodec()
-           .dispatch("function",LootItemFunction::getType, LootItemFunctionType::codec);
-*/
-    //TODO
+
     public static final MapCodec<SimpleItemListing> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             ItemCost.CODEC.fieldOf("price").forGetter(SimpleItemListing::price),
             ItemCost.CODEC.optionalFieldOf("price_secondary").forGetter(SimpleItemListing::price2),
@@ -60,12 +58,18 @@ public record SimpleItemListing(ItemCost price, Optional<ItemCost> price2, ItemS
             ExtraCodecs.POSITIVE_INT.optionalFieldOf("max_trades", 16).forGetter(SimpleItemListing::maxTrades),
             ExtraCodecs.POSITIVE_INT.optionalFieldOf("xp").forGetter(s -> Optional.of(s.xp)),
             ExtraCodecs.POSITIVE_FLOAT.optionalFieldOf("price_multiplier", 0.05f).forGetter(SimpleItemListing::priceMult),
-            Codec.intRange(1, 5).optionalFieldOf("level", 1).forGetter(SimpleItemListing::level)
-            //StrOpt.of(, "loot_function").forGetter(s->Optional.ofNullable(s.func))
+            Codec.intRange(1, 5).optionalFieldOf("level", 1).forGetter(SimpleItemListing::level),
+            ((Codec<LootItemFunction>) BuiltInRegistries.LOOT_FUNCTION_TYPE.byNameCodec()
+                    .dispatch("function", LootItemFunction::getType, LootItemFunctionType::codec))
+                    .optionalFieldOf("loot_function")
+                    .forGetter(s->Optional.ofNullable(s.func))
     ).apply(instance, SimpleItemListing::createDefault));
 
     @Override
     public MerchantOffer getOffer(Entity entity, RandomSource randomSource) {
+        var TYPED_CODEC = BuiltInRegistries.LOOT_FUNCTION_TYPE.byNameCodec()
+                .dispatch("function", LootItemFunction::getType, LootItemFunctionType::codec);
+
         AtomicReference<ItemStack> stack = new AtomicReference<>();
         stack.set(offer);
         if (func != null && entity.level() instanceof ServerLevel serverLevel) {

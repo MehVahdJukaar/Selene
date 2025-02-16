@@ -37,8 +37,7 @@ import java.util.function.Consumer;
 public class DispenserHelper {
 
     private static final Map<Item, List<DispenseItemBehavior>> MODDED_BEHAVIORS = new HashMap<>();
-    //TODO: remove once mods have updated
-    private static final Map<Item, List<DispenseItemBehavior>> STATIC_MODDED_BEHAVIORS = new HashMap<>();
+
     private static final Map<Priority, List<Consumer<Event>>> EVENT_LISTENERS = Map.of(
             Priority.LOW, new ArrayList<>(),
             Priority.NORMAL, new ArrayList<>(),
@@ -57,9 +56,6 @@ public class DispenserHelper {
         Map<Item, DispenseItemBehavior> originals = new HashMap<>();
         for (var e : MODDED_BEHAVIORS.entrySet()) {
             Item item = e.getKey();
-            // dont alter these as we cant override them since they are static otherwise we would lose them
-            if (STATIC_MODDED_BEHAVIORS.containsKey(item)) continue;
-
             var expected = new ReferenceOpenHashSet<>(e.getValue());
             var current = DispenserBlock.DISPENSER_REGISTRY.get(item);
             if (current instanceof AdditionalDispenserBehavior behavior) {
@@ -96,8 +92,6 @@ public class DispenserHelper {
 
         //re-register all behaviors
         MODDED_BEHAVIORS.clear();
-
-        failed.addAll(STATIC_MODDED_BEHAVIORS.keySet());
 
         Event event = new Event() {
             @Override

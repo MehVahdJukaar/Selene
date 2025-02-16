@@ -44,7 +44,6 @@ public class ModFluidType extends FluidType {
         );
     }
 
-    //TODO:
     @Override
     public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
         consumer.accept((IClientFluidTypeExtensions) HACK.get().createRenderProperties());
