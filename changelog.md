@@ -1,1 +1,1 @@
-- fixed an issue that caused servers to take slightly more time to start due to a concurrency issue
+- fixed an issue on level close possibly causing a leak

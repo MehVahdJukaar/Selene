@@ -35,11 +35,6 @@ public class FakeLevelManager {
         return unloaded;
     }
 
-    @ApiStatus.Internal
-    public static void invalidate(String name) {
-        INSTANCES.remove(name);
-    }
-
     public static FakeLevel getDefaultClient(Level original) {
         return getClient("dummy_world", original, FakeLevel::new);
     }
