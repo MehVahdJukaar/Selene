@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.moonlight.api.misc.fake_level;
 
 import com.mojang.datafixers.DataFixer;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -9,6 +10,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
+import net.minecraft.server.level.ChunkHolder;
+
 import net.minecraft.server.level.ChunkResult;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
@@ -46,6 +49,7 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.timers.TimerCallbacks;
 import net.minecraft.world.level.timers.TimerQueue;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -445,10 +449,6 @@ public class FakeServerLevel extends ServerLevel {
         @Override
         public void save(boolean flush) {
 
-        }
-
-        @Override
-        public void close() throws IOException {
         }
 
         @Override
