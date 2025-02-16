@@ -63,7 +63,7 @@ public class LeavesTypeRegistry extends BlockTypeRegistry<LeavesType> {
 
     private static boolean isBlacklisted(String namespace, String path) {
         return namespace.equals("securitycraft") || namespace.equals("dynamic_trees") ||
-                namespace.equals("dynamictrees") || path.contains("hanging");
+                namespace.matches("dynamictrees|dt") || path.contains("hanging");
     }
 
     @Override
