@@ -78,6 +78,10 @@ public class MapItemDataPacketMixin implements IMapDataPacketExtension {
             at = @At("RETURN"))
     private void readExtraData(FriendlyByteBuf buf, CallbackInfo ci) {
         //we always need to send enough data to create the correct map type because we dont know if client has it
+        if(!buf.isReadable()) {
+            return;
+        }
+
         if (buf.readBoolean()) {
             moonlight$dimension = buf.readResourceLocation();
             moonlight$mapCenterX = buf.readVarInt();
