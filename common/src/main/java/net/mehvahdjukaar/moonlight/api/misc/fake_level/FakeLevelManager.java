@@ -1,8 +1,6 @@
 package net.mehvahdjukaar.moonlight.api.misc.fake_level;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.mehvahdjukaar.moonlight.core.Moonlight;
-import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -13,7 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiFunction;
 
 public class FakeLevelManager {
@@ -24,15 +21,18 @@ public class FakeLevelManager {
     @VisibleForTesting
     public static Collection<Level> invalidateAll() {
         var unloaded = new ArrayList<>(INSTANCES.values());
-        INSTANCES.clear();
-        for (Level level : unloaded) {
-            try {
-                level.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        new ArrayList<>(INSTANCES.keySet()).forEach(FakeLevelManager::invalidate);
         return unloaded;
+    }
+
+    @ApiStatus.Internal
+    public static void invalidate(String name) {
+        Level level = INSTANCES.remove(name);
+        try {
+            level.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static FakeLevel getDefaultClient(Level original) {
