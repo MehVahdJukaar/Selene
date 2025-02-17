@@ -30,8 +30,8 @@ public class FakeLevelManager {
         Level level = INSTANCES.remove(name);
         try {
             level.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
         }
     }
 
