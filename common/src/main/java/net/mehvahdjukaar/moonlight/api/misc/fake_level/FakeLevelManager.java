@@ -2,15 +2,14 @@ package net.mehvahdjukaar.moonlight.api.misc.fake_level;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.VisibleForTesting;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -21,23 +20,23 @@ public class FakeLevelManager {
     @ApiStatus.Internal
     @VisibleForTesting
     public static void invalidateAll() {
-        var unloaded = new ArrayList<>(INSTANCES.values());
         new ArrayList<>(INSTANCES.keySet()).forEach(FakeLevelManager::invalidate);
-
-        for (var l : unloaded){
-            PlatHelper.invokeLevelUnload(l);
-        }
     }
 
     @ApiStatus.Internal
     public static void invalidate(String name) {
         Level level = INSTANCES.remove(name);
+        PlatHelper.invokeLevelUnload(level);
         try {
-            if(level instanceof FakeServerLevel) {
+            if (level instanceof FakeServerLevel) {
                 level.close();
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            if (PlatHelper.isDev()) {
+                throw new RuntimeException(e);
+            } else {
+                Moonlight.LOGGER.error("An error occurred while closing fake level", e);
+            }
         }
     }
 

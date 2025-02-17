@@ -1,2 +1,1 @@
-- fixed a bug with config screen icons
-- added custom config screen on forge
+- fixed another issue on server closing
