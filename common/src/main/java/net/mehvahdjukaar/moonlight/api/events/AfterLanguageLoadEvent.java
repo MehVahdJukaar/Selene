@@ -24,8 +24,10 @@ public class AfterLanguageLoadEvent implements SimpleEvent {
     }
 
     public void addEntry(String key, String translation) {
-        languageLines.computeIfAbsent(key, k -> translation);
-        extraLanguageLines.put(key, translation);
+        languageLines.computeIfAbsent(key, k -> {
+            extraLanguageLines.put(key, translation);
+            return translation;
+        });
     }
 
     public void addEntries(LangBuilder builder) {
