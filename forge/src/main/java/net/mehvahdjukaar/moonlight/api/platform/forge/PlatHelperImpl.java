@@ -50,6 +50,7 @@ import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -176,7 +177,7 @@ public class PlatHelperImpl {
     }
 
     public static RecordItem newMusicDisc(int power, Supplier<SoundEvent> soundSupplier, Item.Properties properties, int duration) {
-        return new RecordItem(power, soundSupplier, properties, duration*20);
+        return new RecordItem(power, soundSupplier, properties, duration * 20);
     }
 
     public static SimpleParticleType newParticle() {
@@ -194,7 +195,6 @@ public class PlatHelperImpl {
                 .sized(width, height).clientTrackingRange(clientTrackingRange)
                 .setShouldReceiveVelocityUpdates(velocityUpdates).updateInterval(updateInterval).build(name);
     }
-
 
 
     public static boolean isModLoadingValid() {
@@ -263,7 +263,7 @@ public class PlatHelperImpl {
     }
 
     public static String getModVersion(String modId) {
-        return ModList.get().getModContainerById(modId).map(v->v.getModInfo().getVersion().toString()).orElse(null);
+        return ModList.get().getModContainerById(modId).map(v -> v.getModInfo().getVersion().toString()).orElse(null);
     }
 
 
@@ -273,6 +273,10 @@ public class PlatHelperImpl {
             listener.accept(event.getRegistryAccess(), event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED);
         };
         MinecraftForge.EVENT_BUS.addListener(eventConsumer);
+    }
+
+    public static void invokeLevelUnload(Level l) {
+        MinecraftForge.EVENT_BUS.post(new LevelEvent.Unload(l)); //unload level with event shit
     }
 
 

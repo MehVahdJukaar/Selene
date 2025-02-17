@@ -100,6 +100,10 @@ public class PlatHelper {
         throw new AssertionError();
     }
 
+    @ExpectPlatform
+    public static void invokeLevelUnload(Level l) {
+        throw new AssertionError();
+    }
 
     public enum Platform {
         FORGE, FABRIC;

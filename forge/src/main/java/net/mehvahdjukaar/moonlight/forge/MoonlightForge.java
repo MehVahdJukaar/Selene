@@ -16,13 +16,12 @@ import net.mehvahdjukaar.moonlight.core.misc.forge.ModLootConditions;
 import net.mehvahdjukaar.moonlight.core.misc.forge.ModLootModifiers;
 import net.mehvahdjukaar.moonlight.core.network.ClientBoundSendLoginPacket;
 import net.mehvahdjukaar.moonlight.core.network.ModMessages;
+import net.minecraft.Util;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.OnDatapackSyncEvent;
-import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
@@ -93,11 +92,8 @@ public class MoonlightForge {
     }
 
     @SubscribeEvent
-    public static void beforeServerStart(ServerStoppedEvent event) {
-        var oldLevels = FakeLevelManager.invalidateAll();
-        for (var level : oldLevels) {
-            MinecraftForge.EVENT_BUS.post(new LevelEvent.Unload(level)); //unload level with event shit
-        }
+    public static void onServerShuttingDown(GameShuttingDownEvent event) {
+        FakeLevelManager.invalidateAll();
     }
 
     @SubscribeEvent
@@ -120,7 +116,7 @@ public class MoonlightForge {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onDimensionUnload(LevelEvent.Unload event) {
+    public static void onLevelUnload(LevelEvent.Unload event) {
         var level = event.getLevel();
         try {
             if (PlatHelper.getPhysicalSide().isClient()) {

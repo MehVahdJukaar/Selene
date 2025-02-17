@@ -6,8 +6,8 @@ import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.entity.FakePlayer;
-import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -47,7 +47,10 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.RecordItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -273,7 +276,7 @@ public class PlatHelperImpl {
     }
 
     public static Player getFakeServerPlayer(GameProfile id, ServerLevel level) {
-       return FakePlayer.get(level, id);
+        return FakePlayer.get(level, id);
     }
 
     public static boolean isInitializing() {
@@ -281,13 +284,19 @@ public class PlatHelperImpl {
     }
 
     public static String getModVersion(String modId) {
-        return FabricLoader.getInstance().getModContainer(modId).map(v->v.getMetadata().getVersion().getFriendlyString())
+        return FabricLoader.getInstance().getModContainer(modId).map(v -> v.getMetadata().getVersion().getFriendlyString())
                 .orElse(null);
     }
 
     public static void addReloadableCommonSetup(BiConsumer<RegistryAccess, Boolean> setup) {
         Objects.requireNonNull(setup);
         CommonLifecycleEvents.TAGS_LOADED.register(setup::accept);
+    }
+
+    public static void invokeLevelUnload(Level l) {
+        if (l instanceof ServerLevel sl) {
+            ServerWorldEvents.UNLOAD.invoker().onWorldUnload(sl.getServer(), sl);
+        }
     }
 
 

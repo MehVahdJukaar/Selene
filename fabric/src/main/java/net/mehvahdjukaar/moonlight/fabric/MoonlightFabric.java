@@ -2,22 +2,26 @@ package net.mehvahdjukaar.moonlight.fabric;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.configs.fabric.FabricConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.fabric.RegHelperImpl;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkDir;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
+import net.mehvahdjukaar.moonlight.core.fake_player.FPClientAccess;
+import net.mehvahdjukaar.moonlight.core.fake_player.FakeGenericPlayer;
 import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
-import net.mehvahdjukaar.moonlight.core.misc.FakeLevel;
 import net.mehvahdjukaar.moonlight.core.misc.FakeLevelManager;
 import net.mehvahdjukaar.moonlight.core.network.ClientBoundSendLoginPacket;
 import net.mehvahdjukaar.moonlight.core.network.ModMessages;
 import net.mehvahdjukaar.moonlight.core.network.fabric.ClientBoundOpenScreenMessage;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -43,9 +47,20 @@ public class MoonlightFabric implements ModInitializer, DedicatedServerModInitia
             Moonlight.beforeServerStart();
         });
         CommonLifecycleEvents.TAGS_LOADED.register(Moonlight::afterDataReload);
-        ServerLifecycleEvents.SERVER_STOPPED.register(s -> {
+        ServerLifecycleEvents.SERVER_STOPPING.register(s -> {
             currentServer = null;
-            FakeLevelManager.invalidateAll();
+             FakeLevelManager.invalidateAll();
+        });
+        ServerWorldEvents.UNLOAD.register((server, world) -> {
+            try {
+                FakeGenericPlayer.unloadLevel(world);
+                if (PlatHelper.getPhysicalSide().isClient()) {
+                    //got to be careful with classloading
+                    FPClientAccess.unloadLevel(world);
+                }
+            } catch (Exception e) {
+                Moonlight.LOGGER.error("Failed to unload fake players for level {}", world, e);
+            }
         });
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(SoftFluidInternal::onDataSyncToPlayer);
         ServerPlayerEvents.COPY_FROM.register(Moonlight::onPlayerCloned);

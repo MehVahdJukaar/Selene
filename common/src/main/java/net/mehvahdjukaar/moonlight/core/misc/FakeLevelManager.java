@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.moonlight.core.misc;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -19,19 +20,24 @@ public class FakeLevelManager {
 
     @ApiStatus.Internal
     @VisibleForTesting
-    public static Collection<Level> invalidateAll() {
+    public static void invalidateAll() {
         var unloaded = new ArrayList<>(INSTANCES.values());
         new ArrayList<>(INSTANCES.keySet()).forEach(FakeLevelManager::invalidate);
-        return unloaded;
+
+        for (var l : unloaded){
+            PlatHelper.invokeLevelUnload(l);
+        }
     }
 
     @ApiStatus.Internal
     public static void invalidate(String name) {
         Level level = INSTANCES.remove(name);
         try {
-            level.close();
+            if(level instanceof FakeServerLevel) {
+                level.close();
+            }
         } catch (Exception e) {
-            //throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 

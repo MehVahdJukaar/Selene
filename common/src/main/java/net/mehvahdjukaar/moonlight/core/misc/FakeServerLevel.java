@@ -99,6 +99,11 @@ public class FakeServerLevel extends ServerLevel {
     }
 
     @Override
+    public void close() throws IOException {
+       // super.close();
+    }
+
+    @Override
     public BlockPos getSharedSpawnPos() {
         return BlockPos.ZERO;
     }
@@ -471,9 +476,7 @@ public class FakeServerLevel extends ServerLevel {
             super(level, levelStorageAccess, fixerUpper, structureManager, dispatcher, generator, viewDistance, simulationDistance, sync, progressListener, chunkStatusListener, overworldDataStorage);
         }
 
-        @Override
-        public void save(boolean flush) {
-        }
+
 
         @Override
         public void tick(BooleanSupplier hasTimeLeft, boolean tickChunks) {
@@ -515,6 +518,14 @@ public class FakeServerLevel extends ServerLevel {
             return emptyChunkInstance;
         }
 
+        @Override
+        public void close() throws IOException {
+            super.close();
+        }
+
+        @Override
+        public void save(boolean flush) {
+        }
     }
 
 
@@ -525,7 +536,13 @@ public class FakeServerLevel extends ServerLevel {
         }
 
         @Override
-        public void close() {
+        public void saveAll() {
+
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
         }
     }
 }
