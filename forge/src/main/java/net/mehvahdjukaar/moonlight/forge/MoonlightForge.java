@@ -104,13 +104,6 @@ public class MoonlightForge {
             SoftFluidInternal.onDataSyncToPlayer(event.getPlayer(), true);
         }//else joined = false
     }
-    public static void aa (ServerStartedEvent e){
-        long millis = Util.getMillis();
-        var l = FakeLevelManager.getServer("duwmmy_world", e.getServer().overworld(), FakeServerLevel::new);
-        long elapsed = Util.getMillis() - millis;
-        int aa = 1;
-        FakeLevelManager.invalidate("duwmmy_world");
-    }
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
