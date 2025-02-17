@@ -10,6 +10,7 @@ import net.mehvahdjukaar.moonlight.core.Moonlight;
 import net.mehvahdjukaar.moonlight.core.fake_player.FPClientAccess;
 import net.mehvahdjukaar.moonlight.core.fake_player.FakeGenericPlayer;
 import net.mehvahdjukaar.moonlight.core.fluid.SoftFluidInternal;
+import net.mehvahdjukaar.moonlight.core.misc.FakeLevel;
 import net.mehvahdjukaar.moonlight.core.misc.FakeLevelManager;
 import net.mehvahdjukaar.moonlight.core.misc.FakeServerLevel;
 import net.mehvahdjukaar.moonlight.core.misc.forge.ModLootConditions;
@@ -102,6 +103,13 @@ public class MoonlightForge {
         if (event.getPlayer() != null) {
             SoftFluidInternal.onDataSyncToPlayer(event.getPlayer(), true);
         }//else joined = false
+    }
+    public static void aa (ServerStartedEvent e){
+        long millis = Util.getMillis();
+        var l = FakeLevelManager.getServer("duwmmy_world", e.getServer().overworld(), FakeServerLevel::new);
+        long elapsed = Util.getMillis() - millis;
+        int aa = 1;
+        FakeLevelManager.invalidate("duwmmy_world");
     }
 
     @SubscribeEvent
