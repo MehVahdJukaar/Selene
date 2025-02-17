@@ -111,11 +111,8 @@ public class MoonlightForge {
     }
 
     @SubscribeEvent
-    public static void onServerStopped(ServerStoppedEvent event) {
-        var oldLevels = FakeLevelManager.invalidateAll();
-        for (var level : oldLevels) {
-            NeoForge.EVENT_BUS.post(new LevelEvent.Unload(level)); //unload level with event shit
-        }
+    public static void onServerShuttingDown(GameShuttingDownEvent event) {
+        FakeLevelManager.invalidateAll();
     }
 
     @SubscribeEvent
