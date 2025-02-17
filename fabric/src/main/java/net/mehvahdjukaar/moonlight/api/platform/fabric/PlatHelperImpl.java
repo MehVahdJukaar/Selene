@@ -6,6 +6,7 @@ import com.mojang.serialization.DynamicOps;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -49,6 +50,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameRules;
@@ -293,6 +295,12 @@ public class PlatHelperImpl {
 
     public static void addReloadableCommonSetup(BiConsumer<RegistryAccess, Boolean> setup) {
         CommonLifecycleEvents.TAGS_LOADED.register(setup::accept);
+    }
+
+    public static void invokeLevelUnload(Level l) {
+        if (l instanceof ServerLevel sl) {
+            ServerWorldEvents.UNLOAD.invoker().onWorldUnload(sl.getServer(), sl);
+        }
     }
 
 

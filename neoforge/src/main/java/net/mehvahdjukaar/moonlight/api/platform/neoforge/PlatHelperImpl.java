@@ -53,6 +53,7 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
+import net.minecraftforge.event.level.LevelEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
@@ -279,6 +280,10 @@ public class PlatHelperImpl {
         if (to instanceof MutableDataComponentHolder mc) {
             mc.set(type, componentValue);
         }
+    }
+
+    public static void invokeLevelUnload(Level l) {
+        MinecraftForge.EVENT_BUS.post(new LevelEvent.Unload(l)); //unload level with event shit
     }
 
 
