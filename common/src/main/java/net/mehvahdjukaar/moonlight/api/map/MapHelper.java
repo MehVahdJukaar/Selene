@@ -1,10 +1,10 @@
 package net.mehvahdjukaar.moonlight.api.map;
 
 import net.mehvahdjukaar.moonlight.api.MoonlightRegistry;
-import net.mehvahdjukaar.moonlight.api.integration.MapAtlasCompat;
 import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapDecorationType;
 import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapMarker;
 import net.mehvahdjukaar.moonlight.api.map.decoration.SimpleMapMarker;
+import net.mehvahdjukaar.moonlight.core.integration.MapAtlasCompat;
 import net.mehvahdjukaar.moonlight.core.map.MapDataInternal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;

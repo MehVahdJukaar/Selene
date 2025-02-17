@@ -126,14 +126,12 @@ public class DispenserHelper {
     @Deprecated(forRemoval = true)
     public static void registerCustomBehavior(AdditionalDispenserBehavior behavior) {
         DispenserBlock.registerBehavior(behavior.item, behavior);
-        STATIC_MODDED_BEHAVIORS.computeIfAbsent(behavior.item, k -> new ArrayList<>()).add(behavior);
     }
 
     //block placement behavior
     @Deprecated(forRemoval = true)
     public static void registerPlaceBlockBehavior(ItemLike block) {
         DispenserBlock.registerBehavior(block, PLACE_BLOCK_BEHAVIOR);
-        STATIC_MODDED_BEHAVIORS.computeIfAbsent(block.asItem(), k -> new ArrayList<>()).add(PLACE_BLOCK_BEHAVIOR);
     }
 
     /**

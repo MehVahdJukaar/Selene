@@ -1,6 +1,6 @@
 package net.mehvahdjukaar.moonlight.api.client;
 
-import net.mehvahdjukaar.moonlight.api.integration.IrisCompat;
+import net.mehvahdjukaar.moonlight.core.integration.IrisCompat;
 import net.mehvahdjukaar.moonlight.core.CompatHandler;
 import net.minecraft.client.renderer.ShaderInstance;
 
@@ -20,7 +20,7 @@ public class CoreShaderContainer implements Supplier<ShaderInstance> {
 
     @Override
     public ShaderInstance get() {
-        if (CompatHandler.IRIS && IrisCompat.isIrisShaderFuckerActive()) {
+        if (CompatHandler.IRIS && IrisCompat.isIrisShaderStuffActive()) {
             return vanillaFallback.get();
         }
         return instance;

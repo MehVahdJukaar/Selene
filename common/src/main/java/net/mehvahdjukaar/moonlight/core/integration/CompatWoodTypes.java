@@ -1,9 +1,10 @@
-package net.mehvahdjukaar.moonlight.api.integration;
+package net.mehvahdjukaar.moonlight.core.integration;
 
 import net.mehvahdjukaar.moonlight.api.set.BlockSetAPI;
 import net.mehvahdjukaar.moonlight.api.set.leaves.LeavesType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 //place for all known weird hardcoded wood types from mods that aren't getting detected

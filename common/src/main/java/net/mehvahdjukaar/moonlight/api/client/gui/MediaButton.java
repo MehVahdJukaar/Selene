@@ -42,7 +42,7 @@ public class MediaButton {
         };
 
         var button = new SpriteIconButton.Builder(CommonComponents.EMPTY, onPress, true)
-                .sprite(texture, 0, 0)
+                .sprite(texture, iconW, iconH)
                 .size(iconW + 6, iconH + 6)
                 .build();
 

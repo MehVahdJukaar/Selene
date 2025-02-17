@@ -110,7 +110,7 @@ dependencies {
     modCompileOnly("curse.maven:autoreglib-250363:3857246")
     modCompileOnly("curse.maven:quark-oddities-301051:3575623")
     modCompileOnly("curse.maven:quark-243121:4463411")
-    modImplementation("curse.maven:the-twilight-forest-227639:5759335")
+    modCompileOnly("curse.maven:the-twilight-forest-227639:5759335")
 
     //modRuntimeOnly("curse.maven:productivetrees-867074:5290721")
     // modRuntimeOnly("com.tterrag.registrate:Registrate:MC1.19-1.1.5")
@@ -119,7 +119,7 @@ dependencies {
     // modRuntimeOnly("net.mehvahdjukaar:supplementaries-forge:1.19.2-2.2.3")
     modCompileOnly ("curse.maven:map-atlases-forge-519759:4990003")
     //modImplementation ("curse.maven:supplementaries-412082:4995508")
-    modCompileOnly ("curse.maven:configured-457570:5441232")
+    modImplementation ("curse.maven:configured-457570:5873783")
     modCompileOnly("curse.maven:yacl-667299:5424504")
 
 

@@ -32,7 +32,8 @@ import java.util.function.Function;
 
 public class CustomConfigSelectScreen extends ModConfigSelectionScreen {
 
-    public static final ResourceLocation MISC_ICONS = Moonlight.res("textures/gui/misc_icons.png");
+    public static final ResourceLocation ON_ICON = Moonlight.res("yes");
+    public static final ResourceLocation OFF_ICON = Moonlight.res("no");
 
     private static final Field FILE_ITEM_BUTTON = CustomConfigScreen.findFieldOrNull(FileItem.class, "modifyButton");
     private static final Field FILE_ITEM_CONFIG = CustomConfigScreen.findFieldOrNull(FileItem.class, "config");

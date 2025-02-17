@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.moonlight.api.integration;
+package net.mehvahdjukaar.moonlight.core.integration;
 
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,21 +15,42 @@ import pepjebs.mapatlases.client.MapAtlasesClient;
 import pepjebs.mapatlases.item.MapAtlasItem;
 import pepjebs.mapatlases.map_collection.MapKey;
 
-@Deprecated(forRemoval = true) //use the internal one of make your own
 public class MapAtlasCompat {
 
     public static boolean isAtlas(Item item) {
-        return net.mehvahdjukaar.moonlight.core.integration.MapAtlasCompat.isAtlas(item);
+        return item == MapAtlasesMod.MAP_ATLAS.get();
     }
 
     @Nullable
     public static MapItemSavedData getSavedDataFromAtlas(ItemStack atlas, Level level, Player player) {
-        return net.mehvahdjukaar.moonlight.core.integration.MapAtlasCompat.getSavedDataFromAtlas(atlas, level, player);
+        if(isAtlas(atlas.getItem())) {
+            var maps = MapAtlasItem.getMaps(atlas, level);
+            if (maps != null) {
+                var slice = MapAtlasItem.getSelectedSlice(atlas, level.dimension());
+                var key = MapKey.at(maps.getScale(), player, slice);
+                var select = maps.select(key);
+                if (select != null) {
+                    return select.data;
+                }
+            }
+        }
+        return null;
     }
 
     @Nullable
     public static Integer getMapIdFromAtlas(ItemStack atlas, Level level, Object data) {
-        return net.mehvahdjukaar.moonlight.core.integration.MapAtlasCompat.getMapIdFromAtlas(atlas, level, data);
+        try {
+            var maps = MapAtlasItem.getMaps(atlas, level);
+            if (maps != null) {
+                for (var e : maps.getAll()) {
+                    if (e.data == data) {
+                        return e.id;
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 
     @Environment(EnvType.CLIENT)

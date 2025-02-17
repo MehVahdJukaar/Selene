@@ -35,7 +35,6 @@ public class MoonlightForgeClient {
     public static void init(IEventBus modEventBus) {
         modEventBus.addListener(MoonlightForgeClient::afterLoad);
         modEventBus.addListener(EventPriority.LOWEST, MoonlightForgeClient::onTextureStitch);
-        IModelBakerExtension
         NeoForge.EVENT_BUS.addListener(MoonlightForgeClient::onInputUpdate);
     }
 

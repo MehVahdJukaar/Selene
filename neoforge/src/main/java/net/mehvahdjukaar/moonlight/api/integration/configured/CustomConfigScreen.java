@@ -394,9 +394,11 @@ public abstract class CustomConfigScreen extends ConfigScreen {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            var r = super.mouseClicked(mouseX, mouseY, button);
-            this.doesNeedsGameRestart = !this.doesNeedsGameRestart;
-            return r;
+            boolean success = super.mouseClicked(mouseX, mouseY, button);
+            if (success && needsGameRestart) {
+                this.doesNeedsGameRestart = !this.doesNeedsGameRestart;
+            }
+            return success;
         }
 
         @Override
@@ -423,21 +425,21 @@ public abstract class CustomConfigScreen extends ConfigScreen {
                 }
             }
 
+            int iconX = iconOffset + (int) (this.button.getX() + Math.ceil((this.button.getWidth() - ICON_SIZE) / 2f));
+            int iconY = (int) (this.button.getY() + Math.ceil(((this.button.getHeight() - ICON_SIZE) / 2f)));
+
+            boolean on = this.holder.get();
+
+            ResourceLocation iconRes = on ? CustomConfigSelectScreen.ON_ICON : CustomConfigSelectScreen.OFF_ICON;
+
+            graphics.blitSprite(iconRes, iconX, iconY, ICON_SIZE, ICON_SIZE);
+
             RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1);
             RenderSystem.enableDepthTest();
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-
-            int iconX = iconOffset + (int) (this.button.getX() + Math.ceil((this.button.getWidth() - ICON_SIZE) / 2f));
-            int iconY = (int) (this.button.getY() + Math.ceil(((this.button.getHeight() - ICON_SIZE) / 2f)));
-
-            boolean on = this.holder.get();
-
-            int u = on ? ICON_SIZE : 0;
-
-            graphics.blit(CustomConfigSelectScreen.MISC_ICONS, iconX, iconY, 0, u, 0, ICON_SIZE, ICON_SIZE, 64, 64);
 
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1);
 

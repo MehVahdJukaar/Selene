@@ -3,7 +3,7 @@ package net.mehvahdjukaar.moonlight.api.resources.pack;
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonElement;
 import dev.architectury.injectables.annotations.PlatformOnly;
-import net.mehvahdjukaar.moonlight.api.integration.ModernFixCompat;
+import net.mehvahdjukaar.moonlight.core.integration.ModernFixCompat;
 import net.mehvahdjukaar.moonlight.api.misc.ResourceLocationSearchTrie;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.resources.RPUtils;
