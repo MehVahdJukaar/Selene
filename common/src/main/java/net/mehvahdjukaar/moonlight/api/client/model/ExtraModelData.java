@@ -33,6 +33,7 @@ public interface ExtraModelData {
         return this == EMPTY;
     }
 
+    //prevents circular dependency when this class is loaded at the same time on 2 threads
     class ClassLoadingBs {
         static final ExtraModelData INSTANCE = ExtraModelData.builder().build();
     }
