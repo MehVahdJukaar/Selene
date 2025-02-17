@@ -391,9 +391,11 @@ public abstract class CustomConfigScreen extends ConfigScreen {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            var r = super.mouseClicked(mouseX, mouseY, button);
-            this.doesNeedsGameRestart = !this.doesNeedsGameRestart;
-            return r;
+            var success = super.mouseClicked(mouseX, mouseY, button);
+            if (success && needsGameRestart) {
+                this.doesNeedsGameRestart = !this.doesNeedsGameRestart;
+            }
+            return success;
         }
 
         @Override
