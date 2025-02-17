@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface ExtraModelData {
 
-    ExtraModelData EMPTY = ExtraModelData.builder().build();
+    ExtraModelData EMPTY = ClassLoadingBs.INSTANCE;
 
     @ExpectPlatform
     static Builder builder() {
@@ -25,6 +25,10 @@ public interface ExtraModelData {
 
     default boolean isEmpty() {
         return this == EMPTY;
+    }
+
+    class ClassLoadingBs {
+        static final ExtraModelData INSTANCE = ExtraModelData.builder().build();
     }
 }
 
