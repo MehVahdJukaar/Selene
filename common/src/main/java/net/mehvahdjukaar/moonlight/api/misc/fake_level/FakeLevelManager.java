@@ -23,7 +23,6 @@ public class FakeLevelManager {
         new ArrayList<>(INSTANCES.keySet()).forEach(FakeLevelManager::invalidate);
     }
 
-    @ApiStatus.Internal
     public static void invalidate(String name) {
         Level level = INSTANCES.remove(name);
         if (level != null) PlatHelper.invokeLevelUnload(level);
