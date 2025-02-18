@@ -53,7 +53,6 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
-import net.minecraftforge.event.level.LevelEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
@@ -61,6 +60,7 @@ import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.neoforged.neoforgespi.language.IModInfo;
 import org.jetbrains.annotations.Nullable;
@@ -283,7 +283,7 @@ public class PlatHelperImpl {
     }
 
     public static void invokeLevelUnload(Level l) {
-        MinecraftForge.EVENT_BUS.post(new LevelEvent.Unload(l)); //unload level with event shit
+        NeoForge.EVENT_BUS.post(new LevelEvent.Unload(l)); //unload level with event shit
     }
 
 

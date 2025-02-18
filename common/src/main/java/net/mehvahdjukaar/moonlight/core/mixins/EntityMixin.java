@@ -15,6 +15,7 @@ public abstract class EntityMixin extends LivingEntity {
         super(entityType, level);
     }
 
+    //must be redirect
     @Redirect(method = "spawnAnim", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;getX(D)D"),
     require = 0)
     public double fixSpawnAnimX(Mob instance, double v){

@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /**
  * This stuff attempts to fix an issue where you can totally create a BlockPlaceContext with null player
  * as both it and its parent class allows it. Heck even getPlayer is nullable
- * However all the getDirection methods dont check for it causing crashes if mods happen to call it with these on thix context
+ * However all the getDirection methods dont check for it causing crashes if mods happen to call it with these on this context
  */
 @Mixin(BlockPlaceContext.class)
 public abstract class FixBlockPlaceContextMixin extends UseOnContext {
@@ -28,17 +28,17 @@ public abstract class FixBlockPlaceContextMixin extends UseOnContext {
     }
 
     @Inject(method = "getNearestLookingDirection", at = @At("HEAD"), cancellable = true)
-    public void fixNotAccountingForNullPlayer1(CallbackInfoReturnable<Direction> cir) {
+    public void moonlight$fixNotAccountingForNullPlayer1(CallbackInfoReturnable<Direction> cir) {
         if (this.getPlayer() == null) cir.setReturnValue(Direction.NORTH);
     }
 
     @Inject(method = "getNearestLookingVerticalDirection", at = @At("HEAD"), cancellable = true)
-    public void fixNotAccountingForNullPlayer2(CallbackInfoReturnable<Direction> cir) {
+    public void moonlight$fixNotAccountingForNullPlayer2(CallbackInfoReturnable<Direction> cir) {
         if (this.getPlayer() == null) cir.setReturnValue(Direction.UP);
     }
 
     @Inject(method = "getNearestLookingDirections", at = @At("HEAD"), cancellable = true)
-    public void fixNotAccountingForNullPlayer3(CallbackInfoReturnable<Direction[]> cir) {
+    public void moonlight$fixNotAccountingForNullPlayer3(CallbackInfoReturnable<Direction[]> cir) {
         if (this.getPlayer() == null) {
             var directions = Direction.values();
             if (this.replaceClicked) {
