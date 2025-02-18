@@ -26,7 +26,7 @@ public class FakeLevelManager {
     @ApiStatus.Internal
     public static void invalidate(String name) {
         Level level = INSTANCES.remove(name);
-        PlatHelper.invokeLevelUnload(level);
+        if (level != null) PlatHelper.invokeLevelUnload(level);
         try {
             if (level instanceof FakeServerLevel) {
                 level.close();
