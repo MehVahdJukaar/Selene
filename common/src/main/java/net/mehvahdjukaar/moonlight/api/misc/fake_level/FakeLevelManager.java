@@ -20,11 +20,13 @@ public class FakeLevelManager {
     @ApiStatus.Internal
     @VisibleForTesting
     public static void invalidateAll() {
-        new ArrayList<>(INSTANCES.keySet()).forEach(FakeLevelManager::invalidate);
+        new ArrayList<>(INSTANCES.values()).forEach(FakeLevelManager::invalidate);
     }
 
-    public static void invalidate(String name) {
-        Level level = INSTANCES.remove(name);
+    // Manually invalidate one
+    public static boolean invalidate(Level level) {
+        boolean removed = INSTANCES.entrySet().removeIf(e -> e.getValue() == level);
+
         if (level != null) PlatHelper.invokeLevelUnload(level);
         try {
             if (level instanceof FakeServerLevel) {
@@ -37,6 +39,11 @@ public class FakeLevelManager {
                 Moonlight.LOGGER.error("An error occurred while closing fake level", e);
             }
         }
+        return removed;
+    }
+
+    @Deprecated(forRemoval = true)
+    public static void invalidate(String name) {
     }
 
     public static FakeLevel getDefaultClient(Level original) {
