@@ -244,11 +244,11 @@ public class PlatHelperImpl {
     }
 
     //maybe move these
-
     public static void addServerReloadListener(Function<HolderLookup.Provider, PreparableReloadListener> listener, ResourceLocation location) {
         Moonlight.assertInitPhase();
 
-        Consumer<AddReloadListenerEvent> eventConsumer = event -> event.addListener(listener.apply(event.getRegistryAccess()));
+        Consumer<AddReloadListenerEvent> eventConsumer = event -> event.addListener(
+                listener.apply(event.getServerResources().getRegistryLookup()));
         NeoForge.EVENT_BUS.addListener(eventConsumer);
     }
 
