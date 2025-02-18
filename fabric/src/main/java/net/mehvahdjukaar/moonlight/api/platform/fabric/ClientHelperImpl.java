@@ -127,21 +127,18 @@ public class ClientHelperImpl {
     }
 
     public static void addClientReloadListener(Supplier<PreparableReloadListener> listener, ResourceLocation name) {
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new IdentifiableResourceReloadListener() {
-            private final Supplier<PreparableReloadListener> inner = Suppliers.memoize(listener::get);
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(
+                new ReloadWrapper(Suppliers.memoize(listener::get), name));
+    }
 
-            @Override
-            public ResourceLocation getFabricId() {
-                return name;
-            }
+    private record ReloadWrapper(Supplier<PreparableReloadListener> inner,ResourceLocation getFabricId) implements IdentifiableResourceReloadListener {
 
-            @Override
-            public CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager,
-                                                  ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler,
-                                                  Executor backgroundExecutor, Executor gameExecutor) {
-                return inner.get().reload(preparationBarrier, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor);
-            }
-        });
+        @Override
+        public CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager,
+                                             ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler,
+                                             Executor backgroundExecutor, Executor gameExecutor) {
+            return inner.get().reload(preparationBarrier, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor);
+        }
     }
 
     public static final Map<ItemLike, IItemDecoratorRenderer> ITEM_DECORATORS = new IdentityHashMap<>();
