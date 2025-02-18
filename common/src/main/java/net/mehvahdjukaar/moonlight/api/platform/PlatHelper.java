@@ -114,6 +114,7 @@ public class PlatHelper {
         throw new AssertionError();
     }
 
+    @Contract
     @ExpectPlatform
     public static void invokeLevelUnload(Level l) {
         throw new AssertionError();
