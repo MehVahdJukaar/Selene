@@ -28,6 +28,7 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoader;
@@ -93,7 +94,7 @@ public class MoonlightForge {
     }
 
     @SubscribeEvent
-    public static void onServerShuttingDown(GameShuttingDownEvent event) {
+    public static void onServerShuttingDown(ServerStoppingEvent event) {
         FakeLevelManager.invalidateAll();
     }
 
