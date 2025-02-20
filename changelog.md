@@ -1,1 +1,1 @@
-- fixed another issue related to recent changes, minor this time and forge only
+- CompatWoodType: Added undetected Eternal-Tales' puratorium (v2.13.69)

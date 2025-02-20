@@ -11,6 +11,13 @@ import org.jetbrains.annotations.NotNull;
 public class CompatWoodTypes {
 
     public static void init() {
+        // Eternal Tales
+        var comets = WoodType.Finder.simple("eternal_tales", "comets", "comets_log", "comets_log");
+        comets.addChild("stripped_log", "striped_comets_log");
+        BlockSetAPI.addBlockTypeFinder(WoodType.class, comets);
+
+        BlockSetAPI.addBlockTypeFinder(WoodType.class,
+                woodTypeFinder(false, "eternal_tales", "purgatorium", "purgatorium_planks", "log", "wood", "stripped_log", ""));
 
         // Blocks +
         BlockSetAPI.addBlockTypeFinder(WoodType.class,
