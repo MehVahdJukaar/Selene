@@ -1,1 +1,1 @@
-- fixed an issue on server close with possible memory leak
+fixed an issue where wood types and leaves types were not initialized if no mod registered stuff with them. relevant for sawmill specifically

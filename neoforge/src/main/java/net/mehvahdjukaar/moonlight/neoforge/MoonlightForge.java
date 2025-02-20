@@ -36,6 +36,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.Nullable;
@@ -112,7 +113,7 @@ public class MoonlightForge {
     }
 
     @SubscribeEvent
-    public static void onServerShuttingDown(GameShuttingDownEvent event) {
+    public static void onServerShuttingDown(ServerStoppingEvent event) {
         FakeLevelManager.invalidateAll();
     }
 

@@ -3,6 +3,7 @@ package net.mehvahdjukaar.moonlight.api.util;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.core.Moonlight;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public record LenientListCodec<E>(Codec<E> elementCodec) implements Codec<List<E
                     listOps.accept(value -> {
                         DataResult<Pair<E, T>> elementResult = elementCodec.decode(ops, value);
                         if (elementResult.isError() && PlatHelper.isDev()) {
-                            Moonlight.LOGGER.warn("[LL] Failed to decode list element: {}", elementResult.error());
+                            //Moonlight.LOGGER.warn("[LL] Failed to decode list element: {}", elementResult.error());
                         }
                         elementResult.map(p -> elements.add(p.getFirst()));
                     });
